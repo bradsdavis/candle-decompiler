@@ -2,7 +2,7 @@ Introduction
 ===============================
 Hi; I am Brad Davis, and I am the creator of JBoss Cake.  JBoss Cake is a tool to assist developers in migrating platforms from closed, proprietary systems to open source.  Cake had the need for an open source decompiler.  Candle is an open source decompiler I have created on my own time; it is far from complete.  This is where that work will be developed over the next few months.  Once we have a viable open source deompiler, the public beta of JBoss Cake will follow.
 
-Currently, the state of the decompiler is that it only decompiles a subset of the JVM operations; if you are looking for a decompiler, please check out the many closed options at this point.  Cake's Decompiler has a long way to go to catch up with these fine tools, and this is more of a testing ground than anything at this point. 
+Currently, the state of the decompiler is that it only decompiles a subset of the JVM operations; if you are looking for a decompiler, please check out the many closed options at this point.  Candle Decompiler has a long way to go to catch up with these fine tools, and this is more of a testing ground than anything at this point. 
 
 Follow the action at: @bradsdavis and @jbosscake !!
 
