@@ -8,9 +8,9 @@ import java.util.Set;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.Sourceable;
 
-public abstract class Expression implements Sourceable {
+public abstract class Expression implements Sourceable, Cloneable {
 
-	protected final InstructionHandle instructionHandle;
+	protected InstructionHandle instructionHandle;
 	
 	public Expression(InstructionHandle instructionHandle) {
 		this.instructionHandle = instructionHandle;
@@ -18,6 +18,10 @@ public abstract class Expression implements Sourceable {
 	
 	public InstructionHandle getInstructionHandle() {
 		return instructionHandle;
+	}
+	
+	public void setInstructionHandle(InstructionHandle instructionHandle) {
+		this.instructionHandle = instructionHandle;
 	}
 	
 	public abstract Set<Expression> nestedExpression();
@@ -33,6 +37,11 @@ public abstract class Expression implements Sourceable {
 	}
 	
 	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	 
 	@Override
 	public String toString() {
 		StringWriter sw = new StringWriter();

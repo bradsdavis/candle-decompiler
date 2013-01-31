@@ -1,7 +1,6 @@
 package org.candle.decompiler;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -57,16 +56,16 @@ public class CandleDecompiler {
 		Writer writer = null;
 		try {
 			writer = new FileWriter(src);
-			FileInputStream fis = new FileInputStream(clz);
-			ClassParser cp = new ClassParser(fis, "");
+			ClassParser cp = new ClassParser(clz.getAbsolutePath());
 			decompile(cp.parse(), writer);
 		}
 		catch(Exception e) {
-			
+			throw new DecompilerException("Exception while decompiling.", e);
 		}
 		finally {
 			if(writer != null) {
 				try {
+					writer.flush();
 					writer.close();
 				} catch (IOException e) {
 					e.printStackTrace();

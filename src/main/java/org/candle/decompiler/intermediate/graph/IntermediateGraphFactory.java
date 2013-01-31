@@ -47,7 +47,6 @@ public class IntermediateGraphFactory implements Visitor {
 			return;
 		}
 		
-		
 		if(next != null) {
 			//find how that actually maps to the abstract line..
 			AbstractIntermediate intermediate = intermediateMap.get(next);
@@ -85,7 +84,10 @@ public class IntermediateGraphFactory implements Visitor {
 		//also add the target.
 		BranchHandle bi = ((BranchHandle)line.getInstruction());
 		AbstractIntermediate targetIntermediate = intermediateMap.get(bi.getTarget());
-		
+
+		if(targetIntermediate == null) {
+			System.out.println(line);
+		}
 		
 		line.setTrueTarget(targetIntermediate);
 		intermediateGraph.addVertex(targetIntermediate);

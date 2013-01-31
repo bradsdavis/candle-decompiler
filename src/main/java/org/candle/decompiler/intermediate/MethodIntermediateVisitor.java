@@ -11,6 +11,7 @@ import org.apache.bcel.generic.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.DecompilerException;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
@@ -525,7 +526,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		context.getExpressions().push(two);
 		context.getExpressions().push(one);
-		
+	
 		context.getExpressions().push(two);
 		context.getExpressions().push(one);
 	}
@@ -566,8 +567,19 @@ public class MethodIntermediateVisitor implements Visitor {
 	
 	//Now provide the suplication visitors
 	public void visitDUP(DUP instruction) {
-		Expression exp = context.getExpressions().peek();
-		context.getExpressions().push(exp);
+		Expression exp = context.getExpressions().pop();
+		
+		try {
+			Expression dup = (Expression)exp.clone();
+			dup.setInstructionHandle(context.getCurrentInstruction());
+			context.getExpressions().push(dup);
+			context.getExpressions().push(exp);
+			
+		} catch (CloneNotSupportedException e) {
+			LOG.error("Exception duplicating expression: "+exp.toString(), e);
+			
+		}
+		
 	}
 	
 	public void visitDUP_X2(DUP_X2 instruction) {

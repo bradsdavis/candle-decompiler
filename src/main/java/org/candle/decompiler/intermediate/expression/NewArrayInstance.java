@@ -5,8 +5,10 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
+import org.apache.commons.lang.StringUtils;
 
 public class NewArrayInstance extends NewInstance {
 
@@ -19,7 +21,12 @@ public class NewArrayInstance extends NewInstance {
 
 	@Override
 	public void write(Writer builder) throws IOException {
-		super.write(builder);
+		builder.append("new ");
+		
+		String signature = Utility.signatureToString(type.getSignature());
+		signature = StringUtils.removeEnd(signature, "[]");
+		builder.append(signature);
+		
 		builder.append("[");
 		count.write(builder);
 		builder.append("]");
