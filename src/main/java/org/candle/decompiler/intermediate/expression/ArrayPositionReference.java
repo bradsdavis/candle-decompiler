@@ -1,5 +1,8 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,19 +20,23 @@ public class ArrayPositionReference extends Expression {
 	}
 
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(arrayReference.generateSource());
+	public void write(Writer builder) throws IOException {
+		arrayReference.write(builder);
 		builder.append("[");
-		builder.append(arrayPosition.generateSource());
+		arrayPosition.write(builder);
 		builder.append("]");
-		
-		return builder.toString();
 	}
 	
 	@Override
 	public String toString() {
-		return generateSource();
+		StringWriter sw = new StringWriter();
+		try {
+			write(sw);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sw.toString();
 	}
 	
 	@Override

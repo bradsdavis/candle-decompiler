@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,12 +26,10 @@ public class MultiConditional extends ConditionalExpression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder val = new StringBuilder(left.generateSource());
-		val.append(" ").append(operation).append(" ");
-		val.append(right.generateSource());
-
-		return val.toString();
+	public void write(Writer writer) throws IOException {
+		left.write(writer);
+		writer.append(" ").append(operation.toString()).append(" ");
+		right.write(writer);
 	}
 
 	@Override

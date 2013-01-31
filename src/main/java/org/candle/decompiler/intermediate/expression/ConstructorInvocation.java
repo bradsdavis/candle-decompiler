@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.List;
 
 import org.apache.bcel.generic.InstructionHandle;
@@ -12,8 +14,8 @@ public class ConstructorInvocation extends MethodInvocation {
 	}
 
 	@Override
-	public String generateSource() {
-		StringBuilder val = new StringBuilder(target.generateSource());
+	public void write(Writer val) throws IOException {
+		target.write(val);
 		val.append("(");
 		
 		if(parameters!=null) {
@@ -23,12 +25,9 @@ public class ConstructorInvocation extends MethodInvocation {
 				if(i>0) {
 					val.append(", ");
 				}
-				String paramVal = parameters.get(i).generateSource();
-				val.append(paramVal);
+				parameters.get(i).write(val);
 			}
 		}
-		
 		val.append(")");
-		return val.toString();
 	}
 }

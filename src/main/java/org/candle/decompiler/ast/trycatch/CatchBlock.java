@@ -1,5 +1,9 @@
 package org.candle.decompiler.ast.trycatch;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.ast.Block;
 import org.candle.decompiler.ast.Statement;
@@ -33,11 +37,10 @@ public class CatchBlock extends Block {
 	}
 	
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent();
 		
 		//the resolved intro always should be first in the catchblock.
-		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
 		for(int i=0, j=children.size(); i<j; i++) {
 			if(i == 0) {
@@ -46,20 +49,23 @@ public class CatchBlock extends Block {
 				StatementIntermediate line = statement.getLine();
 				Declaration expression = (Declaration)line.getExpression();
 				org.candle.decompiler.intermediate.expression.ObjectType type = expression.getType();
-				builder.append(type.getType());
+				
+				//resolve signature
+				String signature = Utility.signatureToString(type.getType().getSignature());
+
+				builder.append(signature);
 				builder.append(" ");
 				builder.append(((Variable)(expression.getAssignment().getLeft())).getName());
 				builder.append(") {");
 			}
 			else {
-				builder.append(children.get(i).generateSource());
+				children.get(i).write(builder);
 			}
 			builder.append(Block.NL);
 		}
 		builder.append(indent);
 		builder.append("}");
 		builder.append(Block.NL);
-		return builder.toString();
 	}
 
 }

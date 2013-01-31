@@ -1,20 +1,20 @@
 package org.candle.decompiler.test;
 
-import org.candle.decompiler.Decompiler;
+import org.candle.decompiler.CandleDecompiler;
+import org.candle.decompiler.DecompilerException;
 
 
 
 public class BCELMainTest {
 
-	  public static void main(String[] argv) throws ClassNotFoundException
+	  public static void main(String[] argv) throws DecompilerException
 	  {
 		  //String className = "org.candle.decompiler.test.TestSimpleCondition";
 		  String className = "org.candle.decompiler.test.TestSimpleLoops";
 		  //String className = "org.candle.decompiler.test.TestTryCatch";
 		  //String className = "org.candle.decompiler.test.TestConditionsBlock";
 		  
-		  Decompiler decompiler = new Decompiler();
-
+		  CandleDecompiler decompiler = new CandleDecompiler();
 		  decompiler.decompile(className);
 	  }
 }

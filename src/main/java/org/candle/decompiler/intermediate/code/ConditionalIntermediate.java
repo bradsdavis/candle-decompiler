@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.code;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,7 +57,14 @@ public class ConditionalIntermediate extends AbstractIntermediate {
 	
 	@Override
 	public String toString() {
-		return "Conditional: "+this.expression.generateSource();
+		StringWriter sw = new StringWriter();
+		try {
+			this.expression.write(sw);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Conditional: "+sw.toString();
 	}
 
 	@Override

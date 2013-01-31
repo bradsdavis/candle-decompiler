@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,27 +20,19 @@ public class Return extends Expression {
 	public Return(InstructionHandle instructionHandle) {
 		super(instructionHandle);
 	}
-	
-	public String generateSource() {
-		StringBuilder expressionBuilder = new StringBuilder();
-		expressionBuilder.append("return");
+	@Override
+	public void write(Writer writer) throws IOException {
+		writer.append("return");
 		if(child != null) {
-			expressionBuilder.append(" ");
-			expressionBuilder.append(child.generateSource());
+			writer.append(" ");
+			child.write(writer);
 		}
-		
-		return expressionBuilder.toString();
 	}
 	
 	public Expression getChild() {
 		return child;
 	}
 
-	@Override
-	public String toString() {
-		return generateSource();
-	}
-	
 	@Override
 	public Set<Expression> nestedExpression() {
 		Set<Expression> expressions = new HashSet<Expression>(2);

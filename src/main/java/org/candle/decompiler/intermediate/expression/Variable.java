@@ -1,15 +1,16 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.InstructionHandle;
-
-
-
+import org.apache.bcel.generic.Type;
 
 public class Variable extends ObjectType {
 
 	private final String name;
 	
-	public Variable(InstructionHandle instructionHandle, String type, String name) {
+	public Variable(InstructionHandle instructionHandle, Type type, String name) {
 		super(instructionHandle, type);
 		this.name = name;
 	}
@@ -19,15 +20,10 @@ public class Variable extends ObjectType {
 	}
 	
 	@Override
-	public String generateSource() {
-		return this.name;
+	public void write(Writer writer) throws IOException {
+		writer.append(this.name);
 	}
 	
-	@Override
-	public String toString() {
-		return generateSource();
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;

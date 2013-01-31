@@ -1,5 +1,7 @@
 package org.candle.decompiler.ast;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,21 +47,18 @@ public abstract class Block implements Sourceable {
 	}
 	
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent();
 		
-		StringBuilder builder = new StringBuilder();
 		builder.append("{");
 		for(Block child : children) {
 			builder.append(NL);
-			builder.append(child.generateSource());
+			child.write(builder);
 		}
 		builder.append(NL);
 		builder.append(indent);
 		builder.append("}");
 		builder.append(NL);
-		
-		return builder.toString();
 	}
 
 	public abstract InstructionHandle getInstruction();

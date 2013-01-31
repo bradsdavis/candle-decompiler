@@ -1,5 +1,8 @@
 package org.candle.decompiler.ast.loop;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.ast.Block;
@@ -19,26 +22,25 @@ public class WhileBlock extends Block {
 	}
 	
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent();
 		
-		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
 		builder.append("while(");
-		builder.append(conditional.getExpression().generateSource());
+		
+		conditional.getExpression().write(builder);
+		
 		builder.append(") ");
 		
 		builder.append("{");
 		for(Block child : children) {
 			builder.append(NL);
-			builder.append(child.generateSource());
+			child.write(builder);
 		}
 		builder.append(NL);
 		builder.append(indent);
 		builder.append("}");
 		builder.append(NL);
-		
-		return builder.toString();
 	}
 
 	@Override

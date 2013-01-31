@@ -7,7 +7,6 @@ import org.apache.bcel.Constants;
 import org.apache.bcel.classfile.ConstantClass;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.Field;
-import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -36,6 +35,7 @@ import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.expression.SingleConditional;
 import org.candle.decompiler.intermediate.expression.Throw;
+import org.candle.decompiler.intermediate.expression.TypedExpression;
 import org.candle.decompiler.intermediate.expression.Variable;
 
 public class MethodIntermediateVisitor implements Visitor {
@@ -53,29 +53,29 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 	public void visitICONST(ICONST instruction) {
 		LOG.debug("Loading: "+instruction.getValue().toString());
-		Resolved cons = new Resolved(context.getCurrentInstruction(), instruction.getValue().toString());
+		Resolved cons = new Resolved(context.getCurrentInstruction(), Type.INT, instruction.getValue().toString());
 		context.getExpressions().push(cons);
 	}
 
 	public void visitLCONST(LCONST instruction) {
-		Resolved cons = new Resolved(context.getCurrentInstruction(), instruction.getValue().toString());
+		Resolved cons = new Resolved(context.getCurrentInstruction(), Type.LONG, instruction.getValue().toString());
 		context.getExpressions().push(cons);
 	}
 	
 
 	public void visitDCONST(DCONST instruction) {
-		Resolved cons = new Resolved(context.getCurrentInstruction(), instruction.getValue().toString());
+		Resolved cons = new Resolved(context.getCurrentInstruction(), Type.DOUBLE, instruction.getValue().toString());
 		context.getExpressions().push(cons);
 	}
 	
 	public void visitBIPUSH(BIPUSH instruction) {
-		Resolved resolved = new Resolved(context.getCurrentInstruction(), instruction.getValue().toString());
+		Resolved resolved = new Resolved(context.getCurrentInstruction(), Type.BYTE, instruction.getValue().toString());
 		context.getExpressions().push(resolved);
 		LOG.debug("Pushing: "+resolved);
 	}
 	
 	public void visitSIPUSH(SIPUSH instruction) {
-		Resolved resolved = new Resolved(context.getCurrentInstruction(), instruction.getValue().toString());
+		Resolved resolved = new Resolved(context.getCurrentInstruction(), Type.SHORT, instruction.getValue().toString());
 		context.getExpressions().push(resolved);
 		LOG.debug("Pushing: "+resolved);
 	}
@@ -180,12 +180,12 @@ public class MethodIntermediateVisitor implements Visitor {
 			IntermediateVariable localVar = context.getVariableResolver().getLocalVariable(index, context.getCurrentInstruction().getPosition()); 
 
 			String variableName = null;
-			String variableType = null;
+			Type variableType = null;
 			
 			if(localVar == null) {
 				//probably need to create a variable for enhanced loops...
 				Type type = instruction.getType(context.getMethodGen().getConstantPool());
-				localVar = context.getVariableResolver().addLocalVariable(index, type.toString());
+				localVar = context.getVariableResolver().addLocalVariable(index, type);
 			}
 			
 			variableName = localVar.getName();
@@ -202,7 +202,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 	public void visitACONST_NULL(ACONST_NULL instruction) {
 		//load from constant pool.
-		Resolved cons = new Resolved(context.getCurrentInstruction(), "null");
+		Resolved cons = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
 		context.getExpressions().push(cons);
 	}
 
@@ -224,7 +224,7 @@ public class MethodIntermediateVisitor implements Visitor {
 			resolved = referencedClassName+"."+instruction.getFieldName(cpg);
 		}
 		
-		Resolved cons = new Resolved(context.getCurrentInstruction(), resolved);
+		Resolved cons = new Resolved(context.getCurrentInstruction(), instruction.getType(cpg), resolved);
 		context.getExpressions().push(cons);
 	}
 
@@ -232,10 +232,9 @@ public class MethodIntermediateVisitor implements Visitor {
 		ConstantPoolGen cpg = context.getMethodGen().getConstantPool();
 		String fieldName = instruction.getFieldName(cpg);
 		Type fieldType = instruction.getFieldType(cpg);
-		String clazzType = Utility.signatureToString(fieldType.getSignature(), true);
 		
 		Expression right = context.getExpressions().pop();
-		Variable variable = new Variable(context.getCurrentInstruction(), clazzType, fieldName);
+		Variable variable = new Variable(context.getCurrentInstruction(), fieldType, fieldName);
 		Assignment assignment = new Assignment(context.getCurrentInstruction(), variable, right);
 		
 		for(Field field : context.getJavaClass().getFields()) {
@@ -304,7 +303,7 @@ public class MethodIntermediateVisitor implements Visitor {
 			resolvedValue.append("\"");
 		}
 		
-		Resolved resolved = new Resolved(context.getCurrentInstruction(), resolvedValue.toString());
+		Resolved resolved = new Resolved(context.getCurrentInstruction(), type, resolvedValue.toString());
 		context.getExpressions().push(resolved);
 	}
 	
@@ -336,12 +335,12 @@ public class MethodIntermediateVisitor implements Visitor {
 			resolvedValue.append("\"");
 		}
 		
-		Resolved resolved = new Resolved(context.getCurrentInstruction(), resolvedValue.toString());
+		Resolved resolved = new Resolved(context.getCurrentInstruction(), type, resolvedValue.toString());
 		context.getExpressions().push(resolved);
 	}
 
 	public void visitFCONST(FCONST instruction) {
-		Resolved cons = new Resolved(context.getCurrentInstruction(), instruction.getValue().toString());
+		Resolved cons = new Resolved(context.getCurrentInstruction(), Type.FLOAT, instruction.getValue().toString());
 		context.getExpressions().push(cons);
 	}
 	
@@ -355,7 +354,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		if(iv == null) {
 			//generate IV.
-			iv = context.getVariableResolver().addLocalVariable(index, instruction.getType(context.getMethodGen().getConstantPool()).toString());
+			iv = context.getVariableResolver().addLocalVariable(index, instruction.getType(context.getMethodGen().getConstantPool()));
 		}
 		Variable variable = new Variable(context.getCurrentInstruction(), iv.getType(), iv.getName());
 		
@@ -376,7 +375,7 @@ public class MethodIntermediateVisitor implements Visitor {
 			incrementerBuilder.append(" += ").append(incrementBy);
 		}
 		
-		Expression exp = new Increment(context.getCurrentInstruction(), variable, incrementerBuilder.toString());
+		Expression exp = new Increment(context.getCurrentInstruction(), variable, Type.INT, incrementerBuilder.toString());
 		context.getIntermediate().add(new StatementIntermediate(context.getCurrentInstruction(), exp));
 	}
 
@@ -389,27 +388,28 @@ public class MethodIntermediateVisitor implements Visitor {
 	//Process all single-value conditionals.
 	@Override
 	public void visitIFLT(IFLT instruction) {
-		Expression right = new Resolved(context.getCurrentInstruction(), "0");
 		Expression left = context.getExpressions().pop();
+		//TODO: this should probably be resolved to it's left expression value for the resovled value.
+		Expression right = new Resolved(context.getCurrentInstruction(), null, "0");
 		processMultiConditionalStatement(OperationType.LESS, left, right);
 	}
 	
 	@Override
 	public void visitIFGT(IFGT instruction) {
-		Expression right = new Resolved(context.getCurrentInstruction(), "0");
+		Expression right = new Resolved(context.getCurrentInstruction(), null, "0");
 		Expression left = context.getExpressions().pop();
 		processMultiConditionalStatement(OperationType.GREATER, left, right);
 	}
 
 	@Override
 	public void visitIFGE(IFGE obj) {
-		Expression right = new Resolved(context.getCurrentInstruction(), "0");
+		Expression right = new Resolved(context.getCurrentInstruction(), null, "0");
 		Expression left = context.getExpressions().pop();
 		processMultiConditionalStatement(OperationType.GREATER_EQUAL, left, right);
 	}
 	@Override
 	public void visitIFLE(IFLE obj) {
-		Expression right = new Resolved(context.getCurrentInstruction(), "0");
+		Expression right = new Resolved(context.getCurrentInstruction(), null, "0");
 		Expression left = context.getExpressions().pop();
 		processMultiConditionalStatement(OperationType.LESS_EQUAL, left, right);
 	}
@@ -433,7 +433,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	@Override
 	public void visitIFNULL(IFNULL instruction) {
 		Expression left = context.getExpressions().pop();
-		Expression right = new Resolved(context.getCurrentInstruction(), "null");
+		Expression right = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
 		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
@@ -445,7 +445,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	@Override
 	public void visitIFNONNULL(IFNONNULL instruction) {
 		Expression left = context.getExpressions().pop();
-		Expression right = new Resolved(context.getCurrentInstruction(), "null");
+		Expression right = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.NE);
 		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
@@ -461,7 +461,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 		//get the left, create the right
 		Expression left = context.getExpressions().pop();
-		Expression right = new Resolved(context.getCurrentInstruction(), type);
+		Expression right = new Resolved(context.getCurrentInstruction(), Type.BOOLEAN, type);
 		InstanceOf instanceOf = new InstanceOf(context.getCurrentInstruction(), left, right);
 		
 		context.getExpressions().push(instanceOf);
@@ -515,7 +515,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		ObjectType type = instruction.getLoadClassType(this.context.getMethodGen().getConstantPool());
 		Type t = instruction.getType(this.context.getMethodGen().getConstantPool());
 		LOG.debug("New object: "+t +", "+type);
-		NewInstance instance = new NewInstance(context.getCurrentInstruction(), type.getClassName());
+		NewInstance instance = new NewInstance(context.getCurrentInstruction(), type);
 		context.getExpressions().push(instance);
 	}
 	
@@ -664,7 +664,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		}
 		
 		
-		Resolved resolvedType = new Resolved(context.getCurrentInstruction(), instruction.getLoadClassType(cpg).getClassName());
+		Resolved resolvedType = new Resolved(context.getCurrentInstruction(), Type.CLASS, instruction.getLoadClassType(cpg).getClassName());
 		String methodName = instruction.getMethodName(cpg);
 		
 		//create the expression..
@@ -778,9 +778,6 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 
 	public void visitStoreInstruction(StoreInstruction instruction) {
-		String variableName = null;
-		boolean declared = false;
-		
 		Expression right = this.context.getExpressions().pop();
 		Type type = instruction.getType(context.getMethodGen().getConstantPool());
 		
@@ -792,12 +789,8 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		IntermediateVariable iv = context.getVariableResolver().getLocalVariable(lvtIndex, pc);
 
-		if(iv != null) {
-			variableName = iv.getName();
-			declared = true;
-		}
-		
-		String signature = type.toString();
+		//if the variable is not null, it is declared.
+		boolean declared = (iv != null);
 		
 		if(!declared) {
 			//look it up from the next phase code.
@@ -806,10 +799,17 @@ public class MethodIntermediateVisitor implements Visitor {
 
 			if(iv == null) {
 				//probably need to create a variable for enhanced loops...
-				LOG.info("Adding index: "+instruction.getIndex() + " as: "+signature);
+				LOG.info("Adding index: "+instruction.getIndex() + " as: "+type);
+				
+				//try and resolve the type for the variable from the right hand side.
+				if(type == Type.OBJECT) {
+					if(right instanceof TypedExpression) {
+						type = ((TypedExpression) right).getType();
+					}
+				}
 				
 				//generate variable name...
-				iv = context.getVariableResolver().addLocalVariable(instruction.getIndex(), signature);
+				iv = context.getVariableResolver().addLocalVariable(instruction.getIndex(), type);
 			}
 		}
 		
@@ -923,25 +923,25 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 	
 	//negate operations
-	protected void processNegation() {
+	protected void processNegation(Type type) {
 		//negation is the same as multiplying by negative 1; more readable.
 		//push a negative 1 to the stack.
-		Expression negativeOne = new Resolved(context.getCurrentInstruction(), "-1");
+		Expression negativeOne = new Resolved(context.getCurrentInstruction(), type, "-1");
 		context.getExpressions().push(negativeOne);
 		
 		processArithmeticTwoStackOperations(ArithmeticType.MULTIPLY);
 	}
 	public void visitDNEG(DNEG instruction) {
-		processNegation();
+		processNegation(Type.DOUBLE);
 	}
 	public void visitFNEG(FNEG instruction) {
-		processNegation();
+		processNegation(Type.FLOAT);
 	}
 	public void visitLNEG(LNEG instruction) {
-		processNegation();
+		processNegation(Type.LONG);
 	}
 	public void visitINEG(INEG instruction) {
-		processNegation();
+		processNegation(Type.INT);
 	}
 
 	//and operations
@@ -1039,10 +1039,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	
 	public void visitNEWARRAY(NEWARRAY instruction) {
 		Expression count = context.getExpressions().pop();
-		
-		String type = instruction.getType().toString();
-		type = StringUtils.removeEnd(type, "[]");
-		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
+		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), instruction.getType(), count);
 		context.getExpressions().push(nai);
 	}
 	
@@ -1163,7 +1160,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		//now see what type it is.
 		LOG.info("To Type: "+type);
 		
-		Resolved resolve = new Resolved(context.getCurrentInstruction(), type.toString());
+		Resolved resolve = new Resolved(context.getCurrentInstruction(), type, type.toString());
 		
 		Cast cast = new Cast(context.getCurrentInstruction(), resolve, right);
 		context.getExpressions().push(cast);

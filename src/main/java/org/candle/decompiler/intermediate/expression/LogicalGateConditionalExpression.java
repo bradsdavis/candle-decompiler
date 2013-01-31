@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,16 +19,14 @@ public class LogicalGateConditionalExpression extends ConditionalExpression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(left.generateSource());
+	public void write(Writer builder) throws IOException {
+		left.write(builder);
 		
 		builder.append(" ");
 		builder.append(logicalGate.toString());
 		builder.append(" ");
 		
-		builder.append(right.generateSource());
-		return builder.toString();
+		right.write(builder);
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package org.candle.decompiler.ast.trycatch;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +49,9 @@ public class TryBlock extends Block {
 	
 	
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent();
 		List<Block> catchBlocks = new ArrayList<Block>(); 
-		
-		StringBuilder builder = new StringBuilder();
 		
 		builder.append(indent);
 		builder.append("try ");
@@ -64,7 +64,7 @@ public class TryBlock extends Block {
 				continue;
 			}
 			builder.append(Block.NL);
-			builder.append(child.generateSource());
+			child.write(builder);
 		}
 		builder.append(Block.NL);
 		builder.append(indent);
@@ -72,9 +72,7 @@ public class TryBlock extends Block {
 		builder.append(Block.NL);
 		
 		for(Block catchBlock : catchBlocks) {
-			builder.append(catchBlock.generateSource());
+			catchBlock.write(builder);
 		}
-		
-		return builder.toString();
 	}
 }

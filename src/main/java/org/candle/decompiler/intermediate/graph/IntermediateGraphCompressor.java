@@ -43,6 +43,8 @@ public class IntermediateGraphCompressor implements Visitor {
 	
 	@Override
 	public void visitCompleteLine(StatementIntermediate line) {
+		if(true)return;
+
 		//basically, we just need to take any statements who have 1 path in, and then merge with the path in.
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
 		if(predecessors.size() == 1) {

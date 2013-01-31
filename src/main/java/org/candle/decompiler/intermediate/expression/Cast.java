@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,15 +19,12 @@ public class Cast extends Expression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder val = new StringBuilder();
+	public void write(Writer val) throws IOException {
 		
 		val.append("(");
-		val.append(left.generateSource());
+		left.write(val);
 		val.append(") ");
-		val.append(right.generateSource());
-
-		return val.toString();
+		right.write(val);
 	}
 	
 	@Override

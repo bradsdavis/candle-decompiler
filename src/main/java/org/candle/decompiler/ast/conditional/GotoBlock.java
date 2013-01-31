@@ -1,5 +1,8 @@
 package org.candle.decompiler.ast.conditional;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.ast.Block;
@@ -18,11 +21,9 @@ public class GotoBlock extends Block {
 	}
 
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder("goto ");
-		builder.append(super.generateSource());
-		
-		return builder.toString();
+	public void write(Writer builder) throws IOException {
+		builder.append("goto ");
+		super.write(builder);
 	}
 	
 	@Override

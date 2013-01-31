@@ -1,8 +1,11 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 
@@ -26,17 +29,16 @@ public class Declaration extends Expression {
 	}
 
 	@Override
-	public String generateSource() {
-		String outputType = type.getType();
+	public void write(Writer builder) throws IOException {
+		String outputType = Utility.signatureToString(type.getType().getSignature());
+		
 		if(StringUtils.contains(outputType, ".")) {
 			outputType = StringUtils.substringAfterLast(outputType, ".");
 		}
 		
-		StringBuilder builder = new StringBuilder(outputType);
+		builder.append(outputType);
 		builder.append(" ");
-		builder.append(assignment.generateSource());
-		
-		return builder.toString();
+		assignment.write(builder);
 	}
 	
 	@Override

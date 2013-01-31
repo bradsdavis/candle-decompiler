@@ -1,5 +1,8 @@
 package org.candle.decompiler.ast.loop;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.Block;
@@ -18,32 +21,25 @@ public class ForBlock extends Block {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent();
 		builder.append(indent);
 		
 		builder.append("for(");
 		
 		//initialize.
-		String increment = StringUtils.trim(forInit.generateSource());
-		builder.append(increment);
+		forInit.write(builder);
 		builder.append(" ");
 		
 		//expression.
-		String expression = StringUtils.trim(forExpression.getExpression().generateSource());
-		builder.append(expression);
+		forExpression.getExpression().write(builder);
 		builder.append("; ");
 		
 		//increment.
-		String update = StringUtils.trim(forUpdate.generateSource());
-		update = StringUtils.removeEnd(update, ";");
-		builder.append(update);
-		
+		forUpdate.write(builder);
 		
 		builder.append(")");
-		builder.append(super.generateSource());
-		return builder.toString();
+		super.write(builder);
 	}
 	
 	@Override

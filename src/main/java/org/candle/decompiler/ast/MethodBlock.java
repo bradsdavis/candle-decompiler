@@ -1,5 +1,8 @@
 package org.candle.decompiler.ast;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.InstructionHandle;
 
 public class MethodBlock extends Block {
@@ -13,9 +16,8 @@ public class MethodBlock extends Block {
 	}
 	
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		String indent = buildIndent();
-		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
 		builder.append(methodSignature);
 		builder.append(" ");
@@ -23,14 +25,12 @@ public class MethodBlock extends Block {
 		
 		for(Block child : children) {
 			builder.append(NL);
-			builder.append(child.generateSource());
+			child.write(builder);
 		}
 		builder.append(NL);
 		builder.append(indent);
 		builder.append("}");
 		builder.append(NL);
-		
-		return builder.toString();
 	}
 
 	@Override

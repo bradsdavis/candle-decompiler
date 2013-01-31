@@ -1,33 +1,33 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.bcel.generic.Type;
 
-public class ObjectType extends Expression {
+public class ObjectType extends Expression implements TypedExpression {
 
-	protected final String type;
+	protected final Type type;
 
-	public ObjectType(InstructionHandle instructionHandle, String type) {
+	public ObjectType(InstructionHandle instructionHandle, Type type) {
 		super(instructionHandle);
-		this.type = type;
+		this.type = type; 
 	}
 	
-	public String getType() {
+	public Type getType() {
 		return type;
 	}
 	
 	@Override
-	public String generateSource() {
-		return type;
+	public void write(Writer writer) throws IOException {
+		String signature = Utility.signatureToString(type.getSignature());
+		writer.append(signature);
 	}
 	
-	@Override
-	public String toString() {
-		return generateSource();
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

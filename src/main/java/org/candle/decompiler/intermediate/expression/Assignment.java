@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,17 +28,10 @@ public class Assignment extends Expression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder(left.generateSource());
+	public void write(Writer builder) throws IOException {
+		left.write(builder);
 		builder.append(" = ");
-		builder.append(right.generateSource());
-		
-		return builder.toString();
-	}
-	
-	@Override
-	public String toString() {
-		return generateSource();
+		right.write(builder);
 	}
 
 	@Override

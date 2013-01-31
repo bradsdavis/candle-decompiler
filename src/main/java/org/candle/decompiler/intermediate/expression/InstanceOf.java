@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,13 +21,10 @@ public class InstanceOf extends Expression {
 	
 	
 	@Override
-	public String generateSource() {
-		StringBuilder val = new StringBuilder(left.generateSource());
+	public void write(Writer val) throws IOException {
+		left.write(val);
 		val.append(" ").append("instanceof").append(" ");
-		val.append(right.generateSource());
-
-		return val.toString();
-		
+		right.write(val);
 	}
 
 	@Override

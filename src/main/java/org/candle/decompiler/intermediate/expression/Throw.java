@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,13 +17,9 @@ public class Throw extends Expression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
-		
-		builder.append("throw ");
-		builder.append(throwing.generateSource());
-		
-		return builder.toString();
+	public void write(Writer writer) throws IOException {
+		writer.append("throw ");
+		throwing.write(writer);
 	}
 
 	@Override

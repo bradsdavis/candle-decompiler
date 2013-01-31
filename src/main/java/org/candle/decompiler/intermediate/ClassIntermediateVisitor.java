@@ -1,6 +1,8 @@
 package org.candle.decompiler.intermediate;
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -307,11 +309,11 @@ public class ClassIntermediateVisitor implements Visitor {
 				ObjectType ot = catchPosition.get(instruction);
 				if(ot == null) {
 					LOG.debug("Finally Block!!");
-					Resolved resolved = new Resolved(instruction, "ANYEXCEPTION");
+					Resolved resolved = new Resolved(instruction, Type.THROWABLE, "e");
 					intermediateContext.getExpressions().push(resolved);
 				}
 				else {
-					Resolved resolved = new Resolved(instruction, ot.toString());
+					Resolved resolved = new Resolved(instruction, ot, ot.toString());
 					intermediateContext.getExpressions().push(resolved);
 				}
 			}
@@ -373,7 +375,14 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		if(LOG.isDebugEnabled()) {
 			LOG.debug("Method: ");
-			LOG.debug(method.generateSource());
+			StringWriter writer = new StringWriter();
+			try {
+				method.write(writer);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			LOG.debug(writer.toString());
 		}
 		
 	}

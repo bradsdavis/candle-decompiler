@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,8 +23,8 @@ public class MethodInvocation extends Expression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder val = new StringBuilder(target.generateSource());
+	public void write(Writer val) throws IOException {
+		target.write(val);
 		val.append(".").append(methodName);
 		val.append("(");
 		
@@ -33,18 +35,10 @@ public class MethodInvocation extends Expression {
 				if(i>0) {
 					val.append(", ");
 				}
-				String paramVal = parameters.get(i).generateSource();
-				val.append(paramVal);
+				parameters.get(i).write(val);
 			}
 		}
-		
 		val.append(")");
-		return val.toString();
-	}
-	
-	@Override
-	public String toString() {
-		return generateSource();
 	}
 	
 	@Override

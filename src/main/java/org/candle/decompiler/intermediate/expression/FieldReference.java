@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,18 +19,10 @@ public class FieldReference extends Expression {
 	}
 
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(target.generateSource());
+	public void write(Writer builder) throws IOException {
+		target.write(builder);
 		builder.append(".");
 		builder.append(fieldName);
-		
-		return builder.toString();
-	}
-	
-	@Override
-	public String toString() {
-		return generateSource();
 	}
 	
 	@Override

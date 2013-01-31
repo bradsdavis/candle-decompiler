@@ -1,5 +1,8 @@
 package org.candle.decompiler.ast;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 
@@ -17,16 +20,12 @@ public class Statement extends Block {
 	}
 
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent(); 
-		StringBuilder builder = new StringBuilder();
-		
 		
 		builder.append(indent);
-		builder.append(line.getExpression().generateSource());
+		line.getExpression().write(builder);
 		builder.append(";");
-		
-		return builder.toString();
 	}
 	
 	@Override

@@ -1,5 +1,8 @@
 package org.candle.decompiler.ast.conditional;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.ast.Block;
@@ -34,16 +37,15 @@ public class IfBlock extends ConditionalBlock {
 	}
 	 
 	@Override
-	public String generateSource() {
+	public void write(Writer builder) throws IOException {
 		final String indent = buildIndent();
 		
 		Block elseBlock = null;
 		
-		StringBuilder builder = new StringBuilder();
 		builder.append(indent);
 		builder.append("if(");
 		
-		builder.append(conditional.getExpression().generateSource());
+		conditional.getExpression().write(builder);
 		builder.append(") ");
 		
 		builder.append("{");
@@ -54,7 +56,7 @@ public class IfBlock extends ConditionalBlock {
 			}
 			
 			builder.append(Block.NL);
-			builder.append(child.generateSource());
+			child.write(builder);
 		}
 		builder.append(Block.NL);
 		builder.append(indent);
@@ -62,10 +64,8 @@ public class IfBlock extends ConditionalBlock {
 		builder.append(Block.NL);
 		
 		if(elseBlock != null) {
-			builder.append(elseBlock.generateSource());
+			elseBlock.write(builder);
 		}
-		
-		return builder.toString();
 	}
 
 	@Override

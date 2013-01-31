@@ -3,13 +3,16 @@ package org.candle.decompiler.intermediate;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.LocalVariableGen;
 import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class VariableResolver {
-
+	private static final Log LOG = LogFactory.getLog(VariableResolver.class);
+	
 	private final Map<Integer, IntermediateVariable> localGeneratedVariables = new HashMap<Integer, IntermediateVariable>();
 	private final MethodGen methodGen;
 
@@ -21,8 +24,7 @@ public class VariableResolver {
 		IntermediateVariable iv = null;
 		LocalVariableGen lv = getLocalVariableTable(index, pc);
 		if(lv != null) {
-			String signature = Utility.signatureToString(lv.getType().getSignature(), false);
-			iv = new IntermediateVariable(lv.getName(), signature);
+			iv = new IntermediateVariable(lv.getName(), lv.getType());
 		}
 		else {
 			iv = localGeneratedVariables.get(index);
@@ -31,15 +33,16 @@ public class VariableResolver {
 		return iv;
 	}
 	
-	public IntermediateVariable addLocalVariable(int index, String name, String type) {
+	public IntermediateVariable addLocalVariable(int index, String name, Type type) {
 		IntermediateVariable iv = new IntermediateVariable(name, type);
 		localGeneratedVariables.put(index, iv);
 		
 		return iv;
 	}
 	
-	public IntermediateVariable addLocalVariable(int index, String type) {
+	public IntermediateVariable addLocalVariable(int index, Type type) {
 		String name = RandomStringUtils.randomAlphabetic(3) + "$";
+		LOG.info("Adding variable: "+index + " type: "+type + " name: "+name);
 		return addLocalVariable(index, name, type);
 	}
 	

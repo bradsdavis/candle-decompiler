@@ -1,5 +1,7 @@
 package org.candle.decompiler.ast;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -71,8 +73,7 @@ public class ClassBlock extends Block {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
+	public void write(Writer builder) throws IOException {
 		builder.append("package ").append(packageName);
 		builder.append(Block.NL);
 		builder.append(Block.NL);
@@ -96,14 +97,11 @@ public class ClassBlock extends Block {
 		
 		for(Block child : children) {
 			builder.append(NL);
-			builder.append(child.generateSource());
+			child.write(builder);
 		}
 		builder.append(NL);
 		builder.append("}");
 		builder.append(NL);
-		
-		
-		return builder.toString();
 	}
 	
 	protected String extractClassSignature() {

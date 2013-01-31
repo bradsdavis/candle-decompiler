@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,12 +18,10 @@ public class StatementBlock extends Expression {
 	}
 	
 	@Override
-	public String generateSource() {
-		StringBuilder val = new StringBuilder();
-		val.append(left.generateSource());
-		val.append("\n");
-		val.append(right.generateSource());
-		return val.toString();
+	public void write(Writer writer) throws IOException {
+		left.write(writer);
+		writer.append("\n");
+		right.write(writer);
 	}
 	
 	@Override

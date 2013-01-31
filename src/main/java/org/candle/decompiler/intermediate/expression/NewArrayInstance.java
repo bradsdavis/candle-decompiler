@@ -1,28 +1,28 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.bcel.generic.Type;
 
 public class NewArrayInstance extends NewInstance {
 
 	private final Expression count;
 	
-	public NewArrayInstance(InstructionHandle instructionHandle, String type, Expression count) {
+	public NewArrayInstance(InstructionHandle instructionHandle, Type type, Expression count) {
 		super(instructionHandle, type);
 		this.count = count;
 	}
 
 	@Override
-	public String generateSource() {
-		StringBuilder builder = new StringBuilder();
-		builder.append(super.generateSource());
+	public void write(Writer builder) throws IOException {
+		super.write(builder);
 		builder.append("[");
-		builder.append(count.generateSource());
+		count.write(builder);
 		builder.append("]");
-		
-		return builder.toString();
 	}
 	
 

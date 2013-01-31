@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,5 +30,18 @@ public abstract class Expression implements Sourceable {
 			handles.addAll(expression.getAllHandles());
 		}
 		return handles;
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringWriter sw = new StringWriter();
+		try {
+			write(sw);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return sw.toString();
 	}
 }
