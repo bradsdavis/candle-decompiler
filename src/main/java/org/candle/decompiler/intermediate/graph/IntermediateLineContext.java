@@ -1,52 +1,51 @@
 package org.candle.decompiler.intermediate.graph;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collection;
+import java.util.TreeMap;
 
+import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.GoToIntermediate;
 
 public class IntermediateLineContext {
 
-	private final Map<InstructionHandle, AbstractIntermediate> intermediateMap;
-	public IntermediateLineContext(List<AbstractIntermediate> lines) {
-		this.intermediateMap = new HashMap<InstructionHandle, AbstractIntermediate>();
-		for(AbstractIntermediate intermediate : lines) {
-			System.out.println("ADDING HANDLE LINE: "+intermediate);
-			for(InstructionHandle handle : intermediate.getAllHandles()) {
-				System.out.println("ADDING HANDLE: "+handle +" to "+intermediate);
-				
-				//add map entry.
-				this.intermediateMap.put(handle, intermediate);
-			}
+	
+	private final TreeMap<Integer, AbstractIntermediate> intermediate = new TreeMap<Integer, AbstractIntermediate>();
+	
+	public IntermediateLineContext(Collection<AbstractIntermediate> lines) {
+		for(AbstractIntermediate al : lines) {
+			Integer position = al.getInstruction().getPosition();
+			intermediate.put(position, al);
 		}
-		
-		
 	}
 	
-	public Set<AbstractIntermediate> linesWithinBounds(int lower, int upper) {
-		Set<AbstractIntermediate> s = new HashSet<AbstractIntermediate>();
-		
-		for(AbstractIntermediate a : intermediateMap.values()) {
-			boolean withinBounds = true;
-			for(InstructionHandle ih : a.getAllHandles()) {
-				if(ih.getPosition() > upper || ih.getPosition() < lower) {
-					withinBounds = false;
-					break;
-				}
-			}
-			if(withinBounds) {
-				s.add(a);
-			}
+	
+	public AbstractIntermediate getNext(AbstractIntermediate ai) {
+		if(ai instanceof GoToIntermediate) {
+			BranchHandle bh = (BranchHandle)ai.getInstruction();
+			Integer position = bh.getTarget().getPosition();
+			return getNext(position);
 		}
-		
-		return s;
+
+		//otherwise, get it from the next position.
+		InstructionHandle next = ai.getInstruction().getNext();
+
+		//return either null, if next is null (last next).  Otherwise, send next position.
+		return next == null ? null : getNext(next.getPosition());
 	}
 	
-	public Map<InstructionHandle, AbstractIntermediate> getIntermediateMap() {
-		return intermediateMap;
+	public AbstractIntermediate getNext(Integer position) {
+		Integer next = intermediate.tailMap(position).firstKey();
+		
+		if(next != null) {
+			return intermediate.get(next);
+		}
+		
+		return null;
+	}
+	
+	public TreeMap<Integer, AbstractIntermediate> getIntermediate() {
+		return intermediate;
 	}
 }

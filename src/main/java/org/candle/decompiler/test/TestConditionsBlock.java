@@ -29,6 +29,9 @@ public class TestConditionsBlock {
 				LOG.info("Nested Else statement.");
 			}
 		}
+		else if(i>3) {
+			LOG.info("Else If Main");
+		}
 		else {
 			LOG.info("Else Main");
 		}

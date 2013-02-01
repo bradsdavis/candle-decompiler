@@ -64,7 +64,6 @@ import org.candle.decompiler.intermediate.graph.IntermediateGraphCompressor;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
-import org.candle.decompiler.intermediate.graph.IntermediateTryCatch;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 import org.jgrapht.graph.DefaultEdge;
@@ -358,9 +357,10 @@ public class ClassIntermediateVisitor implements Visitor {
 		}
 		*/
 		
-		IntermediateLineContext ilc = new IntermediateLineContext(intermediate);
-		IntermediateGraphFactory lc = new IntermediateGraphFactory(ilc);
-		IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, ilc, lc.getIntermediateGraph());
+		//IntermediateLineContext ilc = new IntermediateLineContext(intermediate);
+		IntermediateLineContext illc = new IntermediateLineContext(intermediate);
+		IntermediateGraphFactory lc = new IntermediateGraphFactory(illc);
+		//IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, ilc, lc.getIntermediateGraph());
 
 		Writer w = new OutputStreamWriter(System.out);
 		DOTExporter<AbstractIntermediate, DefaultEdge> dot = new DOTExporter<AbstractIntermediate, DefaultEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), null);

@@ -145,7 +145,7 @@ public class IntermediateGraphCompressor implements Visitor {
 					
 					if(ci.getTrueTarget() == line.getTrueTarget()) {
 						System.out.println("Don't even need to negate!");
-						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(line.getExpression(), ci.getExpression(), LogicalGateType.OR);
+						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(ci.getExpression(), line.getExpression(), LogicalGateType.OR);
 						line.setExpression(expression);
 						
 						List<AbstractIntermediate> cPrede = Graphs.predecessorListOf(intermediateGraph, ci);
@@ -159,6 +159,7 @@ public class IntermediateGraphCompressor implements Visitor {
 							intermediateGraph.removeEdge(p, ci);
 						}
 						//now remove vertex.
+						
 						retractVertex.add(ci);
 					}
 				}

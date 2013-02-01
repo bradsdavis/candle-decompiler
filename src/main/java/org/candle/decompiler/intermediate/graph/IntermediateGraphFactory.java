@@ -1,7 +1,6 @@
 package org.candle.decompiler.intermediate.graph;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.bcel.generic.BranchHandle;
@@ -18,15 +17,15 @@ import org.jgrapht.graph.DefaultEdge;
 
 public class IntermediateGraphFactory implements Visitor {
 
-	private final Map<InstructionHandle, AbstractIntermediate> intermediateMap;
+	private final IntermediateLineContext ilc;
 	private final DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph;
 	
 	public IntermediateGraphFactory(IntermediateLineContext ilc) {
-	//first, populate the map.
-		this.intermediateMap = ilc.getIntermediateMap();
+		//first, populate the map.
 		this.intermediateGraph = new DefaultDirectedGraph<AbstractIntermediate, DefaultEdge>(DefaultEdge.class);
+		this.ilc = ilc;
 		
-		Set<AbstractIntermediate> lines = new HashSet<AbstractIntermediate>(ilc.getIntermediateMap().values());
+		Set<AbstractIntermediate> lines = new HashSet<AbstractIntermediate>(ilc.getIntermediate().values());
 		for(AbstractIntermediate line : lines) {
 			line.accept(this);
 		}
@@ -39,8 +38,8 @@ public class IntermediateGraphFactory implements Visitor {
 	
 	@Override
 	public void visitCompleteLine(StatementIntermediate line) {
-		InstructionHandle next = line.getInstruction().getNext();
-
+		AbstractIntermediate next = ilc.getNext(line);
+		
 		//check to see if it is a return statement.
 		if(line.getExpression() instanceof Return) {
 			//don't add a line to next.
@@ -49,7 +48,7 @@ public class IntermediateGraphFactory implements Visitor {
 		
 		if(next != null) {
 			//find how that actually maps to the abstract line..
-			AbstractIntermediate intermediate = intermediateMap.get(next);
+			AbstractIntermediate intermediate = next;
 			
 			//now, we just add this into the graph.
 			intermediateGraph.addVertex(intermediate);
@@ -59,9 +58,9 @@ public class IntermediateGraphFactory implements Visitor {
 
 	@Override
 	public void visitGoToLine(GoToIntermediate line) {
-		BranchHandle handle = (BranchHandle)line.getInstruction();
+		
 		//find how that actually maps to the abstract line..
-		AbstractIntermediate intermediate = intermediateMap.get(handle.getTarget());
+		AbstractIntermediate intermediate = ilc.getNext(line);
 		intermediateGraph.addVertex(intermediate);
 		line.setTarget(intermediate);
 		
@@ -74,7 +73,7 @@ public class IntermediateGraphFactory implements Visitor {
 		InstructionHandle next = line.getInstruction().getNext();
 		
 		//find how that actually maps to the abstract line..
-		AbstractIntermediate nextIntermediate = intermediateMap.get(next);
+		AbstractIntermediate nextIntermediate = ilc.getNext(next.getPosition());
 		//now, we just add this into the graph.
 		
 		line.setFalseTarget(nextIntermediate);
@@ -83,7 +82,7 @@ public class IntermediateGraphFactory implements Visitor {
 
 		//also add the target.
 		BranchHandle bi = ((BranchHandle)line.getInstruction());
-		AbstractIntermediate targetIntermediate = intermediateMap.get(bi.getTarget());
+		AbstractIntermediate targetIntermediate = ilc.getNext(bi.getTarget().getPosition());
 
 		if(targetIntermediate == null) {
 			System.out.println(line);

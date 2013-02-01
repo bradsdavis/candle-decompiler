@@ -8,7 +8,7 @@ import org.candle.decompiler.blockinterpreter.Visitor;
 import org.candle.decompiler.intermediate.InstructionHandleReference;
 import org.candle.decompiler.intermediate.expression.Expression;
 
-public abstract class AbstractIntermediate implements InstructionHandleReference {
+public abstract class AbstractIntermediate implements InstructionHandleReference, Comparable<AbstractIntermediate> {
 
 	private final InstructionHandle instruction;
 	
@@ -37,4 +37,8 @@ public abstract class AbstractIntermediate implements InstructionHandleReference
 		return handles;
 	}
 	
+	@Override
+	public int compareTo(AbstractIntermediate o) {
+		return this.getInstruction().getPosition() - o.getInstruction().getPosition();
+	}
 }

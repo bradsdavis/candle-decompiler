@@ -8,7 +8,7 @@ public class IntermediateLabelProvider implements VertexNameProvider<AbstractInt
 
 	@Override
 	public String getVertexName(AbstractIntermediate vertex) {
-		String line = StringUtils.replace(vertex.toString(), "\"", "'");
+		String line = StringUtils.replace(vertex.getInstruction().getPosition()+" : "+vertex.toString(), "\"", "'");
 		line = StringUtils.replace(line, "\n", "  ->  ");
 		line = StringUtils.replace(line, ";", " | ");
 		

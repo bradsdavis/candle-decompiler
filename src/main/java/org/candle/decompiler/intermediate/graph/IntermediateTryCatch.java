@@ -23,7 +23,7 @@ public class IntermediateTryCatch {
 	public IntermediateTryCatch(MethodGen method, IntermediateLineContext ilc, DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
 		
 		for(CodeExceptionGen ceg : method.getExceptionHandlers()) {
-			
+			/*
 			Set<AbstractIntermediate> lineMatches = ilc.linesWithinBounds(ceg.getStartPC().getPosition(), ceg.getEndPC().getPosition());
 			DirectedSubgraph<AbstractIntermediate, DefaultEdge> tryBlock = new DirectedSubgraph<AbstractIntermediate, DefaultEdge>(intermediateGraph, lineMatches, null);
 			
@@ -61,6 +61,7 @@ public class IntermediateTryCatch {
 				dot.export(w, sub);
 				
 			}
+			*/
 		}
 	}
 }
