@@ -9,9 +9,20 @@ public class TestSimpleLoops {
 			System.out.println(i);
 		}
 		
+		
 		int[] testArray = new int[]{};
 		for(int i : testArray) {
 			System.out.println(i);
 		}
+		
+		/*
+		int k=0;
+		int j=0;
+		while(j < 5) {
+			System.out.println("Test while.");
+			j++;
+			k++;
+		}
+		*/
 	}
 }

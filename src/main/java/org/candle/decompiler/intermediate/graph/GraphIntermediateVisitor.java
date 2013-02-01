@@ -60,4 +60,17 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 			intermediateGraph.removeEdge(p, source);
 		}
 	}
+	
+	protected void redirectSuccessors(AbstractIntermediate source, AbstractIntermediate target) {
+		List<AbstractIntermediate> candidate = Graphs.successorListOf(intermediateGraph, source);
+		
+		//remove edges between successor and source.
+		for(AbstractIntermediate s : candidate) {
+			//remove the edge to ci, add one to line.
+			if(!intermediateGraph.containsEdge(target, s)) {
+				intermediateGraph.addEdge(target, s);
+			}
+			intermediateGraph.removeEdge(source, s);
+		}
+	}
 }

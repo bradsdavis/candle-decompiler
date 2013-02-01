@@ -61,6 +61,7 @@ import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.ConditionExpressionMerger;
+import org.candle.decompiler.intermediate.graph.ForSimpleIteratorTransformer;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
@@ -370,6 +371,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		ConditionExpressionMerger igc = new ConditionExpressionMerger(lc.getIntermediateGraph());
 		WhileConditionTransformer wct = new WhileConditionTransformer(lc.getIntermediateGraph());
+		ForSimpleIteratorTransformer fst = new ForSimpleIteratorTransformer(lc.getIntermediateGraph());
 		
 		
 		

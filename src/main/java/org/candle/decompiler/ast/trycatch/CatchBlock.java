@@ -48,7 +48,7 @@ public class CatchBlock extends Block {
 				Statement statement = (Statement)children.get(i);
 				StatementIntermediate line = statement.getLine();
 				Declaration expression = (Declaration)line.getExpression();
-				org.candle.decompiler.intermediate.expression.ObjectType type = expression.getType();
+				org.candle.decompiler.intermediate.expression.ObjectType type = expression.getVariable();
 				
 				//resolve signature
 				String signature = Utility.signatureToString(type.getType().getSignature());

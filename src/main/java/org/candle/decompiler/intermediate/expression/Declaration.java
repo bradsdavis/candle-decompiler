@@ -11,17 +11,17 @@ import org.apache.commons.lang.StringUtils;
 
 public class Declaration extends Expression {
 
-	private final ObjectType type;
+	private final Variable variable;
 	private final Assignment assignment;
 	
-	public Declaration(InstructionHandle instructionHandle, ObjectType type, Assignment assignment) {
+	public Declaration(InstructionHandle instructionHandle, Variable variable, Assignment assignment) {
 		super(instructionHandle);
-		this.type = type;
+		this.variable = variable;
 		this.assignment = assignment;
 	}
 	
-	public ObjectType getType() {
-		return type;
+	public Variable getVariable() {
+		return variable;
 	}
 	
 	public Assignment getAssignment() {
@@ -30,7 +30,7 @@ public class Declaration extends Expression {
 
 	@Override
 	public void write(Writer builder) throws IOException {
-		String outputType = Utility.signatureToString(type.getType().getSignature());
+		String outputType = Utility.signatureToString(variable.getType().getSignature());
 		
 		if(StringUtils.contains(outputType, ".")) {
 			outputType = StringUtils.substringAfterLast(outputType, ".");
@@ -45,7 +45,7 @@ public class Declaration extends Expression {
 	public Set<Expression> nestedExpression() {
 		Set<Expression> expressions = new HashSet<Expression>(2);
 		expressions.add(assignment);
-		expressions.add(type);
+		expressions.add(variable);
 		
 		return expressions;
 	}

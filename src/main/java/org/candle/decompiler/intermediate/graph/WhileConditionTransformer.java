@@ -32,6 +32,7 @@ public class WhileConditionTransformer extends GraphIntermediateVisitor {
 				//check to see if 1 is GOTO.
 				if(predecessor instanceof GoToIntermediate) {
 					gotoLine = (GoToIntermediate)predecessor;
+					continue;
 				}
 				else {
 					otherLine = predecessor;

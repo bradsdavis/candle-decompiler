@@ -61,7 +61,7 @@ public class WhileToForBlockEnhancer implements BlockEnhancer {
 				if(precedingParentBlock instanceof Statement && ((Statement)precedingParentBlock).getLine().getExpression() instanceof Declaration) {
 					Declaration declaration = (Declaration) ((Statement)precedingParentBlock).getLine().getExpression();
 					
-					if(declaration.getType().equals(increment.getVariable())) {
+					if(declaration.getVariable().equals(increment.getVariable())) {
 						LOG.info("Should be a for loop!");
 						
 						ForBlock forBlock = new ForBlock(precedingParentBlock, ((WhileBlock)block).getConditional(), lastChildBlock);
