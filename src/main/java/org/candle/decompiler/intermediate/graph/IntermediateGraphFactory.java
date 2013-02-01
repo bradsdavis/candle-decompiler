@@ -5,17 +5,17 @@ import java.util.Set;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.blockinterpreter.Visitor;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Return;
+import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-public class IntermediateGraphFactory implements Visitor {
+public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 
 	private final IntermediateLineContext ilc;
 	private final DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph;

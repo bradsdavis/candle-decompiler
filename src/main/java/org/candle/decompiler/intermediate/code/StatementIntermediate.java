@@ -2,12 +2,10 @@ package org.candle.decompiler.intermediate.code;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.blockinterpreter.Visitor;
 import org.candle.decompiler.intermediate.expression.Expression;
+import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class StatementIntermediate extends AbstractIntermediate {
 
@@ -41,16 +39,9 @@ public class StatementIntermediate extends AbstractIntermediate {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
+	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractLine(this);
 		
 		visitor.visitCompleteLine(this); 
-	}
-	
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> nested = new HashSet<Expression>();
-		nested.add(expression);
-		return nested;
 	}
 }

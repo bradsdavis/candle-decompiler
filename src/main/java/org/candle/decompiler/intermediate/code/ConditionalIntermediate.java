@@ -2,19 +2,16 @@ package org.candle.decompiler.intermediate.code;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.blockinterpreter.Visitor;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
-import org.candle.decompiler.intermediate.expression.Expression;
+import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class ConditionalIntermediate extends AbstractIntermediate {
 
-	private ConditionalExpression expression;
-	private AbstractIntermediate trueTarget;
-	private AbstractIntermediate falseTarget;
+	protected ConditionalExpression expression;
+	protected AbstractIntermediate trueTarget;
+	protected AbstractIntermediate falseTarget;
 	
 	public ConditionalIntermediate(InstructionHandle instruction, ConditionalExpression expression) {
 		super(instruction);
@@ -68,16 +65,8 @@ public class ConditionalIntermediate extends AbstractIntermediate {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
+	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractLine(this);
 		visitor.visitConditionalLine(this);
 	}
-
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> nested = new HashSet<Expression>();
-		nested.add(expression);
-		return nested;
-	}
-
 }

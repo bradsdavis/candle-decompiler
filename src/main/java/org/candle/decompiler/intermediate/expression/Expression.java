@@ -26,17 +26,6 @@ public abstract class Expression implements Sourceable, Cloneable {
 	
 	public abstract Set<Expression> nestedExpression();
 	
-	public Set<InstructionHandle> getAllHandles() {
-		Set<InstructionHandle> handles = new HashSet<InstructionHandle>();
-		handles.add(instructionHandle);
-		
-		for(Expression expression : nestedExpression()) {
-			handles.addAll(expression.getAllHandles());
-		}
-		return handles;
-	}
-	
-	
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();

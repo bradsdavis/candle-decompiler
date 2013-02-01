@@ -20,8 +20,9 @@ import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
+import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
 
-public class BlockVisitor implements Visitor {
+public class BlockVisitor extends EmptyIntermediateVisitor {
 	private static final Log LOG = LogFactory.getLog(BlockVisitor.class);
 	public final BlockContext context;
 	
@@ -311,6 +312,6 @@ public class BlockVisitor implements Visitor {
 		//recurse up.
 		return currentlyInCodeException(eh, currentBlock.getParent());
 	}
-	
+
 	
 }

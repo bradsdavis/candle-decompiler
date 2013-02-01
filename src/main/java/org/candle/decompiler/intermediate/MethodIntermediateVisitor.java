@@ -11,7 +11,6 @@ import org.apache.bcel.generic.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.candle.decompiler.DecompilerException;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
@@ -347,8 +346,6 @@ public class MethodIntermediateVisitor implements Visitor {
 	
 	public void visitIINC(IINC instruction) {
 		//increment variable.
-		MethodGen mg = context.getMethodGen();
-
 		int index = instruction.getIndex();
 		
 		IntermediateVariable iv = context.getVariableResolver().getLocalVariable(index, context.getCurrentInstruction().getPosition());

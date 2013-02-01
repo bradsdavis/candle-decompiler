@@ -1,12 +1,8 @@
 package org.candle.decompiler.intermediate.code;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.blockinterpreter.Visitor;
-import org.candle.decompiler.intermediate.expression.Expression;
+import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class GoToIntermediate extends AbstractIntermediate {
 
@@ -25,16 +21,11 @@ public class GoToIntermediate extends AbstractIntermediate {
 	}
 
 	@Override
-	public void accept(Visitor visitor) {
+	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractLine(this);
 		visitor.visitGoToLine(this);
 	}
 
-	@Override
-	public Set<Expression> nestedExpression() {
-		return new HashSet<Expression>(1);
-	}
-	
 	@Override
 	public String toString() {
 		String t = null;

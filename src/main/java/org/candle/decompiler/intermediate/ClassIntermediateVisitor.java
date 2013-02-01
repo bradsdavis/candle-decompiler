@@ -60,10 +60,11 @@ import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
-import org.candle.decompiler.intermediate.graph.IntermediateGraphCompressor;
+import org.candle.decompiler.intermediate.graph.ConditionExpressionMerger;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
+import org.candle.decompiler.intermediate.graph.WhileConditionTransformer;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 import org.jgrapht.graph.DefaultEdge;
@@ -367,7 +368,11 @@ public class ClassIntermediateVisitor implements Visitor {
 		dot.export(w, lc.getIntermediateGraph());
 		
 		
-		IntermediateGraphCompressor igc = new IntermediateGraphCompressor(lc.getIntermediateGraph());
+		ConditionExpressionMerger igc = new ConditionExpressionMerger(lc.getIntermediateGraph());
+		WhileConditionTransformer wct = new WhileConditionTransformer(lc.getIntermediateGraph());
+		
+		
+		
 		dot.export(w, lc.getIntermediateGraph());
 		
 		
