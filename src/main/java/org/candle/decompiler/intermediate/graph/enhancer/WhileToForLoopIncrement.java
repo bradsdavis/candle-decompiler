@@ -1,4 +1,4 @@
-package org.candle.decompiler.intermediate.graph;
+package org.candle.decompiler.intermediate.graph.enhancer;
 
 import java.util.List;
 
@@ -6,16 +6,16 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
-import org.candle.decompiler.intermediate.expression.Assignment;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Increment;
+import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 
-public class ForSimpleIteratorTransformer extends GraphIntermediateVisitor {
+public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 
-	public ForSimpleIteratorTransformer(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public WhileToForLoopIncrement(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 
@@ -73,20 +73,15 @@ public class ForSimpleIteratorTransformer extends GraphIntermediateVisitor {
 								ForIntermediate forIntermediate = new ForIntermediate(declaration.getInstruction(), declarationExpression, line.getExpression(), incrementExpression);
 								this.intermediateGraph.addVertex(forIntermediate);
 								
-								List<AbstractIntermediate> successors = Graphs.successorListOf(intermediateGraph, line);
-								for(AbstractIntermediate successor : successors) {
-									
-								}
-								
 								redirectSuccessors(line, forIntermediate);
 								redirectPredecessors(iteration, forIntermediate);
 								redirectPredecessors(declaration, forIntermediate);
 								
 								
 								//remove the while loop, increment, and declaration.
-								retract(line);
-								retract(declaration);
-								retract(iteration);
+								this.intermediateGraph.removeVertex(line);
+								this.intermediateGraph.removeVertex(declaration);
+								this.intermediateGraph.removeVertex(iteration);
 							}
 							
 							

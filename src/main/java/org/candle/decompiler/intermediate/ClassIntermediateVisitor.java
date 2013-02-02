@@ -60,12 +60,13 @@ import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
-import org.candle.decompiler.intermediate.graph.ConditionExpressionMerger;
-import org.candle.decompiler.intermediate.graph.ForSimpleIteratorTransformer;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
-import org.candle.decompiler.intermediate.graph.WhileConditionTransformer;
+import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
+import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
+import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 import org.jgrapht.graph.DefaultEdge;
@@ -369,9 +370,11 @@ public class ClassIntermediateVisitor implements Visitor {
 		dot.export(w, lc.getIntermediateGraph());
 		
 		
-		ConditionExpressionMerger igc = new ConditionExpressionMerger(lc.getIntermediateGraph());
-		WhileConditionTransformer wct = new WhileConditionTransformer(lc.getIntermediateGraph());
-		ForSimpleIteratorTransformer fst = new ForSimpleIteratorTransformer(lc.getIntermediateGraph());
+		MergeConditionExpression igc = new MergeConditionExpression(lc.getIntermediateGraph());
+		ConditionToWhileLoop wct = new ConditionToWhileLoop(lc.getIntermediateGraph());
+		WhileToForLoopIncrement fst = new WhileToForLoopIncrement(lc.getIntermediateGraph());
+		WhileToForLoopIterator fsi = new WhileToForLoopIterator(lc.getIntermediateGraph());
+		
 		
 		
 		

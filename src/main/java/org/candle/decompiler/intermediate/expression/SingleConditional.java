@@ -21,6 +21,10 @@ public class SingleConditional extends ConditionalExpression {
 	public SingleConditional(InstructionHandle instructionHandle, Expression left) {
 		this(instructionHandle, left, false);
 	}
+	
+	public Expression getLeft() {
+		return left;
+	}
 
 	@Override
 	public void write(Writer val) throws IOException {

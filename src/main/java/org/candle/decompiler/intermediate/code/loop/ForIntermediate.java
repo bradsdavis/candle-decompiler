@@ -33,10 +33,12 @@ public class ForIntermediate extends AbstractIntermediate {
 		StringWriter sw = new StringWriter();
 		try {
 			this.init.write(sw);
-			sw.append(" ;");
+			sw.append("; ");
 			this.expression.write(sw);
-			sw.append(" ;");
-			this.update.write(sw);
+			sw.append("; ");
+			if(update != null) {
+				this.update.write(sw);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -1,18 +1,12 @@
 package org.candle.decompiler.intermediate.graph;
 
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.MethodGen;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
-import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.jgrapht.DirectedGraph;
-import org.jgrapht.ext.DOTExporter;
-import org.jgrapht.ext.IntegerNameProvider;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DirectedSubgraph;
 

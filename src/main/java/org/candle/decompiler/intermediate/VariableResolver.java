@@ -3,6 +3,7 @@ package org.candle.decompiler.intermediate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.LocalVariableGen;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
@@ -13,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 public class VariableResolver {
 	private static final Log LOG = LogFactory.getLog(VariableResolver.class);
 	
-	private final Map<Integer, IntermediateVariable> localGeneratedVariables = new HashMap<Integer, IntermediateVariable>();
+	private final Map<VariableIndex, IntermediateVariable> localGeneratedVariables = new HashMap<VariableIndex, IntermediateVariable>();
 	private final MethodGen methodGen;
 
 	public VariableResolver(MethodGen methodGen) {
@@ -27,23 +28,27 @@ public class VariableResolver {
 			iv = new IntermediateVariable(lv.getName(), lv.getType());
 		}
 		else {
-			iv = localGeneratedVariables.get(index);
+			for(VariableIndex vi : localGeneratedVariables.keySet()) {
+				if(vi.withinBounds(index, pc)) {
+					return localGeneratedVariables.get(vi);
+				}
+			}
 		}
 		
 		return iv;
 	}
 	
-	public IntermediateVariable addLocalVariable(int index, String name, Type type) {
+	public IntermediateVariable addLocalVariable(int index, InstructionHandle ih, String name, Type type) {
 		IntermediateVariable iv = new IntermediateVariable(name, type);
-		localGeneratedVariables.put(index, iv);
+		localGeneratedVariables.put(VariableIndex.Factory.createFromInstructionHandle(ih, index), iv);
 		
 		return iv;
 	}
 	
-	public IntermediateVariable addLocalVariable(int index, Type type) {
+	public IntermediateVariable addLocalVariable(int index, InstructionHandle ih, Type type) {
 		String name = RandomStringUtils.randomAlphabetic(3) + "$";
 		LOG.info("Adding variable: "+index + " type: "+type + " name: "+name);
-		return addLocalVariable(index, name, type);
+		return addLocalVariable(index, ih, name, type);
 	}
 	
     protected LocalVariableGen getLocalVariableTable(int index, int pc) {

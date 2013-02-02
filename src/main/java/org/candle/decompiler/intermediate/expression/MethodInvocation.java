@@ -22,6 +22,18 @@ public class MethodInvocation extends Expression {
 		this.parameters = params;
 	}
 	
+	public Expression getTarget() {
+		return target;
+	}
+	
+	public String getMethodName() {
+		return methodName;
+	}
+	
+	public List<Expression> getParameters() {
+		return parameters;
+	}
+	
 	@Override
 	public void write(Writer val) throws IOException {
 		target.write(val);

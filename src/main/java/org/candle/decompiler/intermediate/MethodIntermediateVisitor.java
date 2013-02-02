@@ -24,6 +24,7 @@ import org.candle.decompiler.intermediate.expression.ConstructorInvocation;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.FieldReference;
+import org.candle.decompiler.intermediate.expression.GeneratedVariable;
 import org.candle.decompiler.intermediate.expression.Increment;
 import org.candle.decompiler.intermediate.expression.InstanceOf;
 import org.candle.decompiler.intermediate.expression.MethodInvocation;
@@ -179,19 +180,18 @@ public class MethodIntermediateVisitor implements Visitor {
 		if(index >=0) {
 			IntermediateVariable localVar = context.getVariableResolver().getLocalVariable(index, context.getCurrentInstruction().getPosition()); 
 
-			String variableName = null;
-			Type variableType = null;
-			
+			Variable variable = null;
 			if(localVar == null) {
 				//probably need to create a variable for enhanced loops...
 				Type type = instruction.getType(context.getMethodGen().getConstantPool());
-				localVar = context.getVariableResolver().addLocalVariable(index, type);
+				localVar = context.getVariableResolver().addLocalVariable(index, context.getCurrentInstruction(), type);
+				
+				variable = new GeneratedVariable(context.getCurrentInstruction(), localVar.getType(), localVar.getName());
+			}
+			else {
+				variable = new Variable(context.getCurrentInstruction(), localVar.getType(), localVar.getName());
 			}
 			
-			variableName = localVar.getName();
-			variableType = localVar.getType();
-			
-			Variable variable = new Variable(context.getCurrentInstruction(), variableType, variableName);
 			context.getExpressions().push(variable);
 			LOG.debug("Loaded: "+variable);
 		}
@@ -350,11 +350,15 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		IntermediateVariable iv = context.getVariableResolver().getLocalVariable(index, context.getCurrentInstruction().getPosition());
 		
+		Variable variable = null;
 		if(iv == null) {
 			//generate IV.
-			iv = context.getVariableResolver().addLocalVariable(index, instruction.getType(context.getMethodGen().getConstantPool()));
+			iv = context.getVariableResolver().addLocalVariable(index, context.getCurrentInstruction(), instruction.getType(context.getMethodGen().getConstantPool()));
+			variable = new GeneratedVariable(context.getCurrentInstruction(), iv.getType(), iv.getName());
 		}
-		Variable variable = new Variable(context.getCurrentInstruction(), iv.getType(), iv.getName());
+		else {
+			variable = new Variable(context.getCurrentInstruction(), iv.getType(), iv.getName());
+		}
 		
 		//now, how much does it increment by?
 		int incrementBy = instruction.getIncrement();
@@ -415,7 +419,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	@Override
 	public void visitIFNE(IFNE instruction) {
 		Expression left = context.getExpressions().pop();
-		SingleConditional conditional = new SingleConditional(context.getCurrentInstruction(), left, true);
+		SingleConditional conditional = new SingleConditional(context.getCurrentInstruction(), left, false);
 		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
 	}
@@ -790,7 +794,6 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression right = this.context.getExpressions().pop();
 		Type type = instruction.getType(context.getMethodGen().getConstantPool());
 		
-		
 		//first, check to see whether the variable currently has been declared.
 		//this would be the case if we don't get null when looking up the local variable.
 		int pc = context.getCurrentInstruction().getPosition();
@@ -801,6 +804,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		//if the variable is not null, it is declared.
 		boolean declared = (iv != null);
 		
+		Variable variable = null;
 		if(!declared) {
 			//look it up from the next phase code.
 			pc = this.context.getCurrentInstruction().getNext().getPosition();
@@ -818,12 +822,16 @@ public class MethodIntermediateVisitor implements Visitor {
 				}
 				
 				//generate variable name...
-				iv = context.getVariableResolver().addLocalVariable(instruction.getIndex(), type);
+				iv = context.getVariableResolver().addLocalVariable(instruction.getIndex(), context.getCurrentInstruction(), type);
+				variable = new GeneratedVariable(context.getCurrentInstruction(), iv.getType(), iv.getName());
 			}
 		}
 		
 		//create the variable.
-		Variable variable = new Variable(context.getCurrentInstruction(), iv.getType(), iv.getName());
+		if(variable == null) {
+			variable = new Variable(context.getCurrentInstruction(), iv.getType(), iv.getName());
+		}
+		
 		//create the assignment.
 		Assignment assignment = new Assignment(context.getCurrentInstruction(), variable, right);
 		

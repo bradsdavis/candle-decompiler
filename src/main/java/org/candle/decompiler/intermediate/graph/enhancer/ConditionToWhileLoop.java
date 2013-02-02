@@ -1,4 +1,4 @@
-package org.candle.decompiler.intermediate.graph;
+package org.candle.decompiler.intermediate.graph.enhancer;
 
 import java.util.List;
 
@@ -6,13 +6,14 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
+import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 
-public class WhileConditionTransformer extends GraphIntermediateVisitor {
+public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 	
-	public WhileConditionTransformer(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public ConditionToWhileLoop(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 
@@ -59,6 +60,11 @@ public class WhileConditionTransformer extends GraphIntermediateVisitor {
 				
 				//now, create line from other to while.
 				this.intermediateGraph.addEdge(otherLine, whileIntermediate);
+				
+				if(whileIntermediate.getTrueTarget().getInstruction().getPosition() > whileIntermediate.getFalseTarget().getInstruction().getPosition()) {
+					//negate.
+					whileIntermediate.negate();
+				}
 				
 				//now, remove the GOTO and Conditional Vertext from graph.
 				retract(gotoLine);

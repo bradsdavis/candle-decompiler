@@ -1,4 +1,4 @@
-package org.candle.decompiler.intermediate.graph;
+package org.candle.decompiler.intermediate.graph.enhancer;
 
 import java.util.List;
 
@@ -6,13 +6,14 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
+import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 
-public class ConditionExpressionMerger extends GraphIntermediateVisitor {
+public class MergeConditionExpression extends GraphIntermediateVisitor {
 	
-	public ConditionExpressionMerger(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public MergeConditionExpression(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 
