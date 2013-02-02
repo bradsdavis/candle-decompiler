@@ -40,7 +40,9 @@ public class VariableResolver {
 	
 	public IntermediateVariable addLocalVariable(int index, InstructionHandle ih, String name, Type type) {
 		IntermediateVariable iv = new IntermediateVariable(name, type);
-		localGeneratedVariables.put(VariableIndex.Factory.createFromInstructionHandle(ih, index), iv);
+		VariableIndex varIndex = VariableIndex.Factory.createFromInstructionHandle(ih, index);
+		LOG.info("Adding index: "+varIndex);
+		localGeneratedVariables.put(varIndex, iv);
 		
 		return iv;
 	}

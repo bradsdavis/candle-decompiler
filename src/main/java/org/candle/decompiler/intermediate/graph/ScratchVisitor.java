@@ -6,15 +6,13 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.StatementBlock;
-import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 
 public class ScratchVisitor extends GraphIntermediateVisitor {
 
 	
-	public ScratchVisitor(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public ScratchVisitor(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 

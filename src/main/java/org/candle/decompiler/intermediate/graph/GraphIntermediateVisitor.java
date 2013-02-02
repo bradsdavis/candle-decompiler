@@ -15,12 +15,14 @@ import org.jgrapht.graph.DefaultEdge;
 public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor {
 
 	protected final IntermediateComparator comparator = new IntermediateComparator();
-	protected final DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph;
+	protected final DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph;
+	
+	
 	private List<AbstractIntermediate> retractVertex = new LinkedList<AbstractIntermediate>();
 	private List<AbstractIntermediate> insertVertex = new LinkedList<AbstractIntermediate>();
 	
 	
-	public GraphIntermediateVisitor(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public GraphIntermediateVisitor(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		this.intermediateGraph = intermediateGraph;
 		boolean conditionalUpdates = true;
 		

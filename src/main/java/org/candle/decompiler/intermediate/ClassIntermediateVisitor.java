@@ -60,16 +60,18 @@ import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
+import org.candle.decompiler.intermediate.graph.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.IntermediateEdgeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
+import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
-import org.jgrapht.graph.DefaultEdge;
 
 import com.sun.org.apache.bcel.internal.classfile.Utility;
 
@@ -366,7 +368,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		//IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, ilc, lc.getIntermediateGraph());
 
 		Writer w = new OutputStreamWriter(System.out);
-		DOTExporter<AbstractIntermediate, DefaultEdge> dot = new DOTExporter<AbstractIntermediate, DefaultEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), null);
+		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider());
 		dot.export(w, lc.getIntermediateGraph());
 		
 		
@@ -374,6 +376,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		ConditionToWhileLoop wct = new ConditionToWhileLoop(lc.getIntermediateGraph());
 		WhileToForLoopIncrement fst = new WhileToForLoopIncrement(lc.getIntermediateGraph());
 		WhileToForLoopIterator fsi = new WhileToForLoopIterator(lc.getIntermediateGraph());
+		ArrayForToEnhancedFor fsei = new ArrayForToEnhancedFor(lc.getIntermediateGraph());
 		
 		
 		

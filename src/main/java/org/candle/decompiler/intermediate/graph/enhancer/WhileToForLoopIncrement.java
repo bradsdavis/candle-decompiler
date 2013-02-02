@@ -9,13 +9,13 @@ import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Increment;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 
 public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 
-	public WhileToForLoopIncrement(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public WhileToForLoopIncrement(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 
@@ -70,7 +70,7 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 							//now check names.
 							if(incrementExpression.getVariable().getName().equals(declarationExpression.getVariable().getName())) {
 								//we can actually convert this to a for loop.
-								ForIntermediate forIntermediate = new ForIntermediate(declaration.getInstruction(), declarationExpression, line.getExpression(), incrementExpression);
+								ForIntermediate forIntermediate = new ForIntermediate(line, declarationExpression, incrementExpression);
 								this.intermediateGraph.addVertex(forIntermediate);
 								
 								redirectSuccessors(line, forIntermediate);

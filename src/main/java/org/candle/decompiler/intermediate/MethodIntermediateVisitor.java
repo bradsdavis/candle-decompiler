@@ -180,6 +180,10 @@ public class MethodIntermediateVisitor implements Visitor {
 		if(index >=0) {
 			IntermediateVariable localVar = context.getVariableResolver().getLocalVariable(index, context.getCurrentInstruction().getPosition()); 
 
+			if(localVar == null) {
+				LOG.info("Did not find local variable: "+index + " for position: "+context.getCurrentInstruction().getPosition());
+			}
+			/*
 			Variable variable = null;
 			if(localVar == null) {
 				//probably need to create a variable for enhanced loops...
@@ -190,7 +194,9 @@ public class MethodIntermediateVisitor implements Visitor {
 			}
 			else {
 				variable = new Variable(context.getCurrentInstruction(), localVar.getType(), localVar.getName());
-			}
+			}*/
+			
+			Variable variable = new Variable(context.getCurrentInstruction(), localVar.getType(), localVar.getName());
 			
 			context.getExpressions().push(variable);
 			LOG.debug("Loaded: "+variable);

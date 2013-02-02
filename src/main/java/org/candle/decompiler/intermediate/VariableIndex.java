@@ -9,6 +9,14 @@ public class VariableIndex {
 	private final int start;
 	private final int end;
 	
+	
+	
+	@Override
+	public String toString() {
+		return "VariableIndex [index=" + index + ", start=" + start + ", end="
+				+ end + "]";
+	}
+
 	public VariableIndex(int index, int start, int end) {
 		this.index= index;
 		this.start = start;
@@ -44,7 +52,7 @@ public class VariableIndex {
 				//get the max... either branch. 
 				int t1 = ih.getPosition();
 				int t2 = ((BranchHandle) ih).getTarget().getPosition();
-				
+				t2++;
 				end = t1 > t2 ? t1 : t2;
 			}
 			else {

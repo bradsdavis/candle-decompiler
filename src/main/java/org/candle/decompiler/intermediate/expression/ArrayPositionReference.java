@@ -18,6 +18,14 @@ public class ArrayPositionReference extends Expression {
 		this.arrayReference = arrayReference;
 		this.arrayPosition = arrayPosition;
 	}
+	
+	public Expression getArrayReference() {
+		return arrayReference;
+	}
+	
+	public Expression getArrayPosition() {
+		return arrayPosition;
+	}
 
 	@Override
 	public void write(Writer builder) throws IOException {

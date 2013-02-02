@@ -3,16 +3,24 @@ package org.candle.decompiler.intermediate.code.loop;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
-import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class WhileIntermediate extends ConditionalIntermediate {
-
-	public WhileIntermediate(GoToIntermediate g, ConditionalIntermediate ci) {
-		super(g.getInstruction(), ci.getExpression());
+	
+	private ConditionalIntermediate conditionalIntermediate;
+	
+	public WhileIntermediate(InstructionHandle bi, ConditionalIntermediate ci) {
+		super(bi, ci.getExpression());
+		this.conditionalIntermediate = ci;
+		
 		this.setTrueTarget(ci.getTrueTarget());
 		this.setFalseTarget(ci.getFalseTarget());
+	}
+	
+	public ConditionalIntermediate getConditionalIntermediate() {
+		return conditionalIntermediate;
 	}
 
 	@Override

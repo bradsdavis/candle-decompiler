@@ -14,5 +14,4 @@ public class IntermediateLabelProvider implements VertexNameProvider<AbstractInt
 		
 		return line;
 	}
-
 }

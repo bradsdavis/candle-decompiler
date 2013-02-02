@@ -7,13 +7,14 @@ import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 
 public class MergeConditionExpression extends GraphIntermediateVisitor {
 	
-	public MergeConditionExpression(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public MergeConditionExpression(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 

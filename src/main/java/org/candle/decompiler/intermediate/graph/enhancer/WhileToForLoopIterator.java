@@ -14,14 +14,14 @@ import org.candle.decompiler.intermediate.expression.MethodInvocation;
 import org.candle.decompiler.intermediate.expression.SingleConditional;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 
 public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 	private static final Log LOG = LogFactory.getLog(WhileToForLoopIterator.class);
 	
-	public WhileToForLoopIterator(DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public WhileToForLoopIterator(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
 

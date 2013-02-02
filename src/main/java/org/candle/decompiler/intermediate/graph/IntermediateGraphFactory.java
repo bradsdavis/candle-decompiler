@@ -18,11 +18,11 @@ import org.jgrapht.graph.DefaultEdge;
 public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 
 	private final IntermediateLineContext ilc;
-	private final DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph;
+	private final DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph;
 	
 	public IntermediateGraphFactory(IntermediateLineContext ilc) {
 		//first, populate the map.
-		this.intermediateGraph = new DefaultDirectedGraph<AbstractIntermediate, DefaultEdge>(DefaultEdge.class);
+		this.intermediateGraph = new DefaultDirectedGraph<AbstractIntermediate, IntermediateEdge>(IntermediateEdge.class);
 		this.ilc = ilc;
 		
 		Set<AbstractIntermediate> lines = new HashSet<AbstractIntermediate>(ilc.getIntermediate().values());
@@ -31,7 +31,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		}
 	}
 	
-	public DirectedGraph<AbstractIntermediate, DefaultEdge> getIntermediateGraph() {
+	public DirectedGraph<AbstractIntermediate, IntermediateEdge> getIntermediateGraph() {
 		return intermediateGraph;
 	}
 	
