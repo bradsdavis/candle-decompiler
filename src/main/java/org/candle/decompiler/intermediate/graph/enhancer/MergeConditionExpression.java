@@ -10,14 +10,38 @@ import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 
 public class MergeConditionExpression extends GraphIntermediateVisitor {
 	
 	public MergeConditionExpression(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		super(intermediateGraph);
 	}
+	
+	protected void updatePredecessorConditional(ConditionalIntermediate source, ConditionalIntermediate target) {
+		if(source instanceof ConditionalIntermediate) {
+			List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, source);
+			
+			for(AbstractIntermediate predecessor : predecessors) {
+				updatePredecessorConditional(predecessor, (ConditionalIntermediate)source, target);
+			}
+		}
+	}
 
+	protected void updatePredecessorConditional(AbstractIntermediate predecessor, ConditionalIntermediate source, ConditionalIntermediate target) {
+		if(predecessor instanceof ConditionalIntermediate) {
+			ConditionalIntermediate conditionalPredecessor = (ConditionalIntermediate)predecessor;
+			
+			if(conditionalPredecessor.getTrueTarget() == source) {
+				conditionalPredecessor.setTrueTarget(target);
+			}
+			
+			if(conditionalPredecessor.getFalseTarget() == source) {
+				conditionalPredecessor.setFalseTarget(target);
+			}
+			
+		}
+	}
+	
 	@Override
 	public void visitConditionalLine(ConditionalIntermediate line) {
 		List<AbstractIntermediate> successors = Graphs.successorListOf(intermediateGraph, line);
@@ -66,13 +90,19 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 						System.out.println("Don't even need to negate!");
 						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(ci.getExpression(), line.getExpression(), LogicalGateType.OR);
 						line.setExpression(expression);
+						line.setTrueTarget(ci.getTrueTarget());
+						updatePredecessorConditional(ci, line);
 						
 						//find references to ci, redirect to line.
 						redirectPredecessors(ci, line);
-
+						
+						
+						
 						//now remove vertex.
 						retract(ci);
 					}
+					
+					//for each predecessor, set the target if it is a conditional.
 				}
 			}
 		}

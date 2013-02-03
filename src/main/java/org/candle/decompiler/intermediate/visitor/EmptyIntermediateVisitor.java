@@ -4,6 +4,8 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
+import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
+import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
@@ -42,6 +44,16 @@ public class EmptyIntermediateVisitor implements IntermediateVisitor {
 
 	@Override
 	public void visitEnhancedForLoopLine(EnhancedForIntermediate line) {
+		
+	}
+
+	@Override
+	public void visitIfLine(IfIntermediate line) {
+		
+	}
+
+	@Override
+	public void visitElseIfLine(ElseIfIntermediate line) {
 		
 	}
 

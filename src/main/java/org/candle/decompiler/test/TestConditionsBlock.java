@@ -24,20 +24,24 @@ public class TestConditionsBlock {
 				LOG.info("Nested Else If 6!");
 			}
 			else {
+				if(k == 2) {
+					LOG.info("Nested Else statement.");
+				}
+				
 				LOG.info("Nested Else statement.");
 				LOG.info("Nested Else statement.");
 				LOG.info("Nested Else statement.");
 			}
+			
+			LOG.info("End of If/ElseIf/Else");
 		}
-		else if(i>3) {
-			LOG.info("Else If Main");
-		}
-		else {
-			LOG.info("Else Main");
-		}
+		
 
 		if(i == 6) {
 			LOG.info("Breaking Thought?");
+		}
+		else {
+			LOG.info("Else Main");
 		}
 		int y = 5;
 		LOG.info("Another!!"+y);

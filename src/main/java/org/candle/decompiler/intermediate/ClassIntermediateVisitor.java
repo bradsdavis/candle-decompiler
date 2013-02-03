@@ -67,7 +67,11 @@ import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
+import org.candle.decompiler.intermediate.graph.enhancer.Else;
+import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
+import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.NegateConditional;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
 import org.jgrapht.ext.DOTExporter;
@@ -373,13 +377,14 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		
 		MergeConditionExpression igc = new MergeConditionExpression(lc.getIntermediateGraph());
+		NegateConditional nc = new NegateConditional(lc.getIntermediateGraph());
 		ConditionToWhileLoop wct = new ConditionToWhileLoop(lc.getIntermediateGraph());
 		WhileToForLoopIncrement fst = new WhileToForLoopIncrement(lc.getIntermediateGraph());
 		WhileToForLoopIterator fsi = new WhileToForLoopIterator(lc.getIntermediateGraph());
 		ArrayForToEnhancedFor fsei = new ArrayForToEnhancedFor(lc.getIntermediateGraph());
-		
-		
-		
+		If ifE = new If(lc.getIntermediateGraph());
+		ElseIf eifE = new ElseIf(lc.getIntermediateGraph());
+		Else el = new Else(lc.getIntermediateGraph());
 		
 		dot.export(w, lc.getIntermediateGraph());
 		
