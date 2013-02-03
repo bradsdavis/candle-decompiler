@@ -27,7 +27,6 @@ public class Else extends GraphIntermediateVisitor {
 
 	@Override
 	public void visitAbstractLine(AbstractIntermediate line) {
-
 		orderedVertexes = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
 		orderedVertexes.addAll(intermediateGraph.vertexSet());
 		
@@ -36,7 +35,6 @@ public class Else extends GraphIntermediateVisitor {
 		if(predecessors.size() == 0) {
 			return;
 		}
-		
 		
 		TreeSet<GoToIntermediate> gotoIntermediates = new TreeSet<GoToIntermediate>(new IntermediateComparator());
 		

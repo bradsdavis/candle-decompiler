@@ -31,6 +31,7 @@ public class ForIntermediate extends WhileIntermediate {
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
+		visitor.visitAbstractLine(this);
 		visitor.visitForLoopLine(this);
 	}
 

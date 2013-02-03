@@ -100,7 +100,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				for(GoToIntermediate gotoIntermediate : incomingGotoNested) {
 					Continue continueExpression = new Continue(gotoIntermediate.getInstruction()); 
 					StatementIntermediate continueIntermediate = new StatementIntermediate(gotoIntermediate.getInstruction(), continueExpression);
-					
+					updatePredecessorConditional(gotoIntermediate, continueIntermediate);
 					//add the node...
 					this.intermediateGraph.addVertex(continueIntermediate);
 					redirectPredecessors(gotoIntermediate, continueIntermediate);

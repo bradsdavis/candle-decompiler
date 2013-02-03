@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
 import org.jgrapht.DirectedGraph;
@@ -75,4 +76,29 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 			intermediateGraph.removeEdge(source, s);
 		}
 	}
+	
+	
+	protected void updatePredecessorConditional(AbstractIntermediate source, AbstractIntermediate target) {
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, source);
+		
+		for(AbstractIntermediate predecessor : predecessors) {
+			updatePredecessorConditional(predecessor, source, target);
+		}
+	}
+
+	private void updatePredecessorConditional(AbstractIntermediate predecessor, AbstractIntermediate source, AbstractIntermediate target) {
+		if(predecessor instanceof ConditionalIntermediate) {
+			ConditionalIntermediate conditionalPredecessor = (ConditionalIntermediate)predecessor;
+			
+			if(conditionalPredecessor.getTrueTarget() == source) {
+				conditionalPredecessor.setTrueTarget(target);
+			}
+			
+			if(conditionalPredecessor.getFalseTarget() == source) {
+				conditionalPredecessor.setFalseTarget(target);
+			}
+			
+		}
+	}
+	
 }

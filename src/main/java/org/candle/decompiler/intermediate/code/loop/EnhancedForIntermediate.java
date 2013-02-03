@@ -48,6 +48,7 @@ public class EnhancedForIntermediate extends AbstractIntermediate {
 	
 	@Override
 	public void accept(IntermediateVisitor visitor) {
+		visitor.visitAbstractLine(this);
 		visitor.visitEnhancedForLoopLine(this);
 	}
 	

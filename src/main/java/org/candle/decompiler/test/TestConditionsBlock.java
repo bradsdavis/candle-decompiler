@@ -12,6 +12,11 @@ public class TestConditionsBlock {
 		int j=5;
 		int k=5;
 		
+		int[] testArray = new int[]{};
+		for(int x : testArray) {
+			System.out.println(x);
+		} 
+		
 		if(i==3 || j==5 || k==1 && k < 10) {
 			
 			if(i == 10) {
@@ -22,6 +27,7 @@ public class TestConditionsBlock {
 			}
 			else if(k == 6 && i != 3) {
 				LOG.info("Nested Else If 6!");
+				
 			}
 			else {
 				if(k == 2) {
@@ -45,6 +51,7 @@ public class TestConditionsBlock {
 		}
 		int y = 5;
 		LOG.info("Another!!"+y);
+		
 		
 	}
 	

@@ -19,128 +19,42 @@ public class TestSimpleCondition {
 	}
 	
 	public void testArrayCreation() {
-		int[] testArray = new int[2];
+		int i=3;
+		int j=5;
+		int k=5;
 		
-		for(int i = 0, j=testArray.length; i<j; i++) {
-			LOG.info(testArray[i]);
-		}
-		/*for(int x : testArray) {
-			LOG.info("Enhanced For: "+x);
-		}*/
-	}
-	
-	public int testReturnInteger() {
-		Integer someInt = 1;
-		
-		return someInt;
-	}
-	
-	public void testCastDoubleFloat() {
-		double doubleVal = 2d;
-		float someFloat = (float)doubleVal;
-		
-		fieldVal = fieldVal + "x";
-		fieldInt += 1;
-	}
-	
-	public void testCondition(String condition) {
-		final String unique = "unique";
-		Integer someInt = Integer.valueOf(5);
-		String x = "y";
-		int testInt = 0;
-		double testDouble = 0d;
-		float testFloat = 0f;
-		
-		
-		
-		int negatedInt = testInt * -1;
-		int negatedInt2 = ~testInt;
-		int negatedInt3 = testInt ^ 5;
-		
-		int remainder = testInt%2;
-		
-		int devision = testInt / 2;
-		
-		int multiMath = (((testInt / 2) + 3) %2);
-		
-		if(condition.equals("test"))
-		{
-			System.out.println("test: "+condition);
+		if(i==3 || j==5 || k==1 && k < 10) {
 			
-			if(!condition.endsWith("another")) {
-				System.out.println("another: " + condition);
-				
+			if(i == 10) {
+				LOG.info("Nested If!");
+			}
+			else if(i ==5) {
+				LOG.info("Nested Else If 5!");
+			}
+			else if(k == 6 && i != 3) {
+				LOG.info("Nested Else If 6!");
 			}
 			else {
-				System.out.println("Else clause.");
-				
-				for(int j=0; j<10; j++) {
-					System.out.println("Value of J: "+j+"!!");
+				if(k == 2) {
+					LOG.info("Nested Else statement.");
 				}
+				
+				LOG.info("Nested Else statement.");
+				LOG.info("Nested Else statement.");
+				LOG.info("Nested Else statement.");
 			}
 			
-			
-			
-			
-			
-			int i=0;
-			while(i < 5) {
-				System.out.println("Testing While: "+i);
-				i++;
-				testInt++;
-			}
-			
-
-			for(int j = 5; j>0; j-=2) {
-				LOG.info("Logging J: "+j);
-			}
-			
+			LOG.info("End of If/ElseIf/Else");
 		}
-	}
-	
-	public void testTryCatch(String condition) 
-	{
-		final String unique = "unique";
-		Integer someInt = new Integer(5);
-		String x = "y";
-		int testInt = 0;
-		double testDouble = 0d;
-		float testFloat = 0f;
-		
-		int negatedInt = testInt * -1;
-		int negatedInt2 = ~testInt;
-		int negatedInt3 = testInt ^ 5;
 		
 
-		LOG.debug(unique + x);
-	
-		try {
-			LOG.info("Static Call 1.");
-			
-			if(unique instanceof String) {
-				LOG.info("Instanceof Expression!");
-			}
-			
-			if(unique != null || someInt == null) {
-				LOG.info("Testing Null!!");
-			}
-			
-			try {
-				LOG.info("Nested Try");
-			}
-			catch(IllegalMonitorStateException e) {
-				LOG.info("Nested Catch.");
-			}
-			
-			LOG.info("Static Call 2.");
+		if(i == 6) {
+			LOG.info("Breaking Thought?");
 		}
-		catch(Exception e) {
-			LOG.error("Error Call 1!!", e);
-			LOG.error("Error Call 2!!", e);
-			LOG.error("Error Call 3!!", e);
-			testInt++;
-			testDouble++;
-			testFloat++;
+		else {
+			LOG.info("Else Main");
 		}
+		int y = 5;
+		LOG.info("Another!!"+y);
 	}
 }

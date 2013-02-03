@@ -41,7 +41,6 @@ public class StatementIntermediate extends AbstractIntermediate {
 	@Override
 	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractLine(this);
-		
 		visitor.visitCompleteLine(this); 
 	}
 }

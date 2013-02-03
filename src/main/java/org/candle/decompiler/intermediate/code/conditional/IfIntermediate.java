@@ -29,6 +29,7 @@ public class IfIntermediate extends ConditionalIntermediate {
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
+		visitor.visitAbstractLine(this);
 		visitor.visitIfLine(this);
 	}
 	

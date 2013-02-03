@@ -37,6 +37,7 @@ public class WhileIntermediate extends ConditionalIntermediate {
 	
 	@Override
 	public void accept(IntermediateVisitor visitor) {
+		visitor.visitAbstractLine(this);
 		visitor.visitWhileLoopLine(this);
 	}
 
