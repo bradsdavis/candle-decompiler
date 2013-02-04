@@ -380,10 +380,12 @@ public class ClassIntermediateVisitor implements Visitor {
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
 		System.out.println("End Before ======");
 		
-		MergeConditionExpression igc = new MergeConditionExpression(lc.getIntermediateGraph());
-		NegateConditional nc = new NegateConditional(lc.getIntermediateGraph());
 		
 		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
+		enhancers.add(new MergeConditionExpression(lc.getIntermediateGraph()));
+		enhancers.add(new NegateConditional(lc.getIntermediateGraph()));
+		
+		
 		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));

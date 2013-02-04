@@ -7,6 +7,7 @@ import org.apache.bcel.generic.BranchHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
+import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 import org.candle.decompiler.intermediate.expression.Continue;
@@ -35,8 +36,8 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 		if(predecessors.size() >= 2) {
 			//check to see that 1 predecessor is a GOTO.
 			
-			TreeSet<GoToIntermediate> incomingGotoNonNested = new TreeSet<GoToIntermediate>();
-			TreeSet<GoToIntermediate> incomingGotoNested = new TreeSet<GoToIntermediate>();
+			TreeSet<GoToIntermediate> incomingGotoNonNested = new TreeSet<GoToIntermediate>(new IntermediateComparator());
+			TreeSet<GoToIntermediate> incomingGotoNested = new TreeSet<GoToIntermediate>(new IntermediateComparator());
 			GoToIntermediate nonNestedLine = null;
 			AbstractIntermediate otherLine = null;
 			
