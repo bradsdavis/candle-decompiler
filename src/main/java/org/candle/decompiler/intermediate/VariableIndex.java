@@ -2,9 +2,11 @@ package org.candle.decompiler.intermediate;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class VariableIndex {
-
+	private static final Log LOG = LogFactory.getLog(VariableIndex.class);
 	private final int index;
 	private final int start;
 	private final int end;
@@ -44,6 +46,7 @@ public class VariableIndex {
 				if(next == null) {
 					break;
 				}
+				LOG.info("Skipping forward: "+next);
 				ih = next;
 			}
 			//check ih.
@@ -51,8 +54,14 @@ public class VariableIndex {
 			{
 				//get the max... either branch. 
 				int t1 = ih.getPosition();
-				int t2 = ((BranchHandle) ih).getTarget().getPosition();
-				t2++;
+				
+				InstructionHandle t2handle = ((BranchHandle) ih).getTarget();
+				if(t2handle.getNext() != null) {
+					t2handle = t2handle.getNext();
+				}
+				
+				int t2 = t2handle.getPosition();
+				LOG.info("Skipping forward: "+t2);
 				end = t1 > t2 ? t1 : t2;
 			}
 			else {

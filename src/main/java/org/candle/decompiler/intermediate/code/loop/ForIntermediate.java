@@ -3,22 +3,30 @@ package org.candle.decompiler.intermediate.code.loop;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.candle.decompiler.intermediate.expression.ConditionalExpression;
+import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class ForIntermediate extends WhileIntermediate {
 
 	private final Expression init;
-	private final ConditionalExpression expression;
+	private final ConditionalIntermediate expression;
 	private final Expression update;
 	
 	public ForIntermediate(WhileIntermediate whileIntermediate, Expression init, Expression update) {
 		super(whileIntermediate.getInstruction(), whileIntermediate.getConditionalIntermediate());
 		
+		
+		this.expression = whileIntermediate.getConditionalIntermediate();
 		this.init = init;
-		this.expression = this.getConditionalIntermediate().getExpression();
+		
 		this.update = update;
+	}
+	
+	@Override
+	public ConditionalIntermediate getConditionalIntermediate() {
+		// TODO Auto-generated method stub
+		return super.getConditionalIntermediate();
 	}
 	
 	public Expression getInit() {
@@ -41,7 +49,7 @@ public class ForIntermediate extends WhileIntermediate {
 		try {
 			this.init.write(sw);
 			sw.append("; ");
-			this.expression.write(sw);
+			this.expression.getExpression().write(sw);
 			sw.append("; ");
 			if(update != null) {
 				this.update.write(sw);

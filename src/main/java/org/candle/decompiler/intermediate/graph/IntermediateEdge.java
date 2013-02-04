@@ -4,13 +4,11 @@ import org.jgrapht.graph.DefaultEdge;
 
 public class IntermediateEdge extends DefaultEdge {
 
-	@Override
-	protected Object getSource() {
+	public Object getSource() {
 		return super.getSource();
 	}
 	
-	@Override
-	protected Object getTarget() {
+	public Object getTarget() {
 		return super.getTarget();
 	}
 }

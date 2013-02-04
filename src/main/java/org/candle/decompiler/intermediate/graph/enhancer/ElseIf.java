@@ -6,20 +6,19 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class ElseIf extends GraphIntermediateVisitor {
 
-	public ElseIf(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public ElseIf(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 	
 	@Override
 	public void visitIfLine(IfIntermediate line) {
 		//check to see if the predecessor is an if block.
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		if(predecessors.size() != 1) {
 			return;
@@ -37,12 +36,12 @@ public class ElseIf extends GraphIntermediateVisitor {
 				eii.setTrueTarget(line.getTrueTarget());
 				eii.setFalseTarget(line.getFalseTarget());
 				
-				this.intermediateGraph.addVertex(eii);
+				igc.getIntermediateGraph().addVertex(eii);
+
+				igc.redirectPredecessors(line, eii);
+				igc.redirectSuccessors(line, eii);
 				
-				redirectPredecessors(line, eii);
-				redirectSuccessors(line, eii);
-				
-				this.intermediateGraph.removeVertex(line);
+				igc.getIntermediateGraph().removeVertex(line);
 			}
 		}
 		

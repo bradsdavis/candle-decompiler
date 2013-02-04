@@ -12,26 +12,20 @@ import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class Else extends GraphIntermediateVisitor {
 
-	private TreeSet<AbstractIntermediate> orderedVertexes;
-	public Else(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
-		
+	public Else(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 
 
 	@Override
 	public void visitAbstractLine(AbstractIntermediate line) {
-		orderedVertexes = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
-		orderedVertexes.addAll(intermediateGraph.vertexSet());
-		
 		//for all lines...
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		if(predecessors.size() == 0) {
 			return;
 		}
@@ -51,8 +45,13 @@ public class Else extends GraphIntermediateVisitor {
 		//now, the largest should be...
 		GoToIntermediate maxGotoForBranch = gotoIntermediates.pollLast();
 		
+		if(maxGotoForBranch.getInstruction().getPosition() > line.getInstruction().getPosition()) 
+		{
+			return;
+		}
+		
 		//find the element directly after this one...
-		SortedSet<AbstractIntermediate> elseBranchElements = orderedVertexes.subSet(maxGotoForBranch, false, line, false);
+		SortedSet<AbstractIntermediate> elseBranchElements = igc.getOrderedIntermediate().subSet(maxGotoForBranch, false, line, false);
 		
 		//get the first element...
 		if(elseBranchElements.size() > 0) {
@@ -76,12 +75,10 @@ public class Else extends GraphIntermediateVisitor {
 					ifIntermediate.setTrueTarget(((ConditionalIntermediate) firstElseBlockElement).getTrueTarget());
 					ifIntermediate.setFalseTarget(((ConditionalIntermediate) firstElseBlockElement).getFalseTarget());
 					
-					this.intermediateGraph.addVertex(ifIntermediate);
-					
-					redirectPredecessors(firstElseBlockElement, ifIntermediate);
-					redirectSuccessors(firstElseBlockElement, ifIntermediate);
-					this.intermediateGraph.removeVertex(firstElseBlockElement);
-					
+					igc.getIntermediateGraph().addVertex(ifIntermediate);
+					igc.redirectPredecessors(firstElseBlockElement, ifIntermediate);
+					igc.redirectSuccessors(firstElseBlockElement, ifIntermediate);
+					igc.getIntermediateGraph().removeVertex(firstElseBlockElement);
 				}
 			}
 		}

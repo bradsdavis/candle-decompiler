@@ -1,16 +1,14 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
-import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 
 public class If extends GraphIntermediateVisitor {
 
-	public If(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public If(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 
 	@Override
@@ -22,14 +20,13 @@ public class If extends GraphIntermediateVisitor {
 		ifIntermediate.setTrueTarget(line.getTrueTarget());
 		ifIntermediate.setFalseTarget(line.getFalseTarget());
 		
-		this.intermediateGraph.addVertex(ifIntermediate);
+		igc.getIntermediateGraph().addVertex(ifIntermediate);
 		
 		//now, replace the vertex.
-		updatePredecessorConditional(line, ifIntermediate);
-		redirectPredecessors(line, ifIntermediate);
-		redirectSuccessors(line, ifIntermediate);
+		igc.redirectPredecessors(line, ifIntermediate);
+		igc.redirectSuccessors(line, ifIntermediate);
 		
-		this.intermediateGraph.removeVertex(line);
+		igc.getIntermediateGraph().removeVertex(line);
 	}
 	
 

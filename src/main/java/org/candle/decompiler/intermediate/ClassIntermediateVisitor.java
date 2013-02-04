@@ -7,6 +7,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +61,7 @@ import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
+import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.IntermediateEdgeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
@@ -69,6 +71,7 @@ import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.Else;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
+import org.candle.decompiler.intermediate.graph.enhancer.GotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.NegateConditional;
@@ -371,23 +374,32 @@ public class ClassIntermediateVisitor implements Visitor {
 		IntermediateGraphFactory lc = new IntermediateGraphFactory(illc);
 		//IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, ilc, lc.getIntermediateGraph());
 
+		System.out.println("Before ======");
 		Writer w = new OutputStreamWriter(System.out);
 		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider());
-		dot.export(w, lc.getIntermediateGraph());
-		
+		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
+		System.out.println("End Before ======");
 		
 		MergeConditionExpression igc = new MergeConditionExpression(lc.getIntermediateGraph());
 		NegateConditional nc = new NegateConditional(lc.getIntermediateGraph());
-		ConditionToWhileLoop wct = new ConditionToWhileLoop(lc.getIntermediateGraph());
-		WhileToForLoopIncrement fst = new WhileToForLoopIncrement(lc.getIntermediateGraph());
-		WhileToForLoopIterator fsi = new WhileToForLoopIterator(lc.getIntermediateGraph());
-		ArrayForToEnhancedFor fsei = new ArrayForToEnhancedFor(lc.getIntermediateGraph());
-		If ifE = new If(lc.getIntermediateGraph());
-		ElseIf eifE = new ElseIf(lc.getIntermediateGraph());
-		Else el = new Else(lc.getIntermediateGraph());
 		
-		dot.export(w, lc.getIntermediateGraph());
+		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
+		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
+		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
+		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));
+		enhancers.add(new ArrayForToEnhancedFor(lc.getIntermediateGraph()));
+		enhancers.add(new If(lc.getIntermediateGraph()));
+		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
+		enhancers.add(new Else(lc.getIntermediateGraph()));
+		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
 		
+		for(GraphIntermediateVisitor giv : enhancers) {
+			giv.process();
+		}
+		
+		System.out.println("After ======");
+		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
+		System.out.println("End After ======");
 		
 		
 		

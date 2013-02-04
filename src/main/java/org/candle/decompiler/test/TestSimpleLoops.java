@@ -29,7 +29,19 @@ public class TestSimpleLoops {
 			k++;
 		}
 		
+		List keys = new java.util.ArrayList(); 
+		for(Object test : keys)
+		{
+			System.out.println(test);
+			
+			if(test == null) {
+				break;
+			}
+			System.out.println(test);
+			System.out.println(test);
+		}
 		
+
 		List<TestSimpleLoops> objects = new LinkedList<TestSimpleLoops>();
 		for(TestSimpleLoops test : objects)
 		{

@@ -1,15 +1,13 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
-import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 
 public class NegateConditional extends GraphIntermediateVisitor {
 
-	public NegateConditional(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public NegateConditional(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 	
 	@Override

@@ -1,5 +1,7 @@
 package org.candle.decompiler.test;
 
+import java.io.File;
+
 import org.candle.decompiler.CandleDecompiler;
 import org.candle.decompiler.DecompilerException;
 
@@ -17,7 +19,7 @@ public class BCELMainTest {
 		  CandleDecompiler decompiler = new CandleDecompiler();
 		  decompiler.decompile(className);
 		  
-		  //File clz = new File("/Users/bradsdavis/Projects/workspace/clzTest/ObjectGridProvider.class");
+		  File clz = new File("/Users/bradsdavis/Projects/workspace/clzTest/ObjectGridProvider.class");
 		  //decompiler.decompile(clz, new File("/Users/bradsdavis/Projects/workspace/clzTest/test.src"));
 	  }
 }

@@ -9,19 +9,18 @@ import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Increment;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 
-	public WhileToForLoopIncrement(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public WhileToForLoopIncrement(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 
 	@Override
 	public void visitWhileLoopLine(WhileIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		//look at the predecessor lines;  validate there are only 2 predecessors.
 		if(predecessors.size() == 2) {
@@ -71,17 +70,17 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 							if(incrementExpression.getVariable().getName().equals(declarationExpression.getVariable().getName())) {
 								//we can actually convert this to a for loop.
 								ForIntermediate forIntermediate = new ForIntermediate(line, declarationExpression, incrementExpression);
-								this.intermediateGraph.addVertex(forIntermediate);
+								igc.getIntermediateGraph().addVertex(forIntermediate);
 								
-								redirectSuccessors(line, forIntermediate);
-								redirectPredecessors(iteration, forIntermediate);
-								redirectPredecessors(declaration, forIntermediate);
+								igc.redirectSuccessors(line, forIntermediate);
+								igc.redirectPredecessors(iteration, forIntermediate);
+								igc.redirectPredecessors(declaration, forIntermediate);
 								
 								
 								//remove the while loop, increment, and declaration.
-								this.intermediateGraph.removeVertex(line);
-								this.intermediateGraph.removeVertex(declaration);
-								this.intermediateGraph.removeVertex(iteration);
+								igc.getIntermediateGraph().removeVertex(line);
+								igc.getIntermediateGraph().removeVertex(declaration);
+								igc.getIntermediateGraph().removeVertex(iteration);
 							}
 							
 							

@@ -14,15 +14,14 @@ import org.candle.decompiler.intermediate.expression.MethodInvocation;
 import org.candle.decompiler.intermediate.expression.SingleConditional;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 	private static final Log LOG = LogFactory.getLog(WhileToForLoopIterator.class);
 	
-	public WhileToForLoopIterator(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public WhileToForLoopIterator(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 
 	@Override
@@ -44,7 +43,7 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 				if(StringUtils.equals("hasNext", mi.getMethodName())) {
 					
 					//probably an iterator.
-					List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+					List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 					
 					//look at the predecessor lines;  validate there are only 2 predecessors.
 					if(predecessors.size() == 2) {
@@ -107,19 +106,20 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 															if(StringUtils.equals("iterator", iteratorInvocation.getMethodName())) {
 																//now, we are pretty certain this is an enhanced for loop...  we can chop up the graph.
 																
-																EnhancedForIntermediate enhancedFor = new EnhancedForIntermediate(line.getInstruction(), nextDeclaration.getVariable(), iteratorInvocation.getTarget());
-																this.intermediateGraph.addVertex(enhancedFor);
+																EnhancedForIntermediate enhancedFor = new EnhancedForIntermediate(line, nextDeclaration.getVariable(), iteratorInvocation.getTarget());
+																//determine true / false.
 																
-																redirectSuccessors(line, enhancedFor);
-																redirectPredecessors(line, enhancedFor);
-																redirectPredecessors(declaration, enhancedFor);
-																redirectSuccessors(nextStatement, enhancedFor);
+																igc.getIntermediateGraph().addVertex(enhancedFor);
+																
+																igc.redirectSuccessors(line, enhancedFor);
+																igc.redirectPredecessors(line, enhancedFor);
+																igc.redirectPredecessors(declaration, enhancedFor);
+																igc.redirectSuccessors(nextStatement, enhancedFor);
 																
 																//remove the declaration, next, and line 
-																this.intermediateGraph.removeVertex(line);
-																this.intermediateGraph.removeVertex(declaration);
-																this.intermediateGraph.removeVertex(nextStatement);
-																
+																igc.getIntermediateGraph().removeVertex(line);
+																igc.getIntermediateGraph().removeVertex(declaration);
+																igc.getIntermediateGraph().removeVertex(nextStatement);
 															}
 														}
 														

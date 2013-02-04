@@ -19,15 +19,14 @@ import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.GeneratedVariable;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	private static final Log LOG = LogFactory.getLog(ArrayForToEnhancedFor.class);
 	
-	public ArrayForToEnhancedFor(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public ArrayForToEnhancedFor(IntermediateGraphContext igc) {
+		super(igc, false);
 	}
 
 	@Override
@@ -75,27 +74,30 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 		//format should be: 40 : GENERATED_ARRAY_REFERENCE_TYPE i = GENERATED_ARRAY_REFERENCE[ARRAY_ITERATOR_VALUE] | 
 		StatementIntermediate childDeclarationStatement = ((StatementIntermediate)firstChild);
 		Declaration childDeclaration = (Declaration)childDeclarationStatement.getExpression();
-		Expression right = childDeclaration.getAssignment().getRight();
 		
 		if(firstMatchesGeneratedVariables(childDeclarationStatement, generatedArrayReference, arrayIteratorValue)) {
 			
 			LOG.info("Likely a enhanced for loop for array: "+generatedArrayLength + " , "+ generatedArrayReference);
 			
 			//we are good to go here.  Now we just need to reorganize the graph.  Start by creating the new enhanced for loop.
-			EnhancedForIntermediate efl = new EnhancedForIntermediate(line.getInstruction(), childDeclaration.getVariable(), extractExpressionFromGeneratedArrayAssignment(tempArrayCandidate));
-			this.intermediateGraph.addVertex(efl);
+			EnhancedForIntermediate efl = new EnhancedForIntermediate(line.getInstruction(), line.getConditionalIntermediate(), childDeclaration.getVariable(), extractExpressionFromGeneratedArrayAssignment(tempArrayCandidate));
+			efl.setTrueTarget(line.getTrueTarget());
+			efl.setFalseTarget(line.getFalseTarget());
+			
+			
+			this.igc.getIntermediateGraph().addVertex(efl);
 			
 			//now, we just need to redirect.
-			redirectPredecessors(tempArrayCandidate, efl);
-			redirectPredecessors(line, efl);
-			redirectSuccessors(line, efl);
-			redirectSuccessors(firstChild, efl);
+			igc.redirectPredecessors(tempArrayCandidate, efl);
+			igc.redirectPredecessors(line, efl);
+			igc.redirectSuccessors(line, efl);
+			igc.redirectSuccessors(firstChild, efl);
 			
 			//remove line.
-			this.intermediateGraph.removeVertex(line);
-			this.intermediateGraph.removeVertex(tempArrayCandidate);
-			this.intermediateGraph.removeVertex(firstChild);
-			this.intermediateGraph.removeVertex(arrayLenthCandidate);
+			igc.getIntermediateGraph().removeVertex(line);
+			igc.getIntermediateGraph().removeVertex(tempArrayCandidate);
+			igc.getIntermediateGraph().removeVertex(firstChild);
+			igc.getIntermediateGraph().removeVertex(arrayLenthCandidate);
 		}
 	}
 	
@@ -145,7 +147,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	
 	
 	private AbstractIntermediate getForExteriorPredecessor(ForIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		//loop max min
 		int min = line.getInstruction().getPosition();
@@ -170,7 +172,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	}
 	
 	private AbstractIntermediate getSinglePredecessor(AbstractIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		if(predecessors.size() == 1) {
 			return predecessors.get(0);

@@ -7,19 +7,18 @@ import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class MergeConditionExpression extends GraphIntermediateVisitor {
 	
-	public MergeConditionExpression(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public MergeConditionExpression(IntermediateGraphContext igc) {
+		super(igc, true);
 	}
 	
 	protected void updatePredecessorConditional(ConditionalIntermediate source, ConditionalIntermediate target) {
 		if(source instanceof ConditionalIntermediate) {
-			List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, source);
+			List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), source);
 			
 			for(AbstractIntermediate predecessor : predecessors) {
 				updatePredecessorConditional(predecessor, (ConditionalIntermediate)source, target);
@@ -44,8 +43,8 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 	
 	@Override
 	public void visitConditionalLine(ConditionalIntermediate line) {
-		List<AbstractIntermediate> successors = Graphs.successorListOf(intermediateGraph, line);
-		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		for(AbstractIntermediate i : predecessor) {
 			//check to see whether the incoming is a conditional..
@@ -62,7 +61,7 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 				//and one leg of the other conditional targets this conditional, then we can compress.
 				
 				//we already know here that the conditional i enters this node.  check whether the outcome of this node matches the other node.
-				List<AbstractIntermediate> cSuccess = Graphs.successorListOf(intermediateGraph, ci);
+				List<AbstractIntermediate> cSuccess = Graphs.successorListOf(igc.getIntermediateGraph(), ci);
 				
 				//first, remove self from list.
 				cSuccess.remove(line);
@@ -94,12 +93,10 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 						updatePredecessorConditional(ci, line);
 						
 						//find references to ci, redirect to line.
-						redirectPredecessors(ci, line);
-						
-						
+						igc.redirectPredecessors(ci, line);
 						
 						//now remove vertex.
-						retract(ci);
+						igc.getIntermediateGraph().removeVertex(ci);
 					}
 					
 					//for each predecessor, set the target if it is a conditional.

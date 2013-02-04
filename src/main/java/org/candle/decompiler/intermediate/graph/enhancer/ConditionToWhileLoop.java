@@ -12,21 +12,21 @@ import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 import org.candle.decompiler.intermediate.expression.Continue;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
-import org.jgrapht.DirectedGraph;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.CycleDetector;
 
 public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 	
-	public ConditionToWhileLoop(DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
-		super(intermediateGraph);
+	public ConditionToWhileLoop(IntermediateGraphContext igc) {
+		super(igc, true);
 	}
 
 	@Override
 	public void visitConditionalLine(ConditionalIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
-		CycleDetector<AbstractIntermediate, IntermediateEdge> cycleDetector = new CycleDetector<AbstractIntermediate, IntermediateEdge>(intermediateGraph);
+		CycleDetector<AbstractIntermediate, IntermediateEdge> cycleDetector = new CycleDetector<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph());
 		if(!cycleDetector.detectCyclesContainingVertex(line)) {
 			return;
 		}
@@ -73,17 +73,17 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 			if(comparator.before(nonNestedLine, line) && comparator.before(otherLine, line)) {
 				WhileIntermediate whileIntermediate = new WhileIntermediate((BranchHandle)nonNestedLine.getInstruction(), line);
 				//add this to the graph.
-				this.intermediateGraph.addVertex(whileIntermediate);
+				this.igc.getIntermediateGraph().addVertex(whileIntermediate);
 				
 				//get the incoming from the goto...
-				redirectPredecessors(nonNestedLine, whileIntermediate);
+				igc.redirectPredecessors(nonNestedLine, whileIntermediate);
 				
 				//now, add the reference to the condition
-				this.intermediateGraph.addEdge(whileIntermediate, whileIntermediate.getTrueTarget());
-				this.intermediateGraph.addEdge(whileIntermediate, whileIntermediate.getFalseTarget());
+				this.igc.getIntermediateGraph().addEdge(whileIntermediate, whileIntermediate.getTrueTarget());
+				this.igc.getIntermediateGraph().addEdge(whileIntermediate, whileIntermediate.getFalseTarget());
 				
 				//now, create line from other to while.
-				this.intermediateGraph.addEdge(otherLine, whileIntermediate);
+				this.igc.getIntermediateGraph().addEdge(otherLine, whileIntermediate);
 				
 				if(whileIntermediate.getTrueTarget().getInstruction().getPosition() > whileIntermediate.getFalseTarget().getInstruction().getPosition()) {
 					//negate.
@@ -91,24 +91,22 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				}
 				
 				//now, remove the GOTO and Conditional Vertext from graph.
-				retract(nonNestedLine);
-				retract(line);
-				
-				
+				igc.getIntermediateGraph().removeVertex(nonNestedLine);
+				igc.getIntermediateGraph().removeVertex(line);
 				
 				//now, the other GOTO lines coming in should all be CONTINUE statements...
 				for(GoToIntermediate gotoIntermediate : incomingGotoNested) {
 					Continue continueExpression = new Continue(gotoIntermediate.getInstruction()); 
 					StatementIntermediate continueIntermediate = new StatementIntermediate(gotoIntermediate.getInstruction(), continueExpression);
-					updatePredecessorConditional(gotoIntermediate, continueIntermediate);
+
 					//add the node...
-					this.intermediateGraph.addVertex(continueIntermediate);
-					redirectPredecessors(gotoIntermediate, continueIntermediate);
+					igc.getIntermediateGraph().addVertex(continueIntermediate);
+					igc.redirectPredecessors(gotoIntermediate, continueIntermediate);
 					//remove vertex.
-					this.intermediateGraph.removeVertex(gotoIntermediate);
+					igc.getIntermediateGraph().removeVertex(gotoIntermediate);
 					
 					//now, add line to the loop.
-					this.intermediateGraph.addEdge(continueIntermediate, whileIntermediate);
+					igc.getIntermediateGraph().addEdge(continueIntermediate, whileIntermediate);
 				}
 			}
 		}

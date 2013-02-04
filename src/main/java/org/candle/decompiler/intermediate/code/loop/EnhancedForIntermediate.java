@@ -6,21 +6,24 @@ import java.io.StringWriter;
 import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
-import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
-public class EnhancedForIntermediate extends AbstractIntermediate {
+public class EnhancedForIntermediate extends WhileIntermediate {
 
 	private final Variable variable;
 	private final Expression right;
 	
-	public EnhancedForIntermediate(InstructionHandle instruction, Variable variable, Expression right) {
-		super(instruction);
-		
+	public EnhancedForIntermediate(InstructionHandle ih, ConditionalIntermediate ci, Variable variable, Expression right) {
+		super(ih, ci);
+
 		this.variable = variable;
 		this.right = right;
+	}
+	public EnhancedForIntermediate(WhileIntermediate whileIntermediate, Variable variable, Expression right) {
+		this(whileIntermediate.getInstruction(), whileIntermediate.getConditionalIntermediate(), variable, right);
 	}
 	
 

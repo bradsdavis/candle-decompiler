@@ -10,19 +10,19 @@ import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Return;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
-import org.jgrapht.DirectedGraph;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.ListenableDirectedGraph;
 
 public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 
 	private final IntermediateLineContext ilc;
-	private final DirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph;
+	private final IntermediateGraphContext igc;
 	
 	public IntermediateGraphFactory(IntermediateLineContext ilc) {
 		//first, populate the map.
-		this.intermediateGraph = new DefaultDirectedGraph<AbstractIntermediate, IntermediateEdge>(IntermediateEdge.class);
+		ListenableDirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph = new ListenableDirectedGraph<AbstractIntermediate, IntermediateEdge>(IntermediateEdge.class);
+		this.igc = new IntermediateGraphContext(intermediateGraph);
 		this.ilc = ilc;
 		
 		Set<AbstractIntermediate> lines = new HashSet<AbstractIntermediate>(ilc.getIntermediate().values());
@@ -31,10 +31,9 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		}
 	}
 	
-	public DirectedGraph<AbstractIntermediate, IntermediateEdge> getIntermediateGraph() {
-		return intermediateGraph;
+	public IntermediateGraphContext getIntermediateGraph() {
+		return igc;
 	}
-	
 	
 	@Override
 	public void visitCompleteLine(StatementIntermediate line) {
@@ -51,8 +50,8 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 			AbstractIntermediate intermediate = next;
 			
 			//now, we just add this into the graph.
-			intermediateGraph.addVertex(intermediate);
-			intermediateGraph.addEdge(line, intermediate);
+			igc.getIntermediateGraph().addVertex(intermediate);
+			igc.getIntermediateGraph().addEdge(line, intermediate);
 		}
 	}
 
@@ -61,11 +60,11 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate intermediate = ilc.getNext(line);
-		intermediateGraph.addVertex(intermediate);
+		igc.getIntermediateGraph().addVertex(intermediate);
 		line.setTarget(intermediate);
 		
 		//now, we just add this into the graph.
-		intermediateGraph.addEdge(line, intermediate);
+		igc.getIntermediateGraph().addEdge(line, intermediate);
 	}
 
 	@Override
@@ -77,8 +76,8 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		//now, we just add this into the graph.
 		
 		line.setFalseTarget(nextIntermediate);
-		intermediateGraph.addVertex(nextIntermediate);
-		intermediateGraph.addEdge(line, nextIntermediate);
+		igc.getIntermediateGraph().addVertex(nextIntermediate);
+		igc.getIntermediateGraph().addEdge(line, nextIntermediate);
 
 		//also add the target.
 		BranchHandle bi = ((BranchHandle)line.getInstruction());
@@ -89,13 +88,13 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		}
 		
 		line.setTrueTarget(targetIntermediate);
-		intermediateGraph.addVertex(targetIntermediate);
-		intermediateGraph.addEdge(line, targetIntermediate);
+		igc.getIntermediateGraph().addVertex(targetIntermediate);
+		igc.getIntermediateGraph().addEdge(line, targetIntermediate);
 	}
 
 	@Override
 	public void visitAbstractLine(AbstractIntermediate line) {
 		//add the vertex.
-		intermediateGraph.addVertex(line);
+		igc.getIntermediateGraph().addVertex(line);
 	}
 }
