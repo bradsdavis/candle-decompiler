@@ -74,20 +74,20 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate nextIntermediate = ilc.getNext(next.getPosition());
 		//now, we just add this into the graph.
+
+		BranchHandle bi = ((BranchHandle)line.getInstruction());
+		AbstractIntermediate targetIntermediate = ilc.getNext(bi.getTarget().getPosition());
 		
-		line.setFalseTarget(nextIntermediate);
 		igc.getIntermediateGraph().addVertex(nextIntermediate);
 		igc.getIntermediateGraph().addEdge(line, nextIntermediate);
 
 		//also add the target.
-		BranchHandle bi = ((BranchHandle)line.getInstruction());
-		AbstractIntermediate targetIntermediate = ilc.getNext(bi.getTarget().getPosition());
 
 		if(targetIntermediate == null) {
 			System.out.println(line);
 		}
 		
-		line.setTrueTarget(targetIntermediate);
+
 		igc.getIntermediateGraph().addVertex(targetIntermediate);
 		igc.getIntermediateGraph().addEdge(line, targetIntermediate);
 	}

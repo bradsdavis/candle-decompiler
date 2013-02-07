@@ -73,23 +73,16 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 			//check to validate that the GOTO instruction is less than the other incoming...
 			if(comparator.before(nonNestedLine, line) && comparator.before(otherLine, line)) {
 				WhileIntermediate whileIntermediate = new WhileIntermediate((BranchHandle)nonNestedLine.getInstruction(), line);
+				
 				//add this to the graph.
 				this.igc.getIntermediateGraph().addVertex(whileIntermediate);
 				
 				//get the incoming from the goto...
 				igc.redirectPredecessors(nonNestedLine, whileIntermediate);
-				
-				//now, add the reference to the condition
-				this.igc.getIntermediateGraph().addEdge(whileIntermediate, whileIntermediate.getTrueTarget());
-				this.igc.getIntermediateGraph().addEdge(whileIntermediate, whileIntermediate.getFalseTarget());
-				
+				igc.redirectSuccessors(line, whileIntermediate);
+								
 				//now, create line from other to while.
 				this.igc.getIntermediateGraph().addEdge(otherLine, whileIntermediate);
-				
-				if(whileIntermediate.getTrueTarget().getInstruction().getPosition() > whileIntermediate.getFalseTarget().getInstruction().getPosition()) {
-					//negate.
-					whileIntermediate.negate();
-				}
 				
 				//now, remove the GOTO and Conditional Vertext from graph.
 				igc.getIntermediateGraph().removeVertex(nonNestedLine);
@@ -115,8 +108,8 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 
 	protected boolean isNested(ConditionalIntermediate ci, AbstractIntermediate ai) 
 	{
-		int max = ci.getFalseTarget().getInstruction().getPosition();
-		int min = ci.getTrueTarget().getInstruction().getPosition();
+		int max = igc.getFalseTarget(ci).getInstruction().getPosition();
+		int min = igc.getTrueTarget(ci).getInstruction().getPosition();
 		
 		return (ai.getInstruction().getPosition() <= max && ai.getInstruction().getPosition() >= min);
 		

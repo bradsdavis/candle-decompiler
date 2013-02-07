@@ -76,7 +76,7 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 								LOG.debug("Identified Likely Iterator: "+v.getName());
 								
 								//get the ".next()" statement, which should be the first child.
-								AbstractIntermediate firstChild = line.getTrueTarget();
+								AbstractIntermediate firstChild = igc.getTrueTarget(line);
 								
 								//see if this is a statement, if the statement is an assignment... 
 								//then check the right side to see if it is an invocation.. and the invocation has the method name "next"...

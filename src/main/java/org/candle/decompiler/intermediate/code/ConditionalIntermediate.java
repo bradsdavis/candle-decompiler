@@ -10,38 +10,15 @@ import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 public class ConditionalIntermediate extends AbstractIntermediate {
 
 	protected ConditionalExpression expression;
-	protected AbstractIntermediate trueTarget;
-	protected AbstractIntermediate falseTarget;
 	
 	public ConditionalIntermediate(InstructionHandle instruction, ConditionalExpression expression) {
 		super(instruction);
+		
 		this.expression = expression;
 	}
 	
-	public void negate() {
+	protected void negate() {
 		expression.negate();
-		
-		//swap true and false.
-		AbstractIntermediate t = trueTarget;
-		
-		this.trueTarget = falseTarget;
-		this.falseTarget = t;
-	}
-	
-	public void setTrueTarget(AbstractIntermediate trueTarget) {
-		this.trueTarget = trueTarget;
-	}
-	
-	public void setFalseTarget(AbstractIntermediate falseTarget) {
-		this.falseTarget = falseTarget;
-	}
-	
-	public AbstractIntermediate getTrueTarget() {
-		return trueTarget;
-	}
-	
-	public AbstractIntermediate getFalseTarget() {
-		return falseTarget;
 	}
 	
 	public ConditionalExpression getExpression() {

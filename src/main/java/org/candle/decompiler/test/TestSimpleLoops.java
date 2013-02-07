@@ -1,7 +1,5 @@
 package org.candle.decompiler.test;
 
-import java.util.LinkedList;
-import java.util.List;
 
 public class TestSimpleLoops {
 
@@ -11,11 +9,13 @@ public class TestSimpleLoops {
 			System.out.println(i);
 		}
 		
+		
 		int[] testArray = new int[]{};
 		for(int i : testArray) {
 			System.out.println(i);
 		} 
-
+		
+		
 		int k=0;
 		int j=0;
 		while(j < 5) {
@@ -28,7 +28,7 @@ public class TestSimpleLoops {
 			
 			k++;
 		}
-		
+		/*
 		List keys = new java.util.ArrayList(); 
 		for(Object test : keys)
 		{
@@ -47,6 +47,6 @@ public class TestSimpleLoops {
 		{
 			System.out.println(test);
 		}
-		
+		*/
 	}
 }

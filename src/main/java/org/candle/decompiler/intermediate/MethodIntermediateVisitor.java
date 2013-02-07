@@ -445,8 +445,6 @@ public class MethodIntermediateVisitor implements Visitor {
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
 		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
-		
-		//context.getExpressions().push(conditional);
 	}
 
 	@Override
@@ -457,8 +455,6 @@ public class MethodIntermediateVisitor implements Visitor {
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.NE);
 		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
-		
-		//context.getExpressions().push(conditional);
 	}
 	
 
@@ -513,6 +509,19 @@ public class MethodIntermediateVisitor implements Visitor {
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, operation);
 		//context.getExpressions().push(conditional);
 		ConditionalIntermediate line = new ConditionalIntermediate(this.context.getCurrentInstruction(), conditional);
+		//check to see whether you need to negate.
+		
+		//if the conditional's target is greater than the conditional's next statement, don't negate.
+		BranchHandle branchHandle = (BranchHandle) context.getCurrentInstruction();
+		int next = branchHandle.getNext().getPosition();
+		int target = branchHandle.getTarget().getPosition();
+		
+		
+		//Important.  Make sure the expression "true" is pointed towards the lower branch.
+		if(target > next) {
+			line.getExpression().negate();
+		}
+		
 		context.getIntermediate().add(line);
 	}
 	

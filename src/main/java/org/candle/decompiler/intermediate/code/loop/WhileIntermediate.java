@@ -14,9 +14,6 @@ public class WhileIntermediate extends ConditionalIntermediate {
 	public WhileIntermediate(InstructionHandle bi, ConditionalIntermediate ci) {
 		super(bi, ci.getExpression());
 		this.conditionalIntermediate = ci;
-		
-		this.setTrueTarget(ci.getTrueTarget());
-		this.setFalseTarget(ci.getFalseTarget());
 	}
 	
 	public ConditionalIntermediate getConditionalIntermediate() {

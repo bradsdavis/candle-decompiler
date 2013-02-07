@@ -29,12 +29,10 @@ public class ElseIf extends GraphIntermediateVisitor {
 			//check to see whether it is on the ELSE side.
 			IfIntermediate parent = (IfIntermediate)predecessors.get(0);
 			
-			if(parent.getFalseTarget() == line) {
+			if(igc.getFalseTarget(parent) == line) {
 				//then this could be an IF block.
 				
 				ElseIfIntermediate eii = new ElseIfIntermediate(line.getInstruction(), line.getExpression());
-				eii.setTrueTarget(line.getTrueTarget());
-				eii.setFalseTarget(line.getFalseTarget());
 				
 				igc.getIntermediateGraph().addVertex(eii);
 

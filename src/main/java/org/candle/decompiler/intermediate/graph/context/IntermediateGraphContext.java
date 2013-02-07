@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.Graphs;
@@ -56,5 +57,28 @@ public class IntermediateGraphContext {
 			intermediateGraph.removeEdge(source, s);
 		}
 	}
+	
+	public AbstractIntermediate getTrueTarget(ConditionalIntermediate ci) {
+		TreeSet<AbstractIntermediate> successors = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
+		successors.addAll(Graphs.successorListOf(intermediateGraph, ci));
+		
+		if(successors.size() > 2) {
+			throw new IllegalStateException("Condition should only have 1.");
+		}
+		
+		return successors.pollFirst();
+	}
+	
+	public AbstractIntermediate getFalseTarget(ConditionalIntermediate ci) {
+		TreeSet<AbstractIntermediate> successors = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
+		successors.addAll(Graphs.successorListOf(intermediateGraph, ci));
+		
+		if(successors.size() > 2) {
+			throw new IllegalStateException("Condition should only have 1.");
+		}
+		
+		return successors.pollLast();
+	}
+	
 	
 }

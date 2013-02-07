@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.expression.ConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
@@ -14,31 +15,6 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 	
 	public MergeConditionExpression(IntermediateGraphContext igc) {
 		super(igc, true);
-	}
-	
-	protected void updatePredecessorConditional(ConditionalIntermediate source, ConditionalIntermediate target) {
-		if(source instanceof ConditionalIntermediate) {
-			List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), source);
-			
-			for(AbstractIntermediate predecessor : predecessors) {
-				updatePredecessorConditional(predecessor, (ConditionalIntermediate)source, target);
-			}
-		}
-	}
-
-	protected void updatePredecessorConditional(AbstractIntermediate predecessor, ConditionalIntermediate source, ConditionalIntermediate target) {
-		if(predecessor instanceof ConditionalIntermediate) {
-			ConditionalIntermediate conditionalPredecessor = (ConditionalIntermediate)predecessor;
-			
-			if(conditionalPredecessor.getTrueTarget() == source) {
-				conditionalPredecessor.setTrueTarget(target);
-			}
-			
-			if(conditionalPredecessor.getFalseTarget() == source) {
-				conditionalPredecessor.setFalseTarget(target);
-			}
-			
-		}
 	}
 	
 	@Override
@@ -52,7 +28,6 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 				ConditionalIntermediate ci = (ConditionalIntermediate)i;
 				
 				//potential to merge.
-				
 				if(ci == line) {
 					continue;
 				}
@@ -75,29 +50,33 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 				if(cSuccess.size() == 0) {
 					System.out.println("Merge: "+ line + " AND "+i);
 					
+					//previous
+					ConditionalExpression m1 = ci.getExpression();
+					
+					//current
+					ConditionalExpression m2 = line.getExpression();
+					
 					//check to see if we need to negate first...
-					if(ci.getFalseTarget() == line.getTrueTarget()) {
-						ci.negate();
-						System.out.println("Need CI: "+ci);
+					if(igc.getFalseTarget(ci) == igc.getFalseTarget(line)) {
+						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(m1, m2, LogicalGateType.AND);
+						line.setExpression(expression);
 					}
-					else if(ci.getTrueTarget() == line.getFalseTarget()) {
-						line.negate();
-						System.out.println("Negated Line: "+line);
+					else if(igc.getFalseTarget(ci) == igc.getTrueTarget(line)) {
+						m1.negate();
+					
+						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(m1, m2, LogicalGateType.OR);
+						line.setExpression(expression);
+					}
+					else {
+						return;
 					}
 					
-					if(ci.getTrueTarget() == line.getTrueTarget()) {
-						System.out.println("Don't even need to negate!");
-						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(ci.getExpression(), line.getExpression(), LogicalGateType.OR);
-						line.setExpression(expression);
-						line.setTrueTarget(ci.getTrueTarget());
-						updatePredecessorConditional(ci, line);
-						
-						//find references to ci, redirect to line.
-						igc.redirectPredecessors(ci, line);
-						
-						//now remove vertex.
-						igc.getIntermediateGraph().removeVertex(ci);
-					}
+					
+					//find references to ci, redirect to line.
+					igc.redirectPredecessors(ci, line);
+					
+					//now remove vertex.
+					igc.getIntermediateGraph().removeVertex(ci);
 					
 					//for each predecessor, set the target if it is a conditional.
 				}

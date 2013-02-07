@@ -22,6 +22,12 @@ import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
+/**
+ * 
+ * 
+ * @author bradsdavis
+ *
+ */
 public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	private static final Log LOG = LogFactory.getLog(ArrayForToEnhancedFor.class);
 	
@@ -37,7 +43,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 		//check that the array length candidate's declared length variable is used in the for's condition.
 		
 		AbstractIntermediate tempArrayCandidate = null;
-		AbstractIntermediate firstChild = line.getTrueTarget();
+		AbstractIntermediate firstChild = igc.getTrueTarget(line);
 		
 		if(arrayLenthCandidate != null) {
 			tempArrayCandidate = getSinglePredecessor(arrayLenthCandidate);
@@ -81,10 +87,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 			
 			//we are good to go here.  Now we just need to reorganize the graph.  Start by creating the new enhanced for loop.
 			EnhancedForIntermediate efl = new EnhancedForIntermediate(line.getInstruction(), line.getConditionalIntermediate(), childDeclaration.getVariable(), extractExpressionFromGeneratedArrayAssignment(tempArrayCandidate));
-			efl.setTrueTarget(line.getTrueTarget());
-			efl.setFalseTarget(line.getFalseTarget());
-			
-			
+
 			this.igc.getIntermediateGraph().addVertex(efl);
 			
 			//now, we just need to redirect.
@@ -148,11 +151,11 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	
 	private AbstractIntermediate getForExteriorPredecessor(ForIntermediate line) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getIntermediateGraph(), line);
 		
 		//loop max min
 		int min = line.getInstruction().getPosition();
-		int max = line.getFalseTarget().getInstruction().getPosition();
-		
+		int max = igc.getFalseTarget(line).getInstruction().getPosition();
 		
 		Set<AbstractIntermediate> nested = new HashSet<AbstractIntermediate>();
 		//eliminate nested predecessors.

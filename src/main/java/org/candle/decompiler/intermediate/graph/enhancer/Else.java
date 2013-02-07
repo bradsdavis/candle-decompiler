@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
+import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
@@ -58,35 +60,42 @@ public class Else extends GraphIntermediateVisitor {
 			AbstractIntermediate firstElseBlockElement = elseBranchElements.first();
 			if(firstElseBlockElement instanceof StatementIntermediate) {
 				//we should add the ELSE right away...
+				
+				addElseBlock(firstElseBlockElement);
+				return;
 			}
 			
 			if(firstElseBlockElement instanceof ConditionalIntermediate) {
 				//only add ELSE if the child of conditional doesn't go to the target.
 				ConditionalIntermediate ci = (ConditionalIntermediate)firstElseBlockElement;
-				if(ci.getFalseTarget() == line || ci.getTrueTarget() == line) {
+				if(igc.getFalseTarget(ci) == line || igc.getTrueTarget(ci) == line) {
 					//do nothing.
 					return;
 				}
 				
-				//else if thie is an ElseIf, probably should be an IF.
-				
+				//else if this is an ElseIf, probably should be an IF.
 				if(firstElseBlockElement instanceof ElseIfIntermediate) {
 					IfIntermediate ifIntermediate = new IfIntermediate(firstElseBlockElement.getInstruction(), ((ConditionalIntermediate) firstElseBlockElement).getExpression());
-					ifIntermediate.setTrueTarget(((ConditionalIntermediate) firstElseBlockElement).getTrueTarget());
-					ifIntermediate.setFalseTarget(((ConditionalIntermediate) firstElseBlockElement).getFalseTarget());
-					
 					igc.getIntermediateGraph().addVertex(ifIntermediate);
 					igc.redirectPredecessors(firstElseBlockElement, ifIntermediate);
 					igc.redirectSuccessors(firstElseBlockElement, ifIntermediate);
 					igc.getIntermediateGraph().removeVertex(firstElseBlockElement);
+					
+					//add the else between this conditional.
+					addElseBlock(ifIntermediate);
 				}
 			}
-		}
-		
-		for(AbstractIntermediate elements : elseBranchElements) {
-			System.out.println(elements);
 		}
 	}
 	
 	
+	protected void addElseBlock(AbstractIntermediate ai) {
+
+		ElseIntermediate elseIntermediate = new ElseIntermediate(ai.getInstruction().getPrev());
+		igc.getIntermediateGraph().addVertex(elseIntermediate);
+		igc.redirectPredecessors(ai, elseIntermediate);
+		//add a link to the statement.
+		
+		igc.getIntermediateGraph().addEdge(elseIntermediate, ai);
+	}
 }

@@ -12,6 +12,20 @@ public class TestConditionsBlock {
 		int j=5;
 		int k=5;
 		
+		if(i == 5 || i == 4) {
+			System.out.println("I < 3");
+		}
+		else {
+			System.out.println("Not first condition.");
+		}
+		
+		
+		if(i == 5 && i == 4) {
+			System.out.println("I < 3");
+		}
+		
+		
+		
 		int[] testArray = new int[]{};
 		for(int x : testArray) {
 			System.out.println(x);
@@ -27,7 +41,6 @@ public class TestConditionsBlock {
 			}
 			else if(k == 6 && i != 3) {
 				LOG.info("Nested Else If 6!");
-				
 			}
 			else {
 				if(k == 2) {

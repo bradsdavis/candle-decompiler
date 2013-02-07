@@ -41,10 +41,10 @@ public class GotoToBreak extends GraphIntermediateVisitor {
 	public void processLoop(WhileIntermediate loop) {
 		//get the target... then look for GOTO statements going into the target that are within the range 
 		//of the loop.
-		TreeSet<AbstractIntermediate> loopElements = (TreeSet<AbstractIntermediate>)igc.getOrderedIntermediate().subSet(loop.getTrueTarget(), true, loop.getFalseTarget(), false);
+		TreeSet<AbstractIntermediate> loopElements = (TreeSet<AbstractIntermediate>)igc.getOrderedIntermediate().subSet(igc.getTrueTarget(loop), true, igc.getFalseTarget(loop), false);
 		
 		
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), loop.getFalseTarget());
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), igc.getFalseTarget(loop));
 		
 		Set<GoToIntermediate> gotoToBreak = new HashSet<GoToIntermediate>();
 		for(AbstractIntermediate predecessor : predecessors) 

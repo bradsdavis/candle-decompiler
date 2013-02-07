@@ -2,6 +2,7 @@ package org.candle.decompiler.intermediate.graph.context;
 
 import java.util.TreeSet;
 
+import org.apache.bcel.generic.BranchHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
@@ -54,21 +55,34 @@ public class ConditionalBranchListener implements GraphListener<AbstractIntermed
 
 
 	protected void updateTargets(ConditionalIntermediate ci) {
+		/*
 		TreeSet<AbstractIntermediate> ordered = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
 		ordered.addAll(Graphs.successorListOf(igc.getIntermediateGraph(), ci));
+		
+		boolean swapped = false;
+		BranchHandle bh = (BranchHandle)ci.getInstruction();
+		if(bh.getTarget().getPosition() > bh.getNext().getPosition()) {
+			swapped = true;
+		}
+		
 		
 		if(ordered.size() != 2) {
 			return;
 		}
 		
 		System.out.println("Updating targets for: "+ci);
-		ci.setTrueTarget(ordered.pollFirst());
-		ci.setFalseTarget(ordered.pollFirst());
 		
+		if(!swapped) {
+			ci.setTrueTarget(ordered.pollFirst());
+			ci.setFalseTarget(ordered.pollFirst());
+		}
+		else {
+			ci.setFalseTarget(ordered.pollFirst());
+			ci.setTrueTarget(ordered.pollFirst());
+		}
 		System.out.println("\t True: "+ci.getTrueTarget());
 		System.out.println("\t False: "+ci.getFalseTarget());
-		
-		
+		*/
 	}
 
 
