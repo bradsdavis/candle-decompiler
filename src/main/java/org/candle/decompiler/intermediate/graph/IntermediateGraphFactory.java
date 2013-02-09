@@ -5,9 +5,11 @@ import java.util.Set;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.bcel.generic.Select;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
+import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
@@ -68,7 +70,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	}
 
 	@Override
-	public void visitConditionalLine(ConditionalIntermediate line) {
+	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
 		InstructionHandle next = line.getInstruction().getNext();
 		
 		//find how that actually maps to the abstract line..
@@ -90,6 +92,11 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 
 		igc.getIntermediateGraph().addVertex(targetIntermediate);
 		igc.getIntermediateGraph().addEdge(line, targetIntermediate);
+	}
+	
+	@Override
+	public void visitMultiConditionalLine(MultiBranchIntermediate line) {
+	
 	}
 
 	@Override

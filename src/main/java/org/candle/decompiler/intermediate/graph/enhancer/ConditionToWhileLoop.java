@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
@@ -24,7 +24,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitConditionalLine(ConditionalIntermediate line) {
+	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		CycleDetector<AbstractIntermediate, IntermediateEdge> cycleDetector = new CycleDetector<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph());
@@ -106,7 +106,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 		}
 	}
 
-	protected boolean isNested(ConditionalIntermediate ci, AbstractIntermediate ai) 
+	protected boolean isNested(BooleanBranchIntermediate ci, AbstractIntermediate ai) 
 	{
 		int max = igc.getFalseTarget(ci).getInstruction().getPosition();
 		int min = igc.getTrueTarget(ci).getInstruction().getPosition();

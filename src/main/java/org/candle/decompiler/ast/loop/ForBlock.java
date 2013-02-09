@@ -6,15 +6,15 @@ import java.io.Writer;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.Block;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 
 public class ForBlock extends Block {
 
 	private final Block forInit;
-	private final ConditionalIntermediate forExpression;
+	private final BooleanBranchIntermediate forExpression;
 	private final Block forUpdate;
 	
-	public ForBlock(Block forInit, ConditionalIntermediate forExpression, Block forUpdate) {
+	public ForBlock(Block forInit, BooleanBranchIntermediate forExpression, Block forUpdate) {
 		this.forInit = forInit;
 		this.forExpression = forExpression;
 		this.forUpdate = forUpdate;

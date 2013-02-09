@@ -9,6 +9,7 @@ import java.io.Writer;
 import org.apache.bcel.Repository;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.ClassBlock;
@@ -20,6 +21,9 @@ public class CandleDecompiler {
 	private static final Log LOG = LogFactory.getLog(CandleDecompiler.class);
 
 	public void decompile(String clazzName) throws DecompilerException {
+		Validate.isTrue(org.apache.commons.lang.StringUtils.isNotBlank(clazzName), "Classname is required, but not provided.");
+		
+		
 		OutputStreamWriter osw = new OutputStreamWriter(System.out);
 		try {
 			this.decompile(clazzName, osw);
@@ -40,6 +44,9 @@ public class CandleDecompiler {
 	}
 	
 	public void decompile(String clazzName, Writer writer) throws DecompilerException {
+		Validate.isTrue(org.apache.commons.lang.StringUtils.isNotBlank(clazzName), "Classname is required field, but was not provided.");
+		Validate.notNull(writer, "Writer is required, but not provided.");
+		
 		JavaClass clz;
 		try {
 			clz = Repository.lookupClass(clazzName);
@@ -51,6 +58,9 @@ public class CandleDecompiler {
 	}
 	
 	public void decompile(File clz, File src) throws DecompilerException {
+		Validate.notNull(clz, "Input file is required, but not provided.");
+		Validate.notNull(src, "Output file is required, but not provided.");
+		
 		LOG.info("Processing: "+clz.getAbsolutePath());
 		
 		Writer writer = null;
@@ -75,6 +85,10 @@ public class CandleDecompiler {
 	}
 	
 	public void decompile(JavaClass clz, Writer writer) throws DecompilerException {
+		Validate.notNull(clz, "Class is required, but not provided.");
+		Validate.notNull(writer, "Writer is required, but not provided.");
+		
+		
 		ClassIntermediateVisitor civ = new ClassIntermediateVisitor(clz);
 		ClassBlock classBlock = civ.decompile();
 

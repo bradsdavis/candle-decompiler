@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
@@ -65,9 +65,9 @@ public class Else extends GraphIntermediateVisitor {
 				return;
 			}
 			
-			if(firstElseBlockElement instanceof ConditionalIntermediate) {
+			if(firstElseBlockElement instanceof BooleanBranchIntermediate) {
 				//only add ELSE if the child of conditional doesn't go to the target.
-				ConditionalIntermediate ci = (ConditionalIntermediate)firstElseBlockElement;
+				BooleanBranchIntermediate ci = (BooleanBranchIntermediate)firstElseBlockElement;
 				if(igc.getFalseTarget(ci) == line || igc.getTrueTarget(ci) == line) {
 					//do nothing.
 					return;
@@ -75,7 +75,7 @@ public class Else extends GraphIntermediateVisitor {
 				
 				//else if this is an ElseIf, probably should be an IF.
 				if(firstElseBlockElement instanceof ElseIfIntermediate) {
-					IfIntermediate ifIntermediate = new IfIntermediate(firstElseBlockElement.getInstruction(), ((ConditionalIntermediate) firstElseBlockElement).getExpression());
+					IfIntermediate ifIntermediate = new IfIntermediate(firstElseBlockElement.getInstruction(), ((BooleanBranchIntermediate) firstElseBlockElement).getExpression());
 					igc.getIntermediateGraph().addVertex(ifIntermediate);
 					igc.redirectPredecessors(firstElseBlockElement, ifIntermediate);
 					igc.redirectSuccessors(firstElseBlockElement, ifIntermediate);

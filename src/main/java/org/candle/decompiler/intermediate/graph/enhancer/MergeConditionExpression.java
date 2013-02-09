@@ -3,7 +3,7 @@ package org.candle.decompiler.intermediate.graph.enhancer;
 import java.util.List;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
@@ -18,14 +18,14 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitConditionalLine(ConditionalIntermediate line) {
+	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
 		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getIntermediateGraph(), line);
 		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		for(AbstractIntermediate i : predecessor) {
 			//check to see whether the incoming is a conditional..
-			if(i instanceof ConditionalIntermediate) {
-				ConditionalIntermediate ci = (ConditionalIntermediate)i;
+			if(i instanceof BooleanBranchIntermediate) {
+				BooleanBranchIntermediate ci = (BooleanBranchIntermediate)i;
 				
 				//potential to merge.
 				if(ci == line) {

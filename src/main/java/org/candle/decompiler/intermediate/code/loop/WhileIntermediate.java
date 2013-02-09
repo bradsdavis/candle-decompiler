@@ -4,19 +4,19 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
-public class WhileIntermediate extends ConditionalIntermediate {
+public class WhileIntermediate extends BooleanBranchIntermediate {
 	
-	private ConditionalIntermediate conditionalIntermediate;
+	private BooleanBranchIntermediate conditionalIntermediate;
 	
-	public WhileIntermediate(InstructionHandle bi, ConditionalIntermediate ci) {
+	public WhileIntermediate(InstructionHandle bi, BooleanBranchIntermediate ci) {
 		super(bi, ci.getExpression());
 		this.conditionalIntermediate = ci;
 	}
 	
-	public ConditionalIntermediate getConditionalIntermediate() {
+	public BooleanBranchIntermediate getConditionalIntermediate() {
 		return conditionalIntermediate;
 	}
 

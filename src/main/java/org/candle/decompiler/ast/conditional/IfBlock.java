@@ -6,16 +6,16 @@ import java.io.Writer;
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.ast.Block;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 
 public class IfBlock extends ConditionalBlock {
 
-	private final ConditionalIntermediate conditional; 
+	private final BooleanBranchIntermediate conditional; 
 	private int endBlockPosition;
 	private final int startBlockPosition;
 	private int targetBlockPosition;
 	
-	public IfBlock(ConditionalIntermediate conditional) {
+	public IfBlock(BooleanBranchIntermediate conditional) {
 		this.conditional = conditional;
 		
 		BranchHandle handle = (BranchHandle)conditional.getInstruction();
@@ -24,7 +24,7 @@ public class IfBlock extends ConditionalBlock {
 		this.targetBlockPosition = handle.getTarget().getPosition();
 	}
 	
-	public IfBlock(ConditionalIntermediate conditional, int startPosition, int endPosition, int targetPosition) {
+	public IfBlock(BooleanBranchIntermediate conditional, int startPosition, int endPosition, int targetPosition) {
 		this.startBlockPosition = startPosition;
 		this.endBlockPosition = endPosition;
 		this.targetBlockPosition = targetPosition;
@@ -32,7 +32,7 @@ public class IfBlock extends ConditionalBlock {
 		this.conditional = conditional;
 	}
 	
-	public ConditionalIntermediate getConditional() {
+	public BooleanBranchIntermediate getConditional() {
 		return conditional;
 	}
 	 

@@ -7,11 +7,11 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
-public class ConditionalIntermediate extends AbstractIntermediate {
+public class BooleanBranchIntermediate extends AbstractIntermediate {
 
 	protected ConditionalExpression expression;
 	
-	public ConditionalIntermediate(InstructionHandle instruction, ConditionalExpression expression) {
+	public BooleanBranchIntermediate(InstructionHandle instruction, ConditionalExpression expression) {
 		super(instruction);
 		
 		this.expression = expression;
@@ -44,6 +44,6 @@ public class ConditionalIntermediate extends AbstractIntermediate {
 	@Override
 	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractLine(this);
-		visitor.visitConditionalLine(this);
+		visitor.visitBiConditionalLine(this);
 	}
 }

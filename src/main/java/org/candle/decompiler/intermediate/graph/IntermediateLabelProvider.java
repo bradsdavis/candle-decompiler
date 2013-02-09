@@ -3,7 +3,7 @@ package org.candle.decompiler.intermediate.graph;
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.jgrapht.ext.VertexNameProvider;
 
 public class IntermediateLabelProvider implements VertexNameProvider<AbstractIntermediate> {
@@ -13,7 +13,7 @@ public class IntermediateLabelProvider implements VertexNameProvider<AbstractInt
 		String line = StringUtils.replace(vertex.getInstruction().getPosition()+" : "+vertex.toString(), "\"", "'");
 		
 		/*
-		if(vertex instanceof ConditionalIntermediate) {
+		if(vertex instanceof BooleanBranchIntermediate) {
 			BranchHandle bh = (BranchHandle)vertex.getInstruction();
 			line = StringUtils.replace("Branch ["+bh.getInstruction().getName()+"] to ["+bh.getNext().getPosition()+"] or ["+bh.getTarget().getPosition()+"] : "+vertex.toString(), "\"", "'");
 		}

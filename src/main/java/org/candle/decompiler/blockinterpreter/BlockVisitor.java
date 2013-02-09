@@ -14,7 +14,7 @@ import org.candle.decompiler.ast.loop.WhileBlock;
 import org.candle.decompiler.ast.trycatch.CatchBlock;
 import org.candle.decompiler.ast.trycatch.TryBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
@@ -142,7 +142,7 @@ public class BlockVisitor extends EmptyIntermediateVisitor {
 	}
 
 	@Override
-	public void visitConditionalLine(ConditionalIntermediate line) {
+	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
 		//by default, set it as an if block.
 
 		boolean addIf = true;
@@ -189,7 +189,7 @@ public class BlockVisitor extends EmptyIntermediateVisitor {
 				ConditionalExpression currentCE = line.getExpression();
 				LogicalGateConditionalExpression lgce = new LogicalGateConditionalExpression(existingCE, currentCE, LogicalGateType.OR);
 
-				ConditionalIntermediate ci = currentIfBlock.getConditional();
+				BooleanBranchIntermediate ci = currentIfBlock.getConditional();
 				ci.setExpression(lgce);
 				
 				//if you need to grow the parent, do so.
@@ -219,7 +219,7 @@ public class BlockVisitor extends EmptyIntermediateVisitor {
 					ConditionalExpression currentCE = line.getExpression();
 					LogicalGateConditionalExpression lgce = new LogicalGateConditionalExpression(existingCE, currentCE, LogicalGateType.OR);
 
-					ConditionalIntermediate ci = currentIfBlock.getConditional();
+					BooleanBranchIntermediate ci = currentIfBlock.getConditional();
 					ci.setExpression(lgce);
 					
 					//now, if the end of the current line is greater than the IF, then extend the IF.

@@ -4,7 +4,7 @@ import java.util.TreeSet;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.Graphs;
@@ -36,8 +36,8 @@ public class ConditionalBranchListener implements GraphListener<AbstractIntermed
 		Object source = ie.getSource();
 		
 		//check if source is conditional...
-		if(source instanceof ConditionalIntermediate) {
-			updateTargets((ConditionalIntermediate)source);
+		if(source instanceof BooleanBranchIntermediate) {
+			updateTargets((BooleanBranchIntermediate)source);
 		}
 	}
 
@@ -47,14 +47,14 @@ public class ConditionalBranchListener implements GraphListener<AbstractIntermed
 		Object source = ie.getSource();
 		
 		//check if source is conditional...
-		if(source instanceof ConditionalIntermediate) {
-			updateTargets((ConditionalIntermediate)source);
+		if(source instanceof BooleanBranchIntermediate) {
+			updateTargets((BooleanBranchIntermediate)source);
 		}
 		
 	}
 
 
-	protected void updateTargets(ConditionalIntermediate ci) {
+	protected void updateTargets(BooleanBranchIntermediate ci) {
 		/*
 		TreeSet<AbstractIntermediate> ordered = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
 		ordered.addAll(Graphs.successorListOf(igc.getIntermediateGraph(), ci));

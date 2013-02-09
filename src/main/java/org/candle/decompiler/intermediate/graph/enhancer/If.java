@@ -1,12 +1,12 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 
 /**
- * This enhancer transforms ConditionalIntermediate lines into If lines.
+ * This enhancer transforms BooleanBranchIntermediate lines into If lines.
  * 
  * @author bradsdavis
  *
@@ -18,7 +18,7 @@ public class If extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitConditionalLine(ConditionalIntermediate line) {
+	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
 		
 		//transform to IF block.
 		

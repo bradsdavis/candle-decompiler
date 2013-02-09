@@ -1,7 +1,9 @@
 package org.candle.decompiler.intermediate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.bcel.Constants;
 import org.apache.bcel.classfile.ConstantClass;
@@ -11,7 +13,7 @@ import org.apache.bcel.generic.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Arithmetic;
@@ -19,6 +21,7 @@ import org.candle.decompiler.intermediate.expression.ArithmeticType;
 import org.candle.decompiler.intermediate.expression.ArrayLength;
 import org.candle.decompiler.intermediate.expression.ArrayPositionReference;
 import org.candle.decompiler.intermediate.expression.Assignment;
+import org.candle.decompiler.intermediate.expression.Case;
 import org.candle.decompiler.intermediate.expression.Cast;
 import org.candle.decompiler.intermediate.expression.ConstructorInvocation;
 import org.candle.decompiler.intermediate.expression.Declaration;
@@ -35,6 +38,7 @@ import org.candle.decompiler.intermediate.expression.OperationType;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.expression.SingleConditional;
+import org.candle.decompiler.intermediate.expression.Switch;
 import org.candle.decompiler.intermediate.expression.Throw;
 import org.candle.decompiler.intermediate.expression.TypedExpression;
 import org.candle.decompiler.intermediate.expression.Variable;
@@ -425,7 +429,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	public void visitIFNE(IFNE instruction) {
 		Expression left = context.getExpressions().pop();
 		SingleConditional conditional = new SingleConditional(context.getCurrentInstruction(), left, false);
-		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
+		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
 	}
 	
@@ -433,7 +437,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	public void visitIFEQ(IFEQ instruction) {
 		Expression left = context.getExpressions().pop();
 		SingleConditional conditional = new SingleConditional(context.getCurrentInstruction(), left);
-		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
+		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
 	}
 	
@@ -443,7 +447,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression right = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
-		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
+		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
 	}
 
@@ -453,7 +457,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression right = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.NE);
-		ConditionalIntermediate line = new ConditionalIntermediate(context.getCurrentInstruction(), conditional);
+		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
 	}
 	
@@ -508,7 +512,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	public void processMultiConditionalStatement(OperationType operation, Expression left, Expression right) {
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, operation);
 		//context.getExpressions().push(conditional);
-		ConditionalIntermediate line = new ConditionalIntermediate(this.context.getCurrentInstruction(), conditional);
+		BooleanBranchIntermediate line = new BooleanBranchIntermediate(this.context.getCurrentInstruction(), conditional);
 		//check to see whether you need to negate.
 		
 		//if the conditional's target is greater than the conditional's next statement, don't negate.
@@ -1043,7 +1047,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		// TODO Auto-generated method stub
 	}
 	public void visitIASTORE(IASTORE instruction) {
-		// TODO Auto-generated method stub
+		processArrayStore();
 	}
 	public void visitFASTORE(FASTORE instruction) {
 		// TODO Auto-generated method stub
@@ -1053,6 +1057,22 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 	public void visitArrayInstruction(ArrayInstruction instruction) {
 		// TODO Auto-generated method stub
+	}
+	
+	protected void processArrayStore() {
+		System.out.println("Storing array.");
+		
+		Expression value = context.getExpressions().pop();
+		Expression arrayPosition = context.getExpressions().pop();
+		Expression arrayReference = context.getExpressions().pop();
+
+		ArrayPositionReference arrayPositionReference = new ArrayPositionReference(context.getCurrentInstruction(), arrayReference, arrayPosition);
+		Assignment assignment = new Assignment(context.getCurrentInstruction(), arrayPositionReference, value);
+		
+		StatementIntermediate si = new StatementIntermediate(context.getCurrentInstruction(), assignment);
+		
+		//add it to the intermediate lines.
+		context.getIntermediate().add(si);
 	}
 
 	//array length instruction
@@ -1313,7 +1333,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression right = context.getExpressions().pop();
 
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
-		ConditionalIntermediate line = new ConditionalIntermediate(this.context.getCurrentInstruction(), conditional);
+		BooleanBranchIntermediate line = new BooleanBranchIntermediate(this.context.getCurrentInstruction(), conditional);
 		context.getIntermediate().add(line);
 	}
 	
@@ -1339,15 +1359,29 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 
 	public void visitTABLESWITCH(TABLESWITCH instruction) {
-		// TODO Auto-generated method stub
-	}
-	
-	
+		Expression switchVal = context.getExpressions().pop();
+		Switch switchExpression = new Switch(context.getCurrentInstruction(), switchVal);
 
+			Select select = (Select)instruction;
+			
+			Set<Case> cases = new HashSet<Case>();
+			InstructionHandle[] handles = select.getTargets();
+			
+			for(int i=0, j=handles.length; i<j; i++) {
+				InstructionHandle ih = handles[i];
+    			int match = select.getMatchs()[i];
+    			
+    			Resolved resolved = new Resolved(context.getCurrentInstruction(), BasicType.INT, ""+match);
+    			Case caseEntry = new Case(context.getCurrentInstruction(), resolved);
+    		
+    			cases.add(caseEntry);
+			}
+	}
 
 	public void visitIMPDEP1(IMPDEP1 instruction) {
 		//Not used: https://www.vmth.ucdavis.edu/incoming/Jasmin/ref-impdep1.html
 	}
+
 
 	public void visitIMPDEP2(IMPDEP2 instruction) {
 		//Not used: https://www.vmth.ucdavis.edu/incoming/Jasmin/ref-impdep1.html

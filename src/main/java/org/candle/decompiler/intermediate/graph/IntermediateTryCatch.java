@@ -33,9 +33,9 @@ public class IntermediateTryCatch {
 					}
 				}
 				
-				if(ai instanceof ConditionalIntermediate) {
-					int t1 = ((ConditionalIntermediate) ai).getTrueTarget().getInstruction().getPosition();
-					int t2 = ((ConditionalIntermediate) ai).getFalseTarget().getInstruction().getPosition();
+				if(ai instanceof BooleanBranchIntermediate) {
+					int t1 = ((BooleanBranchIntermediate) ai).getTrueTarget().getInstruction().getPosition();
+					int t2 = ((BooleanBranchIntermediate) ai).getFalseTarget().getInstruction().getPosition();
 					
 					if(t1 > upperBounds) {
 						System.out.println("Conditional breaks out of Try block to: "+t1);

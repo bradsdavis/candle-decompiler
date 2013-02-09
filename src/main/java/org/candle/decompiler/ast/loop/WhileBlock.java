@@ -6,18 +6,18 @@ import java.io.Writer;
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.ast.Block;
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 
 public class WhileBlock extends Block {
 
 	
-	private final ConditionalIntermediate conditional;
+	private final BooleanBranchIntermediate conditional;
 	
-	public WhileBlock(ConditionalIntermediate conditional) {
+	public WhileBlock(BooleanBranchIntermediate conditional) {
 		this.conditional = conditional;
 	}
 	
-	public ConditionalIntermediate getConditional() {
+	public BooleanBranchIntermediate getConditional() {
 		return conditional;
 	}
 	

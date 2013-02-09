@@ -3,14 +3,14 @@ package org.candle.decompiler.intermediate.code.loop;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.candle.decompiler.intermediate.code.ConditionalIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class ForIntermediate extends WhileIntermediate {
 
 	private final Expression init;
-	private final ConditionalIntermediate expression;
+	private final BooleanBranchIntermediate expression;
 	private final Expression update;
 	
 	public ForIntermediate(WhileIntermediate whileIntermediate, Expression init, Expression update) {
@@ -24,7 +24,7 @@ public class ForIntermediate extends WhileIntermediate {
 	}
 	
 	@Override
-	public ConditionalIntermediate getConditionalIntermediate() {
+	public BooleanBranchIntermediate getConditionalIntermediate() {
 		// TODO Auto-generated method stub
 		return super.getConditionalIntermediate();
 	}
