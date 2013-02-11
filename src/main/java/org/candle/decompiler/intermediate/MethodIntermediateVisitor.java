@@ -1,9 +1,7 @@
 package org.candle.decompiler.intermediate;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.bcel.Constants;
 import org.apache.bcel.classfile.ConstantClass;
@@ -15,13 +13,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
+import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Arithmetic;
 import org.candle.decompiler.intermediate.expression.ArithmeticType;
 import org.candle.decompiler.intermediate.expression.ArrayLength;
 import org.candle.decompiler.intermediate.expression.ArrayPositionReference;
 import org.candle.decompiler.intermediate.expression.Assignment;
-import org.candle.decompiler.intermediate.expression.Case;
 import org.candle.decompiler.intermediate.expression.Cast;
 import org.candle.decompiler.intermediate.expression.ConstructorInvocation;
 import org.candle.decompiler.intermediate.expression.Declaration;
@@ -1362,20 +1360,8 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression switchVal = context.getExpressions().pop();
 		Switch switchExpression = new Switch(context.getCurrentInstruction(), switchVal);
 
-			Select select = (Select)instruction;
-			
-			Set<Case> cases = new HashSet<Case>();
-			InstructionHandle[] handles = select.getTargets();
-			
-			for(int i=0, j=handles.length; i<j; i++) {
-				InstructionHandle ih = handles[i];
-    			int match = select.getMatchs()[i];
-    			
-    			Resolved resolved = new Resolved(context.getCurrentInstruction(), BasicType.INT, ""+match);
-    			Case caseEntry = new Case(context.getCurrentInstruction(), resolved);
-    		
-    			cases.add(caseEntry);
-			}
+		MultiBranchIntermediate mbi = new MultiBranchIntermediate(context.getCurrentInstruction(), switchExpression);
+		context.getIntermediate().add(mbi);
 	}
 
 	public void visitIMPDEP1(IMPDEP1 instruction) {

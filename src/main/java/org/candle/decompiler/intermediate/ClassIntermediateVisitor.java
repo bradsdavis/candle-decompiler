@@ -62,6 +62,7 @@ import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.IntermediateAttributeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.IntermediateEdgeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
@@ -375,7 +376,7 @@ public class ClassIntermediateVisitor implements Visitor {
 
 		System.out.println("Before ======");
 		Writer w = new OutputStreamWriter(System.out);
-		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()));
+		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()), new IntermediateAttributeProvider(), null);
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
 		System.out.println("End Before ======");
 		

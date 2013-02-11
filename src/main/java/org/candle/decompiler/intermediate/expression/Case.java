@@ -8,12 +8,17 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class Case extends Expression {
 
+	private final InstructionHandle target;
 	private final Expression expression;
 	
-	public Case(InstructionHandle instructionHandle, Expression expression) {
+	public Case(InstructionHandle instructionHandle, InstructionHandle target, Expression expression) {
 		super(instructionHandle);
-		
+		this.target = target;
 		this.expression = expression;
+	}
+	
+	public InstructionHandle getTarget() {
+		return target;
 	}
 	
 	public Expression getExpression() {

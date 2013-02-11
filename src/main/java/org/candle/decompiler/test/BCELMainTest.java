@@ -13,8 +13,8 @@ public class BCELMainTest {
 		 //String className = "org.candle.decompiler.test.TestSimpleLoops";
 		  //String className = "org.candle.decompiler.test.TestTryCatch";
 		  //String className = "org.candle.decompiler.test.TestConditionsBlock";
-		  //String className = "org.candle.decompiler.test.Switch";
-		  String className = "org.candle.decompiler.test.TestArrayAssignment";
+		  String className = "org.candle.decompiler.test.Switch";
+		  //String className = "org.candle.decompiler.test.TestArrayAssignment";
 		  
 		  CandleDecompiler decompiler = new CandleDecompiler();
 		  decompiler.decompile(className);

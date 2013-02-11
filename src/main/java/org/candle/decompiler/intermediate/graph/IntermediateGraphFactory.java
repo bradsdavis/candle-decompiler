@@ -3,14 +3,19 @@ package org.candle.decompiler.intermediate.graph;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.bcel.generic.BasicType;
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Select;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
+import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
+import org.candle.decompiler.intermediate.expression.Case;
+import org.candle.decompiler.intermediate.expression.DefaultCase;
+import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
@@ -96,7 +101,61 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	
 	@Override
 	public void visitMultiConditionalLine(MultiBranchIntermediate line) {
-	
+		
+		Select select = (Select)line.getInstruction().getInstruction();
+		
+		Set<Case> cases = new HashSet<Case>();
+		InstructionHandle[] handles = select.getTargets();
+		
+		for(int i=0, j=handles.length; i<j; i++) {
+			InstructionHandle ih = handles[i];
+			int match = select.getMatchs()[i];
+			
+			Resolved resolved = new Resolved(line.getInstruction(), BasicType.INT, ""+match);
+			Case caseEntry = new Case(line.getInstruction(), ih, resolved);
+			cases.add(caseEntry);
+		}
+		
+		if(select.getTarget()!=null) {
+			DefaultCase defaultCase = new DefaultCase(line.getInstruction(), select.getTarget());
+			line.setDefaultCase(defaultCase);
+		}
+		
+		//now, create the graph.
+		line.setCases(cases);
+		
+		//now, create the graph.
+		
+		igc.getIntermediateGraph().addVertex(line);
+		if(line.getDefaultCase() != null) {
+			CaseIntermediate si = new CaseIntermediate(line.getInstruction(), line.getDefaultCase());
+			igc.getIntermediateGraph().addVertex(si);
+			
+			//add an edge.
+			igc.getIntermediateGraph().addEdge(line, si);
+
+			//add edge from outcome to edge.
+			System.out.println(si);
+			AbstractIntermediate target = ilc.getNext(line.getDefaultCase().getTarget().getPosition());
+			
+			System.out.println("TargeT:"+target);
+			igc.getIntermediateGraph().addVertex(target);
+			igc.getIntermediateGraph().addEdge(si, target);
+		}
+		
+		
+		for(Case caseVal : line.getCases()) {
+			CaseIntermediate si = new CaseIntermediate(line.getInstruction(), caseVal);
+			igc.getIntermediateGraph().addVertex(si);
+			
+			//add an edge.
+			igc.getIntermediateGraph().addEdge(line, si);
+			
+			//add edge from outcome to edge.
+			AbstractIntermediate target = ilc.getNext(caseVal.getTarget().getPosition());
+			igc.getIntermediateGraph().addVertex(target);
+			igc.getIntermediateGraph().addEdge(si, target);
+		}
 	}
 
 	@Override

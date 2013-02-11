@@ -1,5 +1,7 @@
 package org.candle.decompiler.intermediate.code;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
@@ -10,15 +12,20 @@ import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 public class MultiBranchIntermediate extends AbstractIntermediate {
 
 	private final Switch expression;
-	private final Case defaultCase;
-	private final Set<Case> cases;
+	private Case defaultCase;
+	private Set<Case> cases;
 	
-	public MultiBranchIntermediate(InstructionHandle instruction, Switch expression, Case defaultCase, Set<Case> cases) {
+	public MultiBranchIntermediate(InstructionHandle instruction, Switch expression) {
 		super(instruction);
-		
-		this.defaultCase = defaultCase;
-		this.cases = cases;
 		this.expression = expression;
+	}
+	
+	public void setCases(Set<Case> cases) {
+		this.cases = cases;
+	}
+	
+	public void setDefaultCase(Case defaultCase) {
+		this.defaultCase = defaultCase;
 	}
 	
 	public Case getDefaultCase() {
@@ -31,6 +38,18 @@ public class MultiBranchIntermediate extends AbstractIntermediate {
 	
 	public Switch getExpression() {
 		return expression;
+	}
+	
+	@Override
+	public String toString() {
+		StringWriter sw = new StringWriter();
+		try {
+			this.expression.write(sw);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "Switch: "+sw.toString();
 	}
 
 	@Override
