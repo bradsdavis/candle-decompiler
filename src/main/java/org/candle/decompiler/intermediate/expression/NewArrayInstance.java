@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 
 public class NewArrayInstance extends NewInstance {
 
-	private final Expression count;
+	protected final Expression count;
 	
 	public NewArrayInstance(InstructionHandle instructionHandle, Type type, Expression count) {
 		super(instructionHandle, type);

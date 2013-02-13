@@ -70,7 +70,7 @@ import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
-import org.candle.decompiler.intermediate.graph.enhancer.Else;
+import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
 import org.candle.decompiler.intermediate.graph.enhancer.GotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
@@ -385,6 +385,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new MergeConditionExpression(lc.getIntermediateGraph()));
 
 		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
+		enhancers.add(new ConstantArrayCompressor(lc.getIntermediateGraph()));
 		
 		
 		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
@@ -393,7 +394,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		enhancers.add(new If(lc.getIntermediateGraph()));
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
-		enhancers.add(new Else(lc.getIntermediateGraph()));
+		//enhancers.add(new Else(lc.getIntermediateGraph()));
 		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
 
 		for(GraphIntermediateVisitor giv : enhancers) {

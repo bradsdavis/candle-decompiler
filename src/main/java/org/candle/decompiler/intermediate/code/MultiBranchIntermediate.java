@@ -49,7 +49,7 @@ public class MultiBranchIntermediate extends AbstractIntermediate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "Switch: "+sw.toString();
+		return "TestSwitch: "+sw.toString();
 	}
 
 	@Override

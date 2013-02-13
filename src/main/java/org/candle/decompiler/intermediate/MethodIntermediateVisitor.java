@@ -31,6 +31,7 @@ import org.candle.decompiler.intermediate.expression.InstanceOf;
 import org.candle.decompiler.intermediate.expression.MethodInvocation;
 import org.candle.decompiler.intermediate.expression.MultiConditional;
 import org.candle.decompiler.intermediate.expression.NewArrayInstance;
+import org.candle.decompiler.intermediate.expression.NewConstantArrayInstance;
 import org.candle.decompiler.intermediate.expression.NewInstance;
 import org.candle.decompiler.intermediate.expression.OperationType;
 import org.candle.decompiler.intermediate.expression.Resolved;
@@ -1058,12 +1059,10 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 	
 	protected void processArrayStore() {
-		System.out.println("Storing array.");
-		
 		Expression value = context.getExpressions().pop();
 		Expression arrayPosition = context.getExpressions().pop();
 		Expression arrayReference = context.getExpressions().pop();
-
+		
 		ArrayPositionReference arrayPositionReference = new ArrayPositionReference(context.getCurrentInstruction(), arrayReference, arrayPosition);
 		Assignment assignment = new Assignment(context.getCurrentInstruction(), arrayPositionReference, value);
 		
@@ -1086,16 +1085,45 @@ public class MethodIntermediateVisitor implements Visitor {
 		//handle in subtype
 	}
 	
+	/**
+	 * Decompiles "new primitive array" operations. 
+	 */
 	public void visitNEWARRAY(NEWARRAY instruction) {
+		//first, check to see if the next instruction is a DUP.  If so,
+		//this is probably a constant array value.
 		Expression count = context.getExpressions().pop();
-		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), instruction.getType(), count);
+		NewArrayInstance nai = null;
+		
+		if(context.getCurrentInstruction().getNext().getInstruction() instanceof DUP) {
+			nai = new NewConstantArrayInstance(context.getCurrentInstruction(), instruction.getType(), count);
+		}
+		else {
+			nai = new NewArrayInstance(context.getCurrentInstruction(), instruction.getType(), count);
+		}
+		
+		context.getExpressions().push(nai);	
+		
+	}
+	
+	/**
+	 * Decompiles "new object array" operations. 
+	 */
+	public void visitANEWARRAY(ANEWARRAY instruction) {
+		Type type = instruction.getType(context.getMethodGen().getConstantPool());
+		Expression count = context.getExpressions().pop();
+		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
 		context.getExpressions().push(nai);
 	}
 	
-	public void visitANEWARRAY(ANEWARRAY instruction) {
-		LOG.info("Calling ANEWARRAY: "+instruction);
+	/***
+	 * Decompiles "new multi-dimentional array" operations.
+	 */
+	public void visitMULTIANEWARRAY(MULTIANEWARRAY instruction) {
+		Type type = instruction.getType(context.getMethodGen().getConstantPool());
+		Expression count = context.getExpressions().pop();
+		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
+		context.getExpressions().push(nai);
 	}
-	
 	
 	//array load operations
 	protected void processArrayLoad() {
@@ -1303,14 +1331,6 @@ public class MethodIntermediateVisitor implements Visitor {
 	public void visitCHECKCAST(CHECKCAST instruction) {
 		// TODO Auto-generated method stub
 		
-	}
-
-	
-	
-
-	
-	public void visitMULTIANEWARRAY(MULTIANEWARRAY instruction) {
-		// TODO Auto-generated method stub
 	}
 
 	

@@ -24,11 +24,11 @@ public class IntermediateAttributeProvider implements ComponentAttributeProvider
 		}
 		else if(component instanceof CaseIntermediate) 
 		{
-			attributes.put("shape", "box");
+			//attributes.put("shape", "box");
 			attributes.put("fillcolor", "#EEE");
 		}
 		else {
-			attributes.put("shape", "box");
+			//attributes.put("shape", "box");
 		}
 		return attributes;
 	}

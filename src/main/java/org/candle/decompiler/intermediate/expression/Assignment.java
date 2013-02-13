@@ -10,8 +10,8 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class Assignment extends Expression {
 
-	private final Expression left;
-	private final Expression right;
+	private Expression left;
+	private Expression right;
 	
 	public Assignment(InstructionHandle instructionHandle, Expression left, Expression right) {
 		super(instructionHandle);
@@ -25,6 +25,14 @@ public class Assignment extends Expression {
 	
 	public Expression getRight() {
 		return right;
+	}
+	
+	public void setLeft(Expression left) {
+		this.left = left;
+	}
+	
+	public void setRight(Expression right) {
+		this.right = right;
 	}
 	
 	@Override
