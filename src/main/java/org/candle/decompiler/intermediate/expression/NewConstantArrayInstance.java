@@ -2,19 +2,23 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
 
 public class NewConstantArrayInstance extends NewArrayInstance {
 
-	public NewConstantArrayInstance(InstructionHandle instructionHandle,
-			Type type, Expression count) {
+	public NewConstantArrayInstance(InstructionHandle instructionHandle, Type type, Expression count) {
 		super(instructionHandle, type, count);
 	}
 	
+	public NewConstantArrayInstance(InstructionHandle instructionHandle, Type type, List<Expression> counts) {
+		super(instructionHandle, type, counts);
+	}
+	
 	public Expression getCount() {
-		return count;
+		return counts.get(0);
 	}
 	
 	@Override

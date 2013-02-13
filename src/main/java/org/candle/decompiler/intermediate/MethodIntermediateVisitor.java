@@ -1,6 +1,7 @@
 package org.candle.decompiler.intermediate;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.bcel.Constants;
@@ -1125,8 +1126,17 @@ public class MethodIntermediateVisitor implements Visitor {
 	 */
 	public void visitMULTIANEWARRAY(MULTIANEWARRAY instruction) {
 		Type type = instruction.getType(context.getMethodGen().getConstantPool());
-		Expression count = context.getExpressions().pop();
-		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
+		
+		LinkedList<Expression> counts = new LinkedList<Expression>();
+		int provided = instruction.getDimensions();
+		
+		
+		
+		for(int i=0; i<provided; i++) {
+			counts.addFirst(context.getExpressions().pop());
+		}
+		
+		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, counts);
 		context.getExpressions().push(nai);
 	}
 	
