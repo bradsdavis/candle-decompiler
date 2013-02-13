@@ -5,7 +5,9 @@
   <version>1.0.0</version>
   <name>Candle Decompiler</name>
   <description>
-</description>
+   
+  </description>
+ 
   <dependencies>
   	<dependency>
   		<groupId>org.apache.bcel</groupId>
@@ -33,4 +35,6 @@
   		<version>0.8.3</version>
   	</dependency>
   </dependencies>
+  
+  
 </project>

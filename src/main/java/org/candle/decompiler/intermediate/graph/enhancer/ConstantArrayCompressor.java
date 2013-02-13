@@ -1,8 +1,15 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
-import java.util.LinkedList;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.bcel.generic.Type;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.ArrayPositionReference;
@@ -11,12 +18,15 @@ import org.candle.decompiler.intermediate.expression.ConstantArray;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.NewConstantArrayInstance;
+import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
 public class ConstantArrayCompressor extends GraphIntermediateVisitor {
-
+	
+	private static final Log LOG = LogFactory.getLog(ConstantArrayCompressor.class);
+	
 	public ConstantArrayCompressor(IntermediateGraphContext igc) {
 		super(igc, false);
 	}
@@ -43,16 +53,33 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		if(!(declaration.getAssignment().getRight() instanceof NewConstantArrayInstance)) {
 			return;
 		}
+		NewConstantArrayInstance ncai = (NewConstantArrayInstance)declaration.getAssignment().getRight();
+		Expression countExpression = ncai.getCount();
 		
 		
 		AbstractIntermediate current = line;
-		LinkedList<Expression> values = new LinkedList<Expression>();
+		Map<Integer, Expression> values = new HashMap<Integer, Expression>();
 		collectConstantAssignments(current, values);
+		
+		//create a new array...
+		Integer count = toInteger(countExpression);
+		List<Expression> expressions = new ArrayList<Expression>(count);
+		for(int i=0, j=count; i<j; i++) {
+			Expression exp = null;
+			if(values.containsKey(i)) {
+				exp = values.get(i);
+			}
+			else {
+				exp = new Resolved(ncai.getInstructionHandle(), Type.NULL, "null");
+			}
+			expressions.add(i, exp);
+		}
+		
 		
 		//ok, we have the stack... now we need to just create a new expression.
 
 		//create the contant...
-		ConstantArray constantArray = new ConstantArray(declaration.getAssignment().getRight().getInstructionHandle(), values);
+		ConstantArray constantArray = new ConstantArray(declaration.getAssignment().getRight().getInstructionHandle(), expressions);
 		declaration.getAssignment().setRight(constantArray);
 		
 		
@@ -87,7 +114,7 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		}
 	}
 	
-	public void collectConstantAssignments(AbstractIntermediate current, LinkedList<Expression> assignments) {
+	public void collectConstantAssignments(AbstractIntermediate current, Map<Integer, Expression> assignments) {
 		StatementIntermediate si = (StatementIntermediate)current;
 		
 		//get the assignment...
@@ -97,7 +124,8 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		}
 		
 		Expression right = assignment.getRight();
-		assignments.addFirst(right);
+		ArrayPositionReference apr = (ArrayPositionReference)assignment.getLeft();
+		assignments.put(toInteger(apr.getArrayPosition()), right);
 		
 		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), current);
 		
@@ -112,6 +140,17 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		for(AbstractIntermediate a : predecessor) {
 			collectConstantAssignments(a, assignments);
 		}
+	}
+	
+	public Integer toInteger(Expression apr) {
+		StringWriter pos = new StringWriter();
+		try {
+			apr.write(pos);
+		} catch (IOException e) {
+			throw new IllegalStateException("Position is not an integer.", e);
+		}
+		
+		return Integer.parseInt(pos.toString());
 	}
 	
 	public Declaration extractNextDeclaration(StatementIntermediate statement) {

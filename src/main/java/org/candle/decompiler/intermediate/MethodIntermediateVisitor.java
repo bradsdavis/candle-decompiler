@@ -130,18 +130,6 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		processReturn(ret);
 	}
-	
-
-	public void visitJsrInstruction(JsrInstruction instruction) {
-		// TODO Auto-generated method stub
-	}
-	public void visitJSR(JSR instruction) {
-		// TODO Auto-generated method stub
-	}
-	public void visitJSR_W(JSR_W instruction) {
-		// TODO Auto-generated method stub
-	}
-
 
 	public void visitGOTO_W(GOTO_W instruction) {
 		//fall to goto
@@ -1031,28 +1019,36 @@ public class MethodIntermediateVisitor implements Visitor {
 	
 	//array store instruction
 	public void visitLASTORE(LASTORE instruction) {
-		// TODO Auto-generated method stub
+		//long
+		processArrayStore();
 	}
 	public void visitDASTORE(DASTORE instruction) {
-		// TODO Auto-generated method stub
+		//double
+		processArrayStore();
 	}
 	public void visitBASTORE(BASTORE instruction) {
-		// TODO Auto-generated method stub
+		//byte
+		processArrayStore();
 	}
 	public void visitCASTORE(CASTORE instruction) {
-		// TODO Auto-generated method stub
+		//character
+		processArrayStore();
 	}
 	public void visitSASTORE(SASTORE instruction) {
-		// TODO Auto-generated method stub
+		//short
+		processArrayStore();
 	}
 	public void visitIASTORE(IASTORE instruction) {
+		//int
 		processArrayStore();
 	}
 	public void visitFASTORE(FASTORE instruction) {
-		// TODO Auto-generated method stub
+		//float
+		processArrayStore();
 	}
 	public void visitAASTORE(AASTORE instruction) {
-		// TODO Auto-generated method stub
+		//object
+		processArrayStore();
 	}
 	public void visitArrayInstruction(ArrayInstruction instruction) {
 		// TODO Auto-generated method stub
@@ -1111,7 +1107,16 @@ public class MethodIntermediateVisitor implements Visitor {
 	public void visitANEWARRAY(ANEWARRAY instruction) {
 		Type type = instruction.getType(context.getMethodGen().getConstantPool());
 		Expression count = context.getExpressions().pop();
-		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
+
+		NewArrayInstance nai = null;
+		
+		if(context.getCurrentInstruction().getNext().getInstruction() instanceof DUP) {
+			nai = new NewConstantArrayInstance(context.getCurrentInstruction(), type, count);
+		}
+		else {
+			nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
+		}
+		
 		context.getExpressions().push(nai);
 	}
 	
@@ -1243,15 +1248,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		context.getExpressions().push(cast);
 	}
 	
-	public void visitStackInstruction(StackInstruction instruction) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	public void visitLocalVariableInstruction(LocalVariableInstruction instruction) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public void visitBranchInstruction(BranchInstruction instruction) {
 		//handle in subtypes.
@@ -1289,20 +1286,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		//handle in subtype.
 	}
 
-
-
 	
-
-
-	public void visitFieldOrMethod(FieldOrMethod instruction) {
-		// TODO Auto-generated method stub
-	}
-
-
-	public void visitExceptionThrower(ExceptionThrower instruction) {
-		// TODO Auto-generated method stub
-		
-	}
 	public void visitATHROW(ATHROW instruction) {
 		Expression expression = context.getExpressions().pop();
 		Throw throwException = new Throw(context.getCurrentInstruction(), expression);
@@ -1314,8 +1298,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 	
 	public void visitVariableLengthInstruction(VariableLengthInstruction instruction) {
-		// TODO Auto-generated method stub
-		
+		//handle in subtype
 	}
 
 	public void visitStackProducer(StackProducer instruction) {
@@ -1329,12 +1312,27 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 
 	public void visitCHECKCAST(CHECKCAST instruction) {
-		// TODO Auto-generated method stub
-		
+		//don't need to handle for decompile.
+	}
+
+	public void visitFieldOrMethod(FieldOrMethod instruction) {
+		//handle in subtype
+	}
+
+	public void visitExceptionThrower(ExceptionThrower instruction) {
+		//handle in subtype
+	}
+	
+	public void visitStackInstruction(StackInstruction instruction) {
+		//handle in subtype
+	}
+
+	public void visitLocalVariableInstruction(LocalVariableInstruction instruction) {
+		//handle in subtype
 	}
 
 	
-
+	
 	//synchronized block
 	public void visitMONITOREXIT(MONITOREXIT instruction) {
 		// TODO Auto-generated method stub
@@ -1344,6 +1342,17 @@ public class MethodIntermediateVisitor implements Visitor {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void visitJsrInstruction(JsrInstruction instruction) {
+		// TODO Auto-generated method stub
+	}
+	public void visitJSR(JSR instruction) {
+		// TODO Auto-generated method stub
+	}
+	public void visitJSR_W(JSR_W instruction) {
+		// TODO Auto-generated method stub
+	}
+	
 
 
 	protected void processComparator() {
@@ -1373,17 +1382,21 @@ public class MethodIntermediateVisitor implements Visitor {
 
 
 	public void visitLOOKUPSWITCH(LOOKUPSWITCH instruction) {
-		// TODO Auto-generated method stub
+		handleSwitch();
 	}
 
 	public void visitTABLESWITCH(TABLESWITCH instruction) {
+		handleSwitch();
+	}
+
+	public void handleSwitch() {
 		Expression switchVal = context.getExpressions().pop();
 		Switch switchExpression = new Switch(context.getCurrentInstruction(), switchVal);
 
 		MultiBranchIntermediate mbi = new MultiBranchIntermediate(context.getCurrentInstruction(), switchExpression);
 		context.getIntermediate().add(mbi);
 	}
-
+	
 	public void visitIMPDEP1(IMPDEP1 instruction) {
 		//Not used: https://www.vmth.ucdavis.edu/incoming/Jasmin/ref-impdep1.html
 	}

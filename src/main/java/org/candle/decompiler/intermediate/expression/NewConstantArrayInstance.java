@@ -13,6 +13,10 @@ public class NewConstantArrayInstance extends NewArrayInstance {
 		super(instructionHandle, type, count);
 	}
 	
+	public Expression getCount() {
+		return count;
+	}
+	
 	@Override
 	public void write(Writer builder) throws IOException {
 		builder.write("CONSTANT ");
