@@ -17,7 +17,6 @@ public class IntermediateGraphContext {
 	
 	public IntermediateGraphContext(ListenableDirectedGraph<AbstractIntermediate, IntermediateEdge> intermediateGraph) {
 		this.intermediateGraph = intermediateGraph;
-		this.intermediateGraph.addGraphListener(new ConditionalBranchListener(this));
 		this.orderedIntermediate = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
 		
 		this.orderedIntermediate.addAll(this.intermediateGraph.vertexSet());
@@ -58,26 +57,34 @@ public class IntermediateGraphContext {
 		}
 	}
 	
-	public AbstractIntermediate getTrueTarget(BooleanBranchIntermediate ci) {
-		TreeSet<AbstractIntermediate> successors = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
-		successors.addAll(Graphs.successorListOf(intermediateGraph, ci));
+	public AbstractIntermediate getSingleSuccessor(AbstractIntermediate ai) {
+		List<AbstractIntermediate> successors = Graphs.successorListOf(intermediateGraph, ai);
 		
-		if(successors.size() > 2) {
-			throw new IllegalStateException("Condition should only have 1.");
+		if(successors.size() == 1) {
+			return successors.get(0);
 		}
 		
-		return successors.pollFirst();
+		throw new IllegalStateException("Should only have 1 outgoing edge.");
+	}
+	
+	
+	public AbstractIntermediate getSinglePredecessor(AbstractIntermediate ai) {
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, ai);
+		
+		if(predecessors.size() == 1) {
+			return predecessors.get(0);
+		}
+		
+		throw new IllegalStateException("Should only have 1 incoming edge.");
+	}
+	
+	
+	public AbstractIntermediate getTrueTarget(BooleanBranchIntermediate ci) {
+		return getSingleSuccessor(ci.getTrueBranch());
 	}
 	
 	public AbstractIntermediate getFalseTarget(BooleanBranchIntermediate ci) {
-		TreeSet<AbstractIntermediate> successors = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
-		successors.addAll(Graphs.successorListOf(intermediateGraph, ci));
-		
-		if(successors.size() > 2) {
-			throw new IllegalStateException("Condition should only have 1.");
-		}
-		
-		return successors.pollLast();
+		return getSingleSuccessor(ci.getFalseBranch());
 	}
 	
 	

@@ -142,7 +142,7 @@ public class BlockVisitor extends EmptyIntermediateVisitor {
 	}
 
 	@Override
-	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line) {
 		//by default, set it as an if block.
 
 		boolean addIf = true;

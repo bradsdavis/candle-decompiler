@@ -9,6 +9,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Select;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
@@ -75,28 +76,36 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	}
 
 	@Override
-	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line) {
 		InstructionHandle next = line.getInstruction().getNext();
 		
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate nextIntermediate = ilc.getNext(next.getPosition());
-		//now, we just add this into the graph.
-
+		igc.getIntermediateGraph().addVertex(nextIntermediate);
+		
 		BranchHandle bi = ((BranchHandle)line.getInstruction());
 		AbstractIntermediate targetIntermediate = ilc.getNext(bi.getTarget().getPosition());
-		
-		igc.getIntermediateGraph().addVertex(nextIntermediate);
-		igc.getIntermediateGraph().addEdge(line, nextIntermediate);
-
-		//also add the target.
-
-		if(targetIntermediate == null) {
-			System.out.println(line);
-		}
-		
-
 		igc.getIntermediateGraph().addVertex(targetIntermediate);
-		igc.getIntermediateGraph().addEdge(line, targetIntermediate);
+		
+		AbstractIntermediate lowest = targetIntermediate.getInstruction().getPosition() < nextIntermediate.getInstruction().getPosition() ? targetIntermediate : nextIntermediate;
+		AbstractIntermediate highest = targetIntermediate.getInstruction().getPosition() > nextIntermediate.getInstruction().getPosition() ? targetIntermediate : nextIntermediate;
+		
+		
+		
+		//add true path... (Conditional) -> (True) -> (Node A)
+		BooleanBranchOutcome trueOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.TRUE);
+		line.setTrueBranch(trueOutcome);
+		igc.getIntermediateGraph().addVertex(trueOutcome);
+		igc.getIntermediateGraph().addEdge(line, trueOutcome);
+		igc.getIntermediateGraph().addEdge(trueOutcome, lowest);
+		
+		
+		//add false path... (Conditional) -> (False) -> (Node A)
+		BooleanBranchOutcome falseOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.FALSE);
+		line.setFalseBranch(falseOutcome);
+		igc.getIntermediateGraph().addVertex(falseOutcome);
+		igc.getIntermediateGraph().addEdge(line, falseOutcome);
+		igc.getIntermediateGraph().addEdge(falseOutcome, highest);
 	}
 	
 	@Override

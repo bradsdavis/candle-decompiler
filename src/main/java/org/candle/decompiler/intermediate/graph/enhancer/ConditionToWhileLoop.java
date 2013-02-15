@@ -24,7 +24,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		CycleDetector<AbstractIntermediate, IntermediateEdge> cycleDetector = new CycleDetector<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph());
@@ -73,6 +73,8 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 			//check to validate that the GOTO instruction is less than the other incoming...
 			if(comparator.before(nonNestedLine, line) && comparator.before(otherLine, line)) {
 				WhileIntermediate whileIntermediate = new WhileIntermediate((BranchHandle)nonNestedLine.getInstruction(), line);
+				whileIntermediate.setTrueBranch(line.getTrueBranch());
+				whileIntermediate.setFalseBranch(line.getFalseBranch());
 				
 				//add this to the graph.
 				this.igc.getIntermediateGraph().addVertex(whileIntermediate);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
@@ -17,69 +18,59 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 		super(igc, true);
 	}
 	
+	protected void mergeConditions(BooleanBranchIntermediate bbo1, BooleanBranchIntermediate bbo2) {
+		//check to see if the false of bbo2 and bbo1 go to same location.
+
+		//previous
+		ConditionalExpression m1 = bbo2.getExpression();
+		
+		//current
+		ConditionalExpression m2 = bbo1.getExpression();
+		
+		
+		if(igc.getTrueTarget(bbo2) == bbo1) {
+			if(igc.getFalseTarget(bbo1) == igc.getFalseTarget(bbo2)) {
+				LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(m1, m2, LogicalGateType.AND);
+				bbo1.setExpression(expression);
+			}
+			else if(igc.getFalseTarget(bbo2) == igc.getTrueTarget(bbo1)) {
+				m1.negate();
+				
+				LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(m1, m2, LogicalGateType.OR);
+				bbo1.setExpression(expression);
+			}
+			else {
+				return;
+			}
+			
+			//ok, we merged?  remove bbo2.
+			igc.redirectPredecessors(bbo2, bbo1);
+			
+			//remove vertexes of bbo2.
+			igc.getIntermediateGraph().removeVertex(bbo2.getFalseBranch());
+			igc.getIntermediateGraph().removeVertex(bbo2.getTrueBranch());
+			igc.getIntermediateGraph().removeVertex(bbo2);
+		}
+	}
+	
 	@Override
-	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
-		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getIntermediateGraph(), line);
-		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate bbo1) {
+		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), bbo1);
 		
 		for(AbstractIntermediate i : predecessor) {
+			if(!igc.getIntermediateGraph().containsVertex(i)) {
+				continue;
+			}
+			
 			//check to see whether the incoming is a conditional..
-			if(i instanceof BooleanBranchIntermediate) {
-				BooleanBranchIntermediate ci = (BooleanBranchIntermediate)i;
+			if(i instanceof BooleanBranchOutcome) {
+				BooleanBranchOutcome booleanBranchOutcome = (BooleanBranchOutcome)i;
 				
-				//potential to merge.
-				if(ci == line) {
-					continue;
-				}
+				//get a reference to the parent...
+				BooleanBranchIntermediate bbo2 = booleanBranchOutcome.getParent();
+				//ok, we have two branches coming in...
 				
-				//merging or statements are when conditionals have 2 legs.  in that case, if both legs target only the same target
-				//and one leg of the other conditional targets this conditional, then we can compress.
-				
-				//we already know here that the conditional i enters this node.  check whether the outcome of this node matches the other node.
-				List<AbstractIntermediate> cSuccess = Graphs.successorListOf(igc.getIntermediateGraph(), ci);
-				
-				//first, remove self from list.
-				cSuccess.remove(line);
-				
-				//next, for each successor of this, remove from other.
-				for(AbstractIntermediate ai : successors) {
-					cSuccess.remove(ai);
-				}
-				
-				//if this is empty now, we can merge.
-				if(cSuccess.size() == 0) {
-					System.out.println("Merge: "+ line + " AND "+i);
-					
-					//previous
-					ConditionalExpression m1 = ci.getExpression();
-					
-					//current
-					ConditionalExpression m2 = line.getExpression();
-					
-					//check to see if we need to negate first...
-					if(igc.getFalseTarget(ci) == igc.getFalseTarget(line)) {
-						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(m1, m2, LogicalGateType.AND);
-						line.setExpression(expression);
-					}
-					else if(igc.getFalseTarget(ci) == igc.getTrueTarget(line)) {
-						m1.negate();
-					
-						LogicalGateConditionalExpression expression = new LogicalGateConditionalExpression(m1, m2, LogicalGateType.OR);
-						line.setExpression(expression);
-					}
-					else {
-						return;
-					}
-					
-					
-					//find references to ci, redirect to line.
-					igc.redirectPredecessors(ci, line);
-					
-					//now remove vertex.
-					igc.getIntermediateGraph().removeVertex(ci);
-					
-					//for each predecessor, set the target if it is a conditional.
-				}
+				mergeConditions(bbo1, bbo2);
 			}
 		}
 	}

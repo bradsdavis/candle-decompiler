@@ -24,7 +24,8 @@ public class TestSimpleCondition {
 		int k=5;
 		
 		if(i==3 || j==5 || k==1 && k < 10) {
-			
+			LOG.info("Nested or block;");
+
 			if(i == 10) {
 				LOG.info("Nested If!");
 			}
@@ -47,7 +48,6 @@ public class TestSimpleCondition {
 			LOG.info("End of If/ElseIf/Else");
 		}
 		
-
 		if(i == 6) {
 			LOG.info("Breaking Thought?");
 		}

@@ -30,7 +30,7 @@ public class CandleDecompiler {
 		}
 		finally {
 			//silently.
-			if(osw != null) {
+			if(osw != null) { 
 				try {
 					osw.flush();
 					osw.close();

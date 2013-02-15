@@ -2,6 +2,7 @@ package org.candle.decompiler.intermediate.visitor;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
@@ -31,7 +32,7 @@ public class EmptyIntermediateVisitor implements IntermediateVisitor {
 	}
 
 	@Override
-	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line) {
 		
 	}
 
@@ -72,6 +73,11 @@ public class EmptyIntermediateVisitor implements IntermediateVisitor {
 
 	@Override
 	public void visitCaseLine(CaseIntermediate line) {
+		
+	}
+
+	@Override
+	public void visitBooleanBranchOutcome(BooleanBranchOutcome line) {
 		
 	}
 

@@ -2,6 +2,7 @@ package org.candle.decompiler.intermediate.visitor;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
@@ -14,6 +15,9 @@ import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 
 public interface IntermediateVisitor {
+	//branch pseudo
+	public void visitBooleanBranchOutcome(BooleanBranchOutcome line);
+	
 	public void visitEnhancedForLoopLine(EnhancedForIntermediate line);
 	public void visitForLoopLine(ForIntermediate line);
 	public void visitWhileLoopLine(WhileIntermediate line);
@@ -30,7 +34,7 @@ public interface IntermediateVisitor {
 	public void visitCompleteLine(StatementIntermediate line);
 	public void visitGoToLine(GoToIntermediate line);
 	public void visitMultiConditionalLine(MultiBranchIntermediate line);
-	public void visitBiConditionalLine(BooleanBranchIntermediate line);
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line);
 	public void visitAbstractLine(AbstractIntermediate line);
 	
 }

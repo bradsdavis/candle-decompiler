@@ -87,14 +87,18 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 			
 			//we are good to go here.  Now we just need to reorganize the graph.  Start by creating the new enhanced for loop.
 			EnhancedForIntermediate efl = new EnhancedForIntermediate(line.getInstruction(), line.getConditionalIntermediate(), childDeclaration.getVariable(), extractExpressionFromGeneratedArrayAssignment(tempArrayCandidate));
-
+			efl.setTrueBranch(line.getTrueBranch());
+			efl.setFalseBranch(line.getFalseBranch());
+			//add the new node...
 			this.igc.getIntermediateGraph().addVertex(efl);
 			
 			//now, we just need to redirect.
 			igc.redirectPredecessors(tempArrayCandidate, efl);
 			igc.redirectPredecessors(line, efl);
 			igc.redirectSuccessors(line, efl);
-			igc.redirectSuccessors(firstChild, efl);
+			
+			AbstractIntermediate nextChild = getSingleSuccessor(firstChild);
+			igc.redirectPredecessors(firstChild, nextChild);
 			
 			//remove line.
 			igc.getIntermediateGraph().removeVertex(line);
@@ -151,7 +155,6 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	
 	private AbstractIntermediate getForExteriorPredecessor(ForIntermediate line) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
-		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getIntermediateGraph(), line);
 		
 		//loop max min
 		int min = line.getInstruction().getPosition();
@@ -173,6 +176,16 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 		}
 		return null;
 	}
+	
+	private AbstractIntermediate getSingleSuccessor(AbstractIntermediate line) {
+		List<AbstractIntermediate> successor = Graphs.successorListOf(igc.getIntermediateGraph(), line);
+		
+		if(successor.size() == 1) {
+			return successor.get(0);
+		}
+		return null;
+	}
+	
 	
 	private AbstractIntermediate getSinglePredecessor(AbstractIntermediate line) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);

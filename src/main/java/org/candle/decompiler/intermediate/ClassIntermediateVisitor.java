@@ -383,20 +383,20 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
 		enhancers.add(new MergeConditionExpression(lc.getIntermediateGraph()));
-
-		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
 		enhancers.add(new ConstantArrayCompressor(lc.getIntermediateGraph()));
 		
-		
+		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));
 		enhancers.add(new ArrayForToEnhancedFor(lc.getIntermediateGraph()));
-		
+
+		/*
 		enhancers.add(new If(lc.getIntermediateGraph()));
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
 		//enhancers.add(new Else(lc.getIntermediateGraph()));
 		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
 
+	*/
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();
 		}

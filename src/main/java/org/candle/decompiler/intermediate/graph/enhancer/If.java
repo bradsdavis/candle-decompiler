@@ -18,7 +18,7 @@ public class If extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitBiConditionalLine(BooleanBranchIntermediate line) {
+	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line) {
 		
 		//transform to IF block.
 		
