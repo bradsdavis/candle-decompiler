@@ -15,6 +15,7 @@ public class Case extends Expression {
 		super(instructionHandle);
 		this.target = target;
 		this.expression = expression;
+		
 	}
 	
 	public InstructionHandle getTarget() {

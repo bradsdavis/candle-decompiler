@@ -7,13 +7,20 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
-public class StatementIntermediate extends AbstractIntermediate {
+public class StatementIntermediate extends AbstractIntermediate implements BlockSerializable {
 
+	private final BlockRange blockRange;
 	private Expression expression;
 	
 	public StatementIntermediate(InstructionHandle instruction, Expression expression) {
 		super(instruction);
 		this.expression = expression;
+		
+		
+		BlockRange blockRange = new BlockRange();
+		blockRange.setStart(instruction.getPosition());
+		blockRange.setEnd(instruction.getPosition());
+		this.blockRange = blockRange;
 	}
 	
 	public Expression getExpression() {
@@ -42,5 +49,10 @@ public class StatementIntermediate extends AbstractIntermediate {
 	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractLine(this);
 		visitor.visitCompleteLine(this); 
+	}
+
+	@Override
+	public BlockRange getBlockRange() {
+		return blockRange;
 	}
 }

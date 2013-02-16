@@ -14,6 +14,10 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 	protected final IntermediateGraphContext igc;
 	protected final boolean listenForUpdates;
 	
+	public GraphIntermediateVisitor(IntermediateGraphContext igc) {
+		this(igc, false);
+	}
+	
 	public GraphIntermediateVisitor(IntermediateGraphContext igc, boolean listenForUpdates) {
 		this.igc = igc;
 		this.listenForUpdates = listenForUpdates;

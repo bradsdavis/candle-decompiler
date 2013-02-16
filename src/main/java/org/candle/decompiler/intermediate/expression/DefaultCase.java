@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import org.apache.bcel.generic.InstructionHandle;
-
+ 
 public class DefaultCase extends Case {
 
 	public DefaultCase(InstructionHandle instructionHandle, InstructionHandle target) {

@@ -115,11 +115,12 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		
 		Set<Case> cases = new HashSet<Case>();
 		InstructionHandle[] handles = select.getTargets();
+		int[] matches = select.getMatchs();
 		
 		for(int i=0, j=handles.length; i<j; i++) {
 			InstructionHandle ih = handles[i];
-			int match = select.getMatchs()[i];
-			
+			int match = matches[i];
+
 			Resolved resolved = new Resolved(line.getInstruction(), BasicType.INT, ""+match);
 			Case caseEntry = new Case(line.getInstruction(), ih, resolved);
 			cases.add(caseEntry);

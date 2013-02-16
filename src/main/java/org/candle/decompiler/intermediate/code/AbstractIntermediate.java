@@ -5,7 +5,7 @@ import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public abstract class AbstractIntermediate {
 
-	private final InstructionHandle instruction;
+	protected final InstructionHandle instruction;
 	
 	public AbstractIntermediate(InstructionHandle instruction) {
 		this.instruction = instruction;

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.BlockSerializable;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
@@ -16,20 +17,27 @@ public class IntermediateAttributeProvider implements ComponentAttributeProvider
 		Map<String, String> attributes = new HashMap<String, String>();
 		if(component instanceof BooleanBranchIntermediate) {
 			attributes.put("shape", "diamond");
-			//attributes.put("fillcolor", "#FFC285");
 		}
 		else if(component instanceof MultiBranchIntermediate) {
 			attributes.put("shape", "hexagon");
-			//attributes.put("fillcolor", "#FFC285");
 		}
 		else if(component instanceof CaseIntermediate) 
 		{
-			//attributes.put("shape", "box");
-			attributes.put("fillcolor", "#EEE");
+
 		}
-		else {
-			//attributes.put("shape", "box");
+
+		if(component instanceof BlockSerializable) {
+			BlockSerializable block = (BlockSerializable)component;
+			
+			if(block.getBlockRange().isRangeDetermined()) {
+				attributes.put("fillcolor", "green");
+			}
+			else {
+				attributes.put("fillcolor", "red");
+			}
 		}
+		
+		
 		return attributes;
 	}
 

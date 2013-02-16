@@ -77,6 +77,8 @@ import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
+import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 
@@ -390,16 +392,34 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));
 		enhancers.add(new ArrayForToEnhancedFor(lc.getIntermediateGraph()));
 
-		/*
+		
 		enhancers.add(new If(lc.getIntermediateGraph()));
+		
+		/*
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
 		//enhancers.add(new Else(lc.getIntermediateGraph()));
 		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
 
 	*/
+		
+		
+		
+		
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();
 		}
+		
+		
+		List<GraphIntermediateVisitor> ranger = new LinkedList<GraphIntermediateVisitor>();
+		ranger.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
+		ranger.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
+
+		for(GraphIntermediateVisitor giv : ranger) {
+			giv.process();
+		}
+		
+		
+		
 		
 		System.out.println("After ======");
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
