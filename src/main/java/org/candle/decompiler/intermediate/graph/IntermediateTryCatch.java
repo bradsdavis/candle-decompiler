@@ -13,6 +13,7 @@ import org.candle.decompiler.ast.trycatch.TryBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
+import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.expression.Declaration;
@@ -34,8 +35,8 @@ public class IntermediateTryCatch {
 		Map<BlockRange, List<CodeExceptionGen>> tryRangeGen = new HashMap<BlockRange, List<CodeExceptionGen>>();
 		//create try statements...
 		for(CodeExceptionGen ceg : method.getExceptionHandlers()) {
-			int min = ceg.getStartPC().getPosition();
-			int max = ceg.getEndPC().getPosition();
+			InstructionHandle min = ceg.getStartPC();
+			InstructionHandle max = ceg.getEndPC();
 			
 			BlockRange tryRange = new BlockRange();
 			tryRange.setStart(min);
@@ -53,8 +54,8 @@ public class IntermediateTryCatch {
 			//look up block...
 			InstructionHandle start = tryRangeGen.get(tryRange).get(0).getStartPC();
 			TryIntermediate tryIntermediate = new TryIntermediate(start);
-			tryIntermediate.getBlockRange().setStart(tryRange.getMinimumInteger());
-			tryIntermediate.getBlockRange().setEnd(tryRange.getMaximumInteger());
+			tryIntermediate.getBlockRange().setStart(tryRange.getStart());
+			tryIntermediate.getBlockRange().setEnd(tryRange.getEnd());
 			
 			
 			igc.getIntermediateGraph().addVertex(tryIntermediate);

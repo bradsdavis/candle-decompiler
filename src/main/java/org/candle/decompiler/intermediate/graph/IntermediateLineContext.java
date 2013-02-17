@@ -9,7 +9,6 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 
 public class IntermediateLineContext {
-
 	
 	private final TreeMap<Integer, AbstractIntermediate> intermediate = new TreeMap<Integer, AbstractIntermediate>();
 	

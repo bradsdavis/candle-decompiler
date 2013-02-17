@@ -19,8 +19,8 @@ public class WhileRangeVisitor extends GraphIntermediateVisitor {
 		AbstractIntermediate falseTarget = igc.getFalseTarget(line);
 		AbstractIntermediate trueTarget = igc.getTrueTarget(line);
 		
-		line.getBlockRange().setStart(trueTarget.getInstruction().getPosition());
-		line.getBlockRange().setEnd(falseTarget.getInstruction().getPosition());
+		line.getBlockRange().setStart(trueTarget.getInstruction());
+		line.getBlockRange().setEnd(falseTarget.getInstruction());
 		super.visitWhileLoopLine(line);
 	}
 	

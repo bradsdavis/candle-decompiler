@@ -62,14 +62,14 @@ import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdgeAttributeProvider;
-import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.IntermediateEdgeAttributeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateEdgeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
 import org.candle.decompiler.intermediate.graph.IntermediateTryCatch;
+import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
@@ -78,6 +78,7 @@ import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
+import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
@@ -415,6 +416,8 @@ public class ClassIntermediateVisitor implements Visitor {
 		List<GraphIntermediateVisitor> ranger = new LinkedList<GraphIntermediateVisitor>();
 		ranger.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
 		ranger.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
+		ranger.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
+		
 
 		for(GraphIntermediateVisitor giv : ranger) {
 			giv.process();

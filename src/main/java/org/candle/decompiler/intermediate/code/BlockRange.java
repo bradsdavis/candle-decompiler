@@ -1,25 +1,42 @@
 package org.candle.decompiler.intermediate.code;
 
+import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.math.Range;
 
 
 public class BlockRange extends Range {
 
-	private Integer start;
-	private Integer end;
-	
-	public void setStart(Integer start) {
-		this.start = start;
+	public BlockRange() {
+		
 	}
 	
-	public void setEnd(Integer end) {
+	public BlockRange(InstructionHandle start, InstructionHandle end) {
+		this.start = start;
 		this.end = end;
 	}
 	
+	private InstructionHandle start;
+	private InstructionHandle end;
+	
+	public InstructionHandle getStart() {
+		return start;
+	}
+	
+	public InstructionHandle getEnd() {
+		return end;
+	}
+	
+	public void setStart(InstructionHandle start) {
+		this.start = start;
+	}
+	
+	public void setEnd(InstructionHandle end) {
+		this.end = end;
+	}
 	
 	public boolean isRangeDetermined() {
 		if(getMaximumNumber() != null && getMinimumNumber() != null) {
-			if(start <= end) {
+			if(start.getPosition() <= end.getPosition()) {
 				return true;
 			}
 		}
@@ -38,17 +55,23 @@ public class BlockRange extends Range {
 
 	@Override
 	public Number getMaximumNumber() {
-		return end;
+		if(end != null) {
+			return end.getPosition();
+		}
+		return null;
 	}
 
 	@Override
 	public Number getMinimumNumber() {
-		return start;
+		if(start != null) {
+			return start.getPosition();
+		}
+		return null;
 	}
 	
 	@Override
 	public String toString() {
-		return " | Range["+start+", "+end+"]";
+		return " | Range["+getMinimumNumber()+", "+getMaximumNumber()+"]";
 	}
 
 	@Override

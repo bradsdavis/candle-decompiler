@@ -18,8 +18,8 @@ public class StatementIntermediate extends AbstractIntermediate implements Block
 		
 		
 		BlockRange blockRange = new BlockRange();
-		blockRange.setStart(instruction.getPosition());
-		blockRange.setEnd(instruction.getPosition());
+		blockRange.setStart(instruction);
+		blockRange.setEnd(instruction);
 		this.blockRange = blockRange;
 	}
 	

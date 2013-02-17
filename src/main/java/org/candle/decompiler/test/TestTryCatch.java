@@ -9,9 +9,9 @@ public class TestTryCatch {
 	
 	public void testTryCatch() {
 		try {
-			for(int i=0; i<5; i++) {
-				System.out.println(i);
-			}
+			//for(int i=0; i<5; i++) {
+				System.out.println("X");
+			//}
 		}
 		catch(IllegalStateException e) {
 			System.err.println("Exception!!");
@@ -19,9 +19,9 @@ public class TestTryCatch {
 		catch(IllegalAccessError e) {
 			System.err.println("Another !!");
 		}
-		finally {
-			System.out.println("Finally!!");
-		}
+//		finally {
+//			System.out.println("Finally!!");
+//		}
 		
 		System.out.println("After block.");
 	}

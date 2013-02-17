@@ -1,6 +1,7 @@
 package org.candle.decompiler.intermediate.graph;
 
-import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
@@ -30,10 +31,13 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 			igc.getIntermediateGraph().addGraphListener(gul);
 		}
 		while(true) {
-			TreeSet<AbstractIntermediate> snapshot = (TreeSet)igc.getOrderedIntermediate().clone();
+			Set<AbstractIntermediate> snapshot = new HashSet<AbstractIntermediate>();
+			snapshot.addAll(igc.getIntermediateGraph().vertexSet());
 			
 			for(AbstractIntermediate vertex : snapshot) {
-				vertex.accept(this);
+				if(igc.getIntermediateGraph().containsVertex(vertex)) {
+					vertex.accept(this);
+				}
 			}
 			//reset the update listener.
 			if(!gul.isUpdated()) {

@@ -18,6 +18,8 @@ public class CatchIntermediate extends AbstractIntermediate implements BlockSeri
 		super(instruction);
 		this.catchVariable = catchVariable;
 		this.blockRange = new BlockRange();
+		
+		this.blockRange.setStart(instruction);
 	}
 
 	@Override

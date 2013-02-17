@@ -1,5 +1,6 @@
 package org.candle.decompiler.intermediate.graph.range;
 
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
@@ -15,7 +16,7 @@ public class IfLowerRangeVisitor extends GraphIntermediateVisitor {
 	@Override
 	public void visitIfLine(IfIntermediate line) {
 		AbstractIntermediate l = igc.getTrueTarget(line);
-		int lower = l.getInstruction().getPosition();
+		InstructionHandle lower = l.getInstruction();
 		line.getBlockRange().setStart(lower);
 		
 		//upper range...
@@ -24,7 +25,7 @@ public class IfLowerRangeVisitor extends GraphIntermediateVisitor {
 		AbstractIntermediate ai = igc.getOrderedIntermediate().floor(nullIntermediate);
 
 		if(ai != null) {
-			line.getBlockRange().setEnd(ai.getInstruction().getPosition());
+			line.getBlockRange().setEnd(ai.getInstruction());
 		}
 		
 	}
