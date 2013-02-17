@@ -1,5 +1,6 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -63,7 +64,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				return;
 			}
 			
-			nonNestedLine = incomingGotoNonNested.pollFirst();
+			nonNestedLine = incomingGotoNested.pollLast();
 			
 			//stop if both conditions aren't met.
 			if(nonNestedLine == null || otherLine == null) {
@@ -71,8 +72,18 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 			}
 			
 			//check to validate that the GOTO instruction is less than the other incoming...
-			if(comparator.before(nonNestedLine, line) && comparator.before(otherLine, line)) {
-				WhileIntermediate whileIntermediate = new WhileIntermediate((BranchHandle)nonNestedLine.getInstruction(), line);
+			if(comparator.before(otherLine, line)) {
+				//take the lower condition...
+				BranchHandle refHandle = null;
+				if(comparator.before(nonNestedLine, line)) {
+					refHandle = (BranchHandle)nonNestedLine.getInstruction();
+				}
+				else {
+					refHandle = (BranchHandle)line.getInstruction();
+				}
+				
+				
+				WhileIntermediate whileIntermediate = new WhileIntermediate(refHandle, line);
 				whileIntermediate.setTrueBranch(line.getTrueBranch());
 				whileIntermediate.setFalseBranch(line.getFalseBranch());
 				

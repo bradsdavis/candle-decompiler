@@ -72,7 +72,6 @@ import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
-import org.candle.decompiler.intermediate.graph.enhancer.GotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
@@ -394,16 +393,14 @@ public class ClassIntermediateVisitor implements Visitor {
 
 		
 		enhancers.add(new If(lc.getIntermediateGraph()));
+		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
+		
 		
 		/*
-		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
 		//enhancers.add(new Else(lc.getIntermediateGraph()));
 		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
 
 	*/
-		
-		
-		
 		
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();
@@ -417,7 +414,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		for(GraphIntermediateVisitor giv : ranger) {
 			giv.process();
 		}
-		
+		 
 		
 		
 		

@@ -24,9 +24,8 @@ public class If extends GraphIntermediateVisitor {
 		
 		IfIntermediate ifIntermediate = new IfIntermediate(line.getInstruction(), line.getExpression());
 		igc.getIntermediateGraph().addVertex(ifIntermediate);
-		ifIntermediate.setTrueBranch(line.getTrueBranch());
-		ifIntermediate.setFalseBranch(line.getFalseBranch());
 		
+		igc.replaceBooleanBranchIntermediate(line, ifIntermediate);
 		
 		//now, replace the vertex.
 		igc.redirectPredecessors(line, ifIntermediate);

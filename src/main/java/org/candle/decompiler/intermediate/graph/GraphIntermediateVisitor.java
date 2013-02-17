@@ -31,6 +31,7 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 		}
 		while(true) {
 			TreeSet<AbstractIntermediate> snapshot = (TreeSet)igc.getOrderedIntermediate().clone();
+			
 			for(AbstractIntermediate vertex : snapshot) {
 				vertex.accept(this);
 			}

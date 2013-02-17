@@ -5,17 +5,11 @@ import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class BooleanBranchOutcome extends AbstractIntermediate {
 
-	private final BooleanBranchIntermediate parent;
 	private final Boolean expressionOutcome;
 	
 	public BooleanBranchOutcome(InstructionHandle instruction, BooleanBranchIntermediate intermediate, Boolean expressionOutcome) {
 		super(instruction);
-		this.parent = intermediate;
 		this.expressionOutcome = expressionOutcome;
-	}
-	
-	public BooleanBranchIntermediate getParent() {
-		return parent;
 	}
 	
 	public Boolean getExpressionOutcome() {

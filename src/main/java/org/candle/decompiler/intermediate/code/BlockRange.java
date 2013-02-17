@@ -19,7 +19,9 @@ public class BlockRange extends Range {
 	
 	public boolean isRangeDetermined() {
 		if(getMaximumNumber() != null && getMinimumNumber() != null) {
-			return true;
+			if(start <= end) {
+				return true;
+			}
 		}
 		
 		return false;

@@ -12,9 +12,8 @@ import org.jgrapht.graph.DirectedSubgraph;
 
 public class IntermediateTryCatch {
 
-	private Set<DirectedSubgraph<AbstractIntermediate, DefaultEdge>> tryCatchSubgraph = new HashSet<DirectedSubgraph<AbstractIntermediate,DefaultEdge>>();
 	
-	public IntermediateTryCatch(MethodGen method, IntermediateLineContext ilc, DirectedGraph<AbstractIntermediate, DefaultEdge> intermediateGraph) {
+	public IntermediateTryCatch(MethodGen method) {
 		
 		for(CodeExceptionGen ceg : method.getExceptionHandlers()) {
 			/*

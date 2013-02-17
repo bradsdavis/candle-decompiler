@@ -49,6 +49,7 @@ public class IntermediateGraphContext {
 
 		//remove edges between successor and source.
 		for(AbstractIntermediate s : candidate) {
+			
 			//remove the edge to ci, add one to line.
 			if(!intermediateGraph.containsEdge(target, s)) {
 				intermediateGraph.addEdge(target, s);
@@ -67,7 +68,6 @@ public class IntermediateGraphContext {
 		throw new IllegalStateException("Should only have 1 outgoing edge.");
 	}
 	
-	
 	public AbstractIntermediate getSinglePredecessor(AbstractIntermediate ai) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(intermediateGraph, ai);
 		
@@ -85,6 +85,11 @@ public class IntermediateGraphContext {
 	
 	public AbstractIntermediate getFalseTarget(BooleanBranchIntermediate ci) {
 		return getSingleSuccessor(ci.getFalseBranch());
+	}
+	
+	public void replaceBooleanBranchIntermediate(BooleanBranchIntermediate a, BooleanBranchIntermediate b) {
+		b.setFalseBranch(a.getFalseBranch());
+		b.setTrueBranch(a.getTrueBranch());
 	}
 	
 	

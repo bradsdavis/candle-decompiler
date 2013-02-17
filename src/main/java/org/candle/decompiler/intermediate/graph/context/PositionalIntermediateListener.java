@@ -6,6 +6,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
@@ -23,6 +24,10 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 	
 	@Override
 	public void vertexAdded(GraphVertexChangeEvent<AbstractIntermediate> e) {
+		if(e.getVertex() instanceof BooleanBranchOutcome) {
+			return;
+		}
+		
 		if(!this.igc.getOrderedIntermediate().add(e.getVertex())) {
 			//queue it up.
 			queuePosition.add(e.getVertex());
@@ -39,7 +44,7 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 		
 		for(AbstractIntermediate ai : queuePosition) {
 			if(ai.getInstruction() == e.getVertex().getInstruction()) {
-				LOG.info("Removed vertex: "+e.getVertex());
+				LOG.info("Removed vertex: "+e.getVertex()+" Instruction: "+ai.getInstruction().getPosition());
 				LOG.info("\tLocated queued vertex: "+ai);
 				
 				this.igc.getOrderedIntermediate().add(ai);

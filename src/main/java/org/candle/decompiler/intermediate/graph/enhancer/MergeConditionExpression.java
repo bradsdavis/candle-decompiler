@@ -67,7 +67,7 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 				BooleanBranchOutcome booleanBranchOutcome = (BooleanBranchOutcome)i;
 				
 				//get a reference to the parent...
-				BooleanBranchIntermediate bbo2 = booleanBranchOutcome.getParent();
+				BooleanBranchIntermediate bbo2 = (BooleanBranchIntermediate)igc.getSinglePredecessor(booleanBranchOutcome);
 				//ok, we have two branches coming in...
 				
 				mergeConditions(bbo1, bbo2);
