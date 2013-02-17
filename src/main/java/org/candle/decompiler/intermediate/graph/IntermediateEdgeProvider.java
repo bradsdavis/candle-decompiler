@@ -1,5 +1,8 @@
 package org.candle.decompiler.intermediate.graph;
 
+import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.CatchIntermediate;
+import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.ext.EdgeNameProvider;
 

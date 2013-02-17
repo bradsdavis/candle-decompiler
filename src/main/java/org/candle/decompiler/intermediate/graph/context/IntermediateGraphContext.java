@@ -3,6 +3,7 @@ package org.candle.decompiler.intermediate.graph.context;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
@@ -78,6 +79,15 @@ public class IntermediateGraphContext {
 		throw new IllegalStateException("Should only have 1 incoming edge.");
 	}
 	
+	public AbstractIntermediate findNextNode(InstructionHandle ci) {
+		NullIntermediate nullIntermediate = new NullIntermediate(ci);
+		return this.orderedIntermediate.ceiling(nullIntermediate);
+	}
+	
+	public AbstractIntermediate findPreviousNode(InstructionHandle ci) {
+		NullIntermediate nullIntermediate = new NullIntermediate(ci);
+		return this.orderedIntermediate.floor(nullIntermediate);
+	}
 	
 	public AbstractIntermediate getTrueTarget(BooleanBranchIntermediate ci) {
 		return getSingleSuccessor(ci.getTrueBranch());

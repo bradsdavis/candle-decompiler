@@ -62,12 +62,14 @@ import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateAttributeProvider;
+import org.candle.decompiler.intermediate.graph.IntermediateEdgeAttributeProvider;
+import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.IntermediateEdgeProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphFactory;
 import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
+import org.candle.decompiler.intermediate.graph.IntermediateTryCatch;
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
@@ -373,13 +375,16 @@ public class ClassIntermediateVisitor implements Visitor {
 		//IntermediateLineContext ilc = new IntermediateLineContext(intermediate);
 		IntermediateLineContext illc = new IntermediateLineContext(intermediate);
 		IntermediateGraphFactory lc = new IntermediateGraphFactory(illc);
-		//IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, ilc, lc.getIntermediateGraph());
 
 		System.out.println("Before ======");
 		Writer w = new OutputStreamWriter(System.out);
-		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()), new IntermediateAttributeProvider(), null);
+		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()), new IntermediateVertexAttributeProvider(), new IntermediateEdgeAttributeProvider());
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
 		System.out.println("End Before ======");
+		
+		IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, lc.getIntermediateGraph());
+		itc.process();
+		
 		
 		
 		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();

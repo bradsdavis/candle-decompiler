@@ -8,6 +8,7 @@ import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
+import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
@@ -84,6 +85,11 @@ public class EmptyIntermediateVisitor implements IntermediateVisitor {
 
 	@Override
 	public void visitCatchLine(CatchIntermediate line) {
+		
+	}
+
+	@Override
+	public void visitTryIntermediate(TryIntermediate line) {
 		
 	}
 

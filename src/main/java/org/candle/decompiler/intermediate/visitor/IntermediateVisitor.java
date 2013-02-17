@@ -8,6 +8,7 @@ import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
+import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
@@ -23,7 +24,7 @@ public interface IntermediateVisitor {
 	public void visitForLoopLine(ForIntermediate line);
 	public void visitWhileLoopLine(WhileIntermediate line);
 	
-	
+	public void visitTryIntermediate(TryIntermediate line);
 	public void visitCatchLine(CatchIntermediate line);
 	public void visitCaseLine(CaseIntermediate line);
 	

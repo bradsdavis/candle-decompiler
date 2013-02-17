@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
+import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
@@ -25,6 +26,9 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 	@Override
 	public void vertexAdded(GraphVertexChangeEvent<AbstractIntermediate> e) {
 		if(e.getVertex() instanceof BooleanBranchOutcome) {
+			return;
+		}
+		if(e.getVertex() instanceof TryIntermediate) {
 			return;
 		}
 		
