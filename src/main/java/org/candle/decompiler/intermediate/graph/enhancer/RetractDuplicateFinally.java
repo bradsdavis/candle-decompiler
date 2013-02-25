@@ -10,9 +10,11 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
+import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
@@ -79,7 +81,24 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		InstructionHandle end = tryIntermediate.getBlockRange().getEnd();
 		//next should be GOTO.
 		AbstractIntermediate tryEndNode = igc.findNextNode(end);
-		AbstractIntermediate gotoIntermediate = igc.getSingleSuccessor(tryEndNode);
+		
+		AbstractIntermediate gotoIntermediate = null;
+		//check to see if this is loop...
+		if(tryEndNode instanceof StatementIntermediate) {
+			gotoIntermediate = igc.getSingleSuccessor(tryEndNode);
+		}
+		else if(tryEndNode instanceof BooleanBranchIntermediate) {
+			BooleanBranchIntermediate bbi = (BooleanBranchIntermediate)tryEndNode;
+			
+			//find higher target...
+			AbstractIntermediate trueTarget = igc.getTrueTarget(bbi);
+			AbstractIntermediate falseTarget = igc.getFalseTarget(bbi);
+			
+			int trueTargetPosition = trueTarget.getInstruction().getPosition();
+			int falseTargetPosition = falseTarget.getInstruction().getPosition();
+			
+			gotoIntermediate = (trueTargetPosition > falseTargetPosition) ? trueTarget : falseTarget; 
+		}
 		
 		//validate it is a GOTO.
 		if(!(gotoIntermediate instanceof GoToIntermediate)) {

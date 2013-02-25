@@ -7,10 +7,12 @@ import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 public class Resolved extends Expression implements TypedExpression {
-
+	private static final Log LOG = LogFactory.getLog(Resolved.class);
 	private final Type type;
 	private final String value;
 	
@@ -35,7 +37,7 @@ public class Resolved extends Expression implements TypedExpression {
 	
 	@Override
 	public Set<Expression> nestedExpression() {
-		System.out.println("Calling nested on RESOLVED!");
+		LOG.debug("Calling nested on RESOLVED!");
 		Set<Expression> expressions = new HashSet<Expression>(2);
 		return expressions;
 	}
