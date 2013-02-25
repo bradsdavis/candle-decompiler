@@ -43,6 +43,10 @@ public class CandleDecompiler {
 		
 	}
 	
+	public void decompile(String clazzName, Writer source, Writer graph) throws DecompilerException {
+		
+	}
+	
 	public void decompile(String clazzName, Writer writer) throws DecompilerException {
 		Validate.isTrue(org.apache.commons.lang.StringUtils.isNotBlank(clazzName), "Classname is required field, but was not provided.");
 		Validate.notNull(writer, "Writer is required, but not provided.");
@@ -87,7 +91,6 @@ public class CandleDecompiler {
 	public void decompile(JavaClass clz, Writer writer) throws DecompilerException {
 		Validate.notNull(clz, "Class is required, but not provided.");
 		Validate.notNull(writer, "Writer is required, but not provided.");
-		
 		
 		ClassIntermediateVisitor civ = new ClassIntermediateVisitor(clz);
 		ClassBlock classBlock = civ.decompile();

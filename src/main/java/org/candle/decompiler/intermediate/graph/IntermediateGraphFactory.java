@@ -18,6 +18,7 @@ import org.candle.decompiler.intermediate.expression.Case;
 import org.candle.decompiler.intermediate.expression.DefaultCase;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
+import org.candle.decompiler.intermediate.expression.Throw;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
 import org.jgrapht.graph.ListenableDirectedGraph;
@@ -49,6 +50,10 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		
 		//check to see if it is a return statement.
 		if(line.getExpression() instanceof Return) {
+			//don't add a line to next.
+			return;
+		}
+		if(line.getExpression() instanceof Throw) {
 			//don't add a line to next.
 			return;
 		}

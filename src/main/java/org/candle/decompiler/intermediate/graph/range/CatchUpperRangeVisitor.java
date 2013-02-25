@@ -1,21 +1,24 @@
 package org.candle.decompiler.intermediate.graph.range;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.ast.trycatch.CatchBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
+import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
+import org.candle.decompiler.intermediate.expression.Return;
+import org.candle.decompiler.intermediate.expression.Throw;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
+import org.jgrapht.traverse.BreadthFirstIterator;
 
 /***
  * Sets the upper bounds of the catch blocks.
@@ -36,55 +39,79 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitTryIntermediate(TryIntermediate line) {
-		List<AbstractIntermediate> candidates = Graphs.successorListOf(igc.getIntermediateGraph(), line);
-		
-		//now, order catch blocks by their instruction handle.
-		//eliminate non-catch blocks.
-		
-		List<CatchIntermediate> catchBlocks = new ArrayList<CatchIntermediate>(candidates.size());
-		for(AbstractIntermediate candidate : candidates) {
-			if(!(candidate instanceof CatchIntermediate)) {
-				continue;
-			}
-			//otherwise, add it to the catchBlocks.
-			catchBlocks.add((CatchIntermediate)candidate);
+	public void visitCatchLine(CatchIntermediate line) {
+		//first, check if the line has an end already..
+		if(line.getBlockRange().getEnd()!=null) {
+			return;
 		}
-		Collections.sort(catchBlocks, new IntermediateComparator());
-
-		//loop through.
-		for(int i=0, j= catchBlocks.size(); i<j; i++) {
-
-			//this is the last catch block.
-			if(i == (j-1)) {
-				InstructionHandle handle = findHandleFromTry(line);
-				catchBlocks.get(i).getBlockRange().setEnd(handle);
+		//processLastCatch(line);
+		
+		BreadthFirstIterator<AbstractIntermediate, IntermediateEdge> bfi = new BreadthFirstIterator<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph(), line);
+		
+		AbstractIntermediate lastStatement = null;
+		while(bfi.hasNext()) {
+			AbstractIntermediate next = bfi.next();
+			if(next instanceof GoToIntermediate) {
+				//this would be a possible GOTO... find previous.
+				System.out.println("Catch GOGO: "+next+" goto:"+next.getInstruction().getPosition());
+				lastStatement = igc.getSinglePredecessor(next);
+				break;
 			}
-			else {
-				//look to the next catch block... find the instruction.. and go back 1 instruction.
-				CatchIntermediate next = catchBlocks.get(i+1);
-				InstructionHandle prev = next.getInstruction().getPrev();
+			if(next instanceof StatementIntermediate) {
+				//determine what type of statement...
+				if(((StatementIntermediate) next).getExpression() instanceof Throw) {
+					lastStatement = next;
+					break;
+				}
 				
-				catchBlocks.get(i).getBlockRange().setEnd(prev);
+				if(((StatementIntermediate) next).getExpression() instanceof Return) {
+					lastStatement = next;
+					break;
+				}
 			}
 			
 		}
-	}
-
-	public InstructionHandle findHandleFromTry(TryIntermediate i) {
-		//from the try block, find the last position...
-		InstructionHandle end = i.getBlockRange().getEnd().getNext();
-		//now, get the next...
 		
-		AbstractIntermediate next = igc.findNextNode(end);
-		
-		if(!(next instanceof GoToIntermediate)) {
-			throw new IllegalStateException("Expected to be GOTO.");
+		if(lastStatement != null) {
+			line.getBlockRange().setEnd(lastStatement.getInstruction());
 		}
-		GoToIntermediate gotoIntermediate = (GoToIntermediate)next;
-		//now, find the target.  that is the end of the catch block.
-		InstructionHandle ih = gotoIntermediate.getTarget().getInstruction();
+	}
+	
+	public void processLastCatch(CatchIntermediate line) {
+		TryIntermediate tryBlock = (TryIntermediate)igc.getSinglePredecessor(line);
+		if(igc.getFinallyClause(tryBlock) != null) {
+			return;
+		}
 		
-		return igc.findPreviousNode(ih.getPrev()).getInstruction();
+		//now, we are going to look for the block jump.
+		InstructionHandle ih = tryBlock.getBlockRange().getEnd();
+		//see about a goto.
+		GoToIntermediate gotoHandle = (GoToIntermediate)igc.findNextNode(ih.getNext());
+		TreeSet<AbstractIntermediate> ordered = new TreeSet<AbstractIntermediate>(new IntermediateComparator());
+		//no finally clause...
+		ordered.addAll(igc.getCatchClauses(tryBlock));
+		
+		AbstractIntermediate target = gotoHandle.getTarget();
+		//now, look backwards and find the non-GOTO statement.
+		
+		List<AbstractIntermediate> candidates = Graphs.predecessorListOf(igc.getIntermediateGraph(), target);
+		Set<AbstractIntermediate> elements = new HashSet<AbstractIntermediate>();
+		
+		for(AbstractIntermediate candidate : candidates) {
+			if(!(candidate instanceof GoToIntermediate)) {
+				elements.add(candidate);
+			}
+		}
+		
+		for(AbstractIntermediate element : elements) {
+			System.out.println("Element: "+element+" Position: "+element.getInstruction().getPosition());
+		}
+		
+		if(elements.size() == 1) {
+			if(ordered.last() instanceof CatchIntermediate) {
+				CatchIntermediate ci = (CatchIntermediate)ordered.last();
+				ci.getBlockRange().setEnd(elements.iterator().next().getInstruction());
+			}
+		}
 	}
 }

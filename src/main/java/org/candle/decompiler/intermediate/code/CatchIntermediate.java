@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.bcel.classfile.Utility;
+import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.intermediate.expression.Variable;
@@ -13,15 +14,25 @@ public class CatchIntermediate extends AbstractIntermediate implements BlockSeri
 
 	protected final BlockRange blockRange;
 	protected final Variable catchVariable;
+	protected final CodeExceptionGen ceg;
 	
-	public CatchIntermediate(InstructionHandle instruction, Variable catchVariable) {
+	public CatchIntermediate(InstructionHandle instruction, CodeExceptionGen ceg, Variable catchVariable) {
 		super(instruction);
 		this.catchVariable = catchVariable;
 		this.blockRange = new BlockRange();
 		
+		this.ceg = ceg;
 		this.blockRange.setStart(instruction);
 	}
+	
+	public Variable getCatchVariable() {
+		return catchVariable;
+	}
 
+	public CodeExceptionGen getCeg() {
+		return ceg;
+	}
+	
 	@Override
 	public String toString() {
 		StringWriter sw = new StringWriter();

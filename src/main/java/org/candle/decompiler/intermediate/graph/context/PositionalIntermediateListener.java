@@ -6,6 +6,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
@@ -37,6 +38,9 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 			queuePosition.add(e.getVertex());
 			LOG.info("Queueing up vertex: "+e.getVertex());
 		}
+		
+		Integer position = e.getVertex().getInstruction().getPosition();
+		igc.getInstructionHandles().put(position, e.getVertex().getInstruction());
 	}
 
 	@Override
@@ -46,14 +50,22 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 		//remove the queued object if it is there too.
 		queuePosition.remove(e.getVertex());
 		
+		boolean placedQueued = false;
 		for(AbstractIntermediate ai : queuePosition) {
 			if(ai.getInstruction() == e.getVertex().getInstruction()) {
+				
 				LOG.info("Removed vertex: "+e.getVertex()+" Instruction: "+ai.getInstruction().getPosition());
 				LOG.info("\tLocated queued vertex: "+ai);
 				
 				this.igc.getOrderedIntermediate().add(ai);
+				placedQueued = true;
 				break;
 			}
+		}
+		
+		if(!placedQueued) {
+			Integer position = e.getVertex().getInstruction().getPosition();
+			igc.getInstructionHandles().remove(position);
 		}
 	}
 

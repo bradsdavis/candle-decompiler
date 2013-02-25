@@ -74,11 +74,16 @@ import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
+import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanOutcomes;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
 import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
@@ -298,13 +303,14 @@ public class ClassIntermediateVisitor implements Visitor {
 		Iterator<InstructionHandle> debugIterator = instructions.iterator();
 		while(debugIterator.hasNext()) {
 			InstructionHandle instruction = debugIterator.next();
-			
 			LOG.debug("Instruction: "+instruction);
 		}
 		
 
 		Map<InstructionHandle, ObjectType> catchPosition = new HashMap<InstructionHandle, ObjectType>();
 		for(CodeExceptionGen e : methodGenerator.getExceptionHandlers()) {
+			System.out.println(e);
+			
 			catchPosition.put(e.getHandlerPC(), e.getCatchType());
 		}
 		 
@@ -323,7 +329,6 @@ public class ClassIntermediateVisitor implements Visitor {
 				//check to see whether it is a finally block...
 				ObjectType ot = catchPosition.get(instruction);
 				if(ot == null) {
-					LOG.debug("Finally Block!!");
 					Resolved resolved = new Resolved(instruction, Type.THROWABLE, "e");
 					intermediateContext.getExpressions().push(resolved);
 				}
@@ -396,10 +401,19 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));
 		enhancers.add(new ArrayForToEnhancedFor(lc.getIntermediateGraph()));
-
 		
 		enhancers.add(new If(lc.getIntermediateGraph()));
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
+		
+		enhancers.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new FinallyRangeVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
+		
+		enhancers.add(new FinallyRemoveThrows(lc.getIntermediateGraph()));
+		enhancers.add(new RetractDuplicateFinally(lc.getIntermediateGraph()));
+		enhancers.add(new RetractOrphanGoto(lc.getIntermediateGraph()));
+		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
 		
 		
 		/*
@@ -411,20 +425,6 @@ public class ClassIntermediateVisitor implements Visitor {
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();
 		}
-		
-		
-		List<GraphIntermediateVisitor> ranger = new LinkedList<GraphIntermediateVisitor>();
-		ranger.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
-		ranger.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
-		ranger.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
-		
-
-		for(GraphIntermediateVisitor giv : ranger) {
-			giv.process();
-		}
-		 
-		
-		
 		
 		System.out.println("After ======");
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
