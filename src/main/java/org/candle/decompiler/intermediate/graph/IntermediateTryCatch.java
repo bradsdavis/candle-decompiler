@@ -6,12 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.MethodGen;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
+import org.candle.decompiler.intermediate.code.BlockRangeComparator;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
@@ -19,8 +21,6 @@ import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.graph.context.NullIntermediate;
-
-import com.sun.source.tree.TryTree;
 
 public class IntermediateTryCatch {
 
@@ -32,10 +32,9 @@ public class IntermediateTryCatch {
 		this.igc = igc;
 	}
 	
-	
 	public void process() {
 		
-		Set<BlockRange> tryBlock = new HashSet<BlockRange>();
+		Set<BlockRange> tryBlock = new TreeSet<BlockRange>(new BlockRangeComparator());
 		Map<BlockRange, List<CodeExceptionGen>> tryRangeGen = new HashMap<BlockRange, List<CodeExceptionGen>>();
 		Map<InstructionHandle, List<CodeExceptionGen>> tryRangeFinally = new  HashMap<InstructionHandle, List<CodeExceptionGen>>();
 		
@@ -71,8 +70,6 @@ public class IntermediateTryCatch {
 			}				
 			tryRangeGen.get(tryRange).add(ceg);
 		}
-		
-		
 		
 		
 		for(BlockRange tryRange : tryBlock) {

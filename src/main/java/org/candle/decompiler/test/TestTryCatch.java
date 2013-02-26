@@ -11,12 +11,21 @@ public class TestTryCatch {
 		int i = 5;
 		
 		try {
-			System.out.println("Inner try");
-			for(int j=0; j<5; j++) {
-				System.out.println("X");
+			try {
+				System.out.println("Inner try");
+				for(int j=0; j<5; j++) {
+					System.out.println("X");
+				}
 			}
+			catch(Exception e) {
+				System.out.println("Exception catch.");
+			}/*
+			finally {
+				System.out.println("Another");
+			}*/
+			
 				
-			//System.out.println("here");
+			System.out.println("here");
 		}
 		catch(IllegalArgumentException e) {
 			System.err.println("Illegal Arg Exception!!"+e.getMessage());

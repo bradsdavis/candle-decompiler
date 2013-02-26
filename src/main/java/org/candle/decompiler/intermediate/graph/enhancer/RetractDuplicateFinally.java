@@ -1,6 +1,9 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -31,6 +34,10 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 	
 	@Override
 	public void visitFinallyIntermediate(FinallyIntermediate line) {
+		//TODO: Remove the highest finally statements first; won't fit this visitor
+		//pattern.
+		
+		
 		//get the bounds of the finally... associate the try.
 		
 		//finally is part of the try if the try + catch bounds has:
@@ -85,6 +92,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		AbstractIntermediate gotoIntermediate = null;
 		//check to see if this is loop...
 		if(tryEndNode instanceof StatementIntermediate) {
+			System.out.println("Position: "+tryEndNode.getInstruction().getPosition()+" Value: "+tryEndNode);
 			gotoIntermediate = igc.getSingleSuccessor(tryEndNode);
 		}
 		else if(tryEndNode instanceof BooleanBranchIntermediate) {
@@ -182,16 +190,34 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 	
 	
 	protected TryIntermediate matchTryBlock(InstructionHandle min, InstructionHandle max) {
+		LinkedList<TryIntermediate> matches = new LinkedList<TryIntermediate>();
 		//find the try block...
 		for(AbstractIntermediate ai : igc.getIntermediateGraph().vertexSet()) {
 			if(ai instanceof TryIntermediate) {
 				TryIntermediate tryIntermediate = ((TryIntermediate) ai);
 				System.out.println("Finally: "+tryIntermediate+ " , "+tryIntermediate.getInstruction().getPosition()+" , "+tryIntermediate.getBlockRange().getStart());
 				if(tryIntermediate.getBlockRange().getStart().getPosition() == min.getPosition()) {
-					return tryIntermediate;
+					matches.add(tryIntermediate);
 				}
 			}
 		}
+		
+		if(matches.size() > 0) {
+			Collections.sort(matches, new Comparator<TryIntermediate>() {
+				@Override
+				public int compare(TryIntermediate t1, TryIntermediate t2) {
+					if(t1.getBlockRange().getEnd().getPosition() > t2.getBlockRange().getEnd().getPosition()) {
+						return -1;
+					}
+					return 0;
+				}
+			});
+			System.out.println("Match: "+matches.peekFirst()+" Range: "+matches.peekFirst().getBlockRange());
+			return matches.getFirst();
+		}
+		
+		
+		
 		return null;
 	}
 

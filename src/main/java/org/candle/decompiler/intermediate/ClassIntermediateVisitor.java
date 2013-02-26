@@ -350,33 +350,6 @@ public class ClassIntermediateVisitor implements Visitor {
 		classBlock.addChild(method);
 		method.setParent(classBlock);
 		
-		/*
-		BlockContext blockContext = new BlockContext(methodGenerator, classBlock, method, intermediate);
-		//TestVisitor blockVisitor = new TestVisitor(blockContext);
-		BlockVisitor blockVisitor = new BlockVisitor(blockContext);
-		
-		//now, we go through the intermediate.
-		
-		if(LOG.isDebugEnabled()) {
-			for(AbstractIntermediate line : intermediate) {
-				LOG.debug("Line: "+ReflectionToStringBuilder.toString(line));
-			}
-		}
-		
-		
-		blockContext.setCurrentBlock(method);
-		
-		for(AbstractIntermediate line : intermediate) {
-			if(LOG.isDebugEnabled()) {
-				LOG.debug("===================");
-				LOG.debug("Building: ");
-				LOG.debug("Instruction: "+line.getInstruction());
-				LOG.debug(method.generateSource());
-			}
-			
-			line.accept(blockVisitor);
-		}
-		*/
 		
 		//IntermediateLineContext ilc = new IntermediateLineContext(intermediate);
 		IntermediateLineContext illc = new IntermediateLineContext(intermediate);

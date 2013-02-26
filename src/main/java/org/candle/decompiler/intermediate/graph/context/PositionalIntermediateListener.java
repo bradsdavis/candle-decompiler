@@ -6,7 +6,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;

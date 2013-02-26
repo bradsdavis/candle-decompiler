@@ -83,7 +83,7 @@ public class IntermediateGraphContext {
 			return successors.get(0);
 		}
 		
-		throw new IllegalStateException("Should only have 1 outgoing edge.");
+		throw new IllegalStateException("Should have exactly 1 outgoing edge; actually: "+successors.size());
 	}
 	
 	public AbstractIntermediate getSinglePredecessor(AbstractIntermediate ai) {

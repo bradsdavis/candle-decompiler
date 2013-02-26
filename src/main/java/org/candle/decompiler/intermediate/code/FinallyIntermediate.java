@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class FinallyIntermediate extends AbstractIntermediate implements BlockSerializable {
