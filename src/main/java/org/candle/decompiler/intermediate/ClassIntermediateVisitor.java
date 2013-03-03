@@ -381,6 +381,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		enhancers.add(new If(lc.getIntermediateGraph()));
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
+		enhancers.add(new Else(lc.getIntermediateGraph()));
 		
 		enhancers.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
@@ -395,7 +396,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		//enhancers.add(new HealGoto(lc.getIntermediateGraph()));
 		enhancers.add(new RemoveImpliedVoidReturn(lc.getIntermediateGraph()));
 		
-		enhancers.add(new Else(lc.getIntermediateGraph()));
+		
 		/*
 		
 		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));

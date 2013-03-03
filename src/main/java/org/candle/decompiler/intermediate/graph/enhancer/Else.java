@@ -75,10 +75,16 @@ public class Else extends GraphIntermediateVisitor {
 				//else if this is an ElseIf, probably should be an IF.
 				if(firstElseBlockElement instanceof ElseIfIntermediate) {
 					IfIntermediate ifIntermediate = new IfIntermediate(firstElseBlockElement.getInstruction(), ((BooleanBranchIntermediate) firstElseBlockElement).getExpression());
+					ifIntermediate.setTrueBranch(((BooleanBranchIntermediate) firstElseBlockElement).getTrueBranch());
+					ifIntermediate.setFalseBranch(((BooleanBranchIntermediate) firstElseBlockElement).getFalseBranch());
+					
+					
 					igc.getIntermediateGraph().addVertex(ifIntermediate);
 					igc.redirectPredecessors(firstElseBlockElement, ifIntermediate);
 					igc.redirectSuccessors(firstElseBlockElement, ifIntermediate);
 					igc.getIntermediateGraph().removeVertex(firstElseBlockElement);
+					
+					
 					
 					//add the else between this conditional.
 					addElseBlock(ifIntermediate, maxGotoForBranch);
