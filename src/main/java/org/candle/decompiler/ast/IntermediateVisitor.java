@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.ast.conditional.ElseBlock;
 import org.candle.decompiler.ast.conditional.ElseIfBlock;
 import org.candle.decompiler.ast.conditional.IfBlock;
 import org.candle.decompiler.ast.tcf.CatchBlock;
@@ -22,6 +23,7 @@ import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
+import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
@@ -86,6 +88,32 @@ public class IntermediateVisitor extends GraphIntermediateVisitor {
 				candidate.accept(this);
 			}
 		}
+	}
+	
+	@Override
+	public void visitElseLine(ElseIntermediate line) {
+		if(seen.contains(line)) {
+			//do nothing.
+			return;
+		}
+		else {
+			seen.add(line);
+		}
+		
+		ElseBlock elseBlock = new ElseBlock(line);
+		current.addChild(elseBlock);
+		current = elseBlock;
+		
+		//now, visit the successor, if any.
+		List<AbstractIntermediate> candidates = getUnseenSuccessors(line);
+		
+		if(candidates.size() > 0) {
+			for(AbstractIntermediate candidate : candidates) {
+				//move to the next.
+				candidate.accept(this);
+			}
+		}
+		moveUp();
 	}
 	
 	@Override
