@@ -63,10 +63,10 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				return;
 			}
 			
-			nonNestedLine = incomingGotoNested.pollLast();
+			nonNestedLine = incomingGotoNonNested.pollLast();
 			
 			//stop if both conditions aren't met.
-			if(nonNestedLine == null || otherLine == null) {
+			if(nonNestedLine == null && otherLine == null) {
 				return;
 			}
 			
