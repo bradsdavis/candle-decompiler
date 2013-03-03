@@ -19,12 +19,10 @@ public class TestTryCatch {
 			}
 			catch(Exception e) {
 				System.out.println("Exception catch.");
-			}/*
+			}
 			finally {
-				System.out.println("Another");
-			}*/
-			
-				
+				System.out.println("Nested Finally");
+			}
 			System.out.println("here");
 		}
 		catch(IllegalArgumentException e) {

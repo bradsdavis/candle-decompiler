@@ -41,7 +41,7 @@ public class FinallyIntermediate extends AbstractIntermediate implements BlockSe
 		StringWriter sw = new StringWriter();
 		sw.append("Finally");
 		for(CodeExceptionGen ceg : codeExceptions) {
-			sw.append("| Handler["+ceg.getStartPC().getPosition()+", "+ceg.getEndPC().getPosition()+"]");
+			sw.append(" | Handler["+ceg.getStartPC().getPosition()+", "+ceg.getEndPC().getPosition()+"]");
 		}
 		return sw.toString() + ";";
 	}

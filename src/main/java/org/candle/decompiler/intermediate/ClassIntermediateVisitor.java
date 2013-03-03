@@ -75,6 +75,7 @@ import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
 import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
+import org.candle.decompiler.intermediate.graph.enhancer.HealGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
@@ -388,6 +389,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new RetractOrphanGoto(lc.getIntermediateGraph()));
 		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
 		
+		enhancers.add(new HealGoto(lc.getIntermediateGraph()));
 		
 		/*
 		//enhancers.add(new Else(lc.getIntermediateGraph()));

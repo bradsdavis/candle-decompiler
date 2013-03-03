@@ -197,11 +197,16 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 				TryIntermediate tryIntermediate = ((TryIntermediate) ai);
 				System.out.println("Finally: "+tryIntermediate+ " , "+tryIntermediate.getInstruction().getPosition()+" , "+tryIntermediate.getBlockRange().getStart());
 				if(tryIntermediate.getBlockRange().getStart().getPosition() == min.getPosition()) {
-					matches.add(tryIntermediate);
+					
+					//only add where max > try's max range...
+					if(tryIntermediate.getBlockRange().getEnd().getPosition() < max.getPosition()) {
+						matches.add(tryIntermediate);
+					}
 				}
 			}
 		}
 		
+		//return the smaller range...
 		if(matches.size() > 0) {
 			Collections.sort(matches, new Comparator<TryIntermediate>() {
 				@Override

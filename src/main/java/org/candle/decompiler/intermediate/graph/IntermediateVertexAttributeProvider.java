@@ -8,6 +8,7 @@ import org.candle.decompiler.intermediate.code.BlockSerializable;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
+import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.jgrapht.ext.ComponentAttributeProvider;
 
@@ -22,7 +23,8 @@ public class IntermediateVertexAttributeProvider implements ComponentAttributePr
 		else if(component instanceof MultiBranchIntermediate) {
 			attributes.put("shape", "hexagon");
 		}
-		else if(component instanceof CatchIntermediate)
+		else if((component instanceof CatchIntermediate) 
+				|| (component instanceof FinallyIntermediate))
 		{
 			attributes.put("shape", "rectangle");
 		}
