@@ -12,10 +12,13 @@ import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.conditional.ElseBlock;
 import org.candle.decompiler.ast.conditional.ElseIfBlock;
 import org.candle.decompiler.ast.conditional.IfBlock;
+import org.candle.decompiler.ast.loop.ForBlock;
+import org.candle.decompiler.ast.loop.WhileBlock;
 import org.candle.decompiler.ast.tcf.CatchBlock;
 import org.candle.decompiler.ast.tcf.FinallyBlock;
 import org.candle.decompiler.ast.tcf.TryBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
@@ -25,6 +28,8 @@ import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
+import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
+import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
@@ -63,6 +68,41 @@ public class IntermediateVisitor extends GraphIntermediateVisitor {
 			LOG.warn("Line: "+ReflectionToStringBuilder.toString(line)+" not within: "+ReflectionToStringBuilder.toString(current));
 			moveUp();
 		}
+	}
+
+	
+	@Override
+	public void visitForLoopLine(ForIntermediate line) {
+		if(seen.contains(line)) {
+			//do nothing.
+			return;
+		}
+		else {
+			seen.add(line);
+		}
+		
+		ForBlock forBlock = new ForBlock(line);
+		current.addChild(forBlock);
+		current = forBlock;
+	
+		processBoolean(forBlock, line);
+	}
+	
+	@Override
+	public void visitWhileLoopLine(WhileIntermediate line) {
+		if(seen.contains(line)) {
+			//do nothing.
+			return;
+		}
+		else {
+			seen.add(line);
+		}
+
+		WhileBlock whileBlock = new WhileBlock(line);
+		current.addChild(whileBlock);
+		current = whileBlock;
+	
+		processBoolean(whileBlock, line);
 	}
 	
 	@Override
@@ -114,6 +154,37 @@ public class IntermediateVisitor extends GraphIntermediateVisitor {
 			}
 		}
 		moveUp();
+	}
+	
+	protected void processBoolean(Block block, BooleanBranchIntermediate bbi) {
+		List<AbstractIntermediate> successors = getUnseenSuccessors(bbi);
+		//assign true... and go through true.
+		
+		BooleanBranchOutcome trueOutcome = null;
+		BooleanBranchOutcome falseOutcome = null;
+		for(AbstractIntermediate successor : successors) {
+			if(successor instanceof BooleanBranchOutcome) {
+				if(((BooleanBranchOutcome) successor).getExpressionOutcome() == Boolean.TRUE) {
+					trueOutcome = (BooleanBranchOutcome)successor;
+				}
+				else {
+					falseOutcome = (BooleanBranchOutcome)successor;
+				}
+			}
+			else {
+				throw new IllegalStateException("Outcome of If expected to be boolean.");
+			}
+		}
+		
+		trueOutcome.accept(this);
+		
+		//now, go back to if...
+		this.current = block;
+		falseOutcome.accept(this);
+
+		if(this.current == block) {
+			moveUp();
+		}
 	}
 	
 	@Override
