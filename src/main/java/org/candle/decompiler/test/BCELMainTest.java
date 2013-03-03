@@ -11,9 +11,9 @@ public class BCELMainTest {
 
 	  public static void main(String[] argv) throws DecompilerException
 	  {
-		  //String className = "org.candle.decompiler.test.TestSimpleCondition";
+		  String className = "org.candle.decompiler.test.TestSimpleCondition";
 		 //String className = "org.candle.decompiler.test.TestSimpleLoops";
-		  String className = "org.candle.decompiler.test.TestTryCatch";
+		 // String className = "org.candle.decompiler.test.TestTryCatch";
 		  //String className = "org.candle.decompiler.test.TestConditionsBlock";
 		 //String className = "org.candle.decompiler.test.TestSwitch";
 		  //String className = "org.candle.decompiler.test.TestArrayAssignment";

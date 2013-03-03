@@ -56,11 +56,6 @@ public class ClassBlock extends Block {
 	public Set<String> getFields() {
 		return fields;
 	}
-	
-	@Override
-	public InstructionHandle getInstruction() {
-		throw new IllegalStateException();
-	}
 
 	@Override
 	public int getStartBlockPosition() {

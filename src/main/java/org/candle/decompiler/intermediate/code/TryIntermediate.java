@@ -21,9 +21,9 @@ public class TryIntermediate extends AbstractIntermediate implements BlockSerial
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
+		visitor.visitAbstractLine(this);
 		visitor.visitTryIntermediate(this);
 	}
-	
 
 	@Override
 	public String toString() {

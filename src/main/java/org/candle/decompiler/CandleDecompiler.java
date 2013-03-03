@@ -13,7 +13,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.ClassBlock;
-import org.candle.decompiler.ast.enhancer.RecursiveClassEnhancer;
 import org.candle.decompiler.intermediate.ClassIntermediateVisitor;
 
 public class CandleDecompiler {
@@ -95,9 +94,6 @@ public class CandleDecompiler {
 		ClassIntermediateVisitor civ = new ClassIntermediateVisitor(clz);
 		ClassBlock classBlock = civ.decompile();
 
-		RecursiveClassEnhancer rce = new RecursiveClassEnhancer();
-		rce.enhanceBlock(classBlock);
-		
 		try {
 			classBlock.write(writer);
 		} catch (IOException e) {

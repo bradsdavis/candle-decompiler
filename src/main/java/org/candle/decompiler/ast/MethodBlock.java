@@ -3,8 +3,6 @@ package org.candle.decompiler.ast;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.bcel.generic.InstructionHandle;
-
 public class MethodBlock extends Block {
 
 	private final int lastPosition;
@@ -31,11 +29,6 @@ public class MethodBlock extends Block {
 		builder.append(indent);
 		builder.append("}");
 		builder.append(NL);
-	}
-
-	@Override
-	public InstructionHandle getInstruction() {
-		return null;
 	}
 	
 	@Override

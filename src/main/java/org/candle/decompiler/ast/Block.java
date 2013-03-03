@@ -34,14 +34,6 @@ public abstract class Block implements Sourceable {
 		this.getChildren().add(block);
 	}
 	
-	public void replaceChild(Block candidate, Block replacement) {
-		int blockPosition = children.indexOf(candidate);
-		
-		children.remove(blockPosition);
-		children.add(blockPosition, replacement);
-	}
-	
-	
 	public void setParent(Block parent) {
 		this.parent = parent;
 	}
@@ -58,12 +50,8 @@ public abstract class Block implements Sourceable {
 		builder.append(NL);
 		builder.append(indent);
 		builder.append("}");
-		builder.append(NL);
 	}
 
-	public abstract InstructionHandle getInstruction();
-	
-	//return last child instruction
 	public abstract int getEndBlockPosition();
 	public abstract int getStartBlockPosition();
 	

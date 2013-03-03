@@ -1,6 +1,5 @@
 package org.candle.decompiler.intermediate.graph.enhancer;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 

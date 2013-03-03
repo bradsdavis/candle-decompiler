@@ -58,6 +58,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
+import org.candle.decompiler.ast.IntermediateVisitor;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
@@ -73,11 +74,13 @@ import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvi
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
+import org.candle.decompiler.intermediate.graph.enhancer.Else;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
 import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
 import org.candle.decompiler.intermediate.graph.enhancer.HealGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanOutcomes;
@@ -390,9 +393,11 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
 		
 		enhancers.add(new HealGoto(lc.getIntermediateGraph()));
+		enhancers.add(new RemoveImpliedVoidReturn(lc.getIntermediateGraph()));
 		
+		enhancers.add(new Else(lc.getIntermediateGraph()));
 		/*
-		//enhancers.add(new Else(lc.getIntermediateGraph()));
+		
 		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
 
 	*/
@@ -405,7 +410,9 @@ public class ClassIntermediateVisitor implements Visitor {
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
 		System.out.println("End After ======");
 		
-		
+
+		IntermediateVisitor iv = new IntermediateVisitor(lc.getIntermediateGraph(), method);
+		iv.process();
 		
 		if(LOG.isDebugEnabled()) {
 			LOG.debug("Method: ");

@@ -19,7 +19,6 @@ public class FinallyIntermediate extends AbstractIntermediate implements BlockSe
 		this.blockRange.setStart(instruction);
 		
 		this.codeExceptions = cegs;
-		//this.catchVariable = catchVariable;
 	}
 	
 	public Set<CodeExceptionGen> getCodeExceptions() {
@@ -33,6 +32,7 @@ public class FinallyIntermediate extends AbstractIntermediate implements BlockSe
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
+		visitor.visitAbstractLine(this);
 		visitor.visitFinallyIntermediate(this);
 	}
 
