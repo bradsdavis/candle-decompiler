@@ -26,6 +26,13 @@ public class EnhancedForIntermediate extends WhileIntermediate {
 		this(whileIntermediate.getInstruction(), whileIntermediate.getConditionalIntermediate(), variable, right);
 	}
 	
+	public Variable getVariable() {
+		return variable;
+	}
+	
+	public Expression getRight() {
+		return right;
+	}
 
 	@Override
 	public String toString() {

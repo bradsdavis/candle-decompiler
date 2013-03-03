@@ -58,7 +58,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
-import org.candle.decompiler.ast.IntermediateVisitor;
+import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
@@ -412,7 +412,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		System.out.println("End After ======");
 		
 
-		IntermediateVisitor iv = new IntermediateVisitor(lc.getIntermediateGraph(), method);
+		BlockVisitor iv = new BlockVisitor(lc.getIntermediateGraph(), method);
 		iv.process();
 		
 		if(LOG.isDebugEnabled()) {

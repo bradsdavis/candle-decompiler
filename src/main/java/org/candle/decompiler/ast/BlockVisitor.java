@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.conditional.ElseBlock;
 import org.candle.decompiler.ast.conditional.ElseIfBlock;
 import org.candle.decompiler.ast.conditional.IfBlock;
+import org.candle.decompiler.ast.loop.EnhancedForBlock;
 import org.candle.decompiler.ast.loop.ForBlock;
 import org.candle.decompiler.ast.loop.WhileBlock;
 import org.candle.decompiler.ast.tcf.CatchBlock;
@@ -28,6 +29,7 @@ import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
+import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
@@ -40,14 +42,14 @@ import org.jgrapht.Graphs;
  * @author bradsdavis
  *
  */
-public class IntermediateVisitor extends GraphIntermediateVisitor {
-	private static final Log LOG = LogFactory.getLog(IntermediateVisitor.class);
+public class BlockVisitor extends GraphIntermediateVisitor {
+	private static final Log LOG = LogFactory.getLog(BlockVisitor.class);
 	
 	private final Set<AbstractIntermediate> seen = new HashSet<AbstractIntermediate>();
 	private AbstractIntermediate start;
 	private Block current;
 	
-	public IntermediateVisitor(IntermediateGraphContext igc, MethodBlock method) {
+	public BlockVisitor(IntermediateGraphContext igc, MethodBlock method) {
 		super(igc);
 		this.current = method;
 	}
@@ -70,6 +72,23 @@ public class IntermediateVisitor extends GraphIntermediateVisitor {
 		}
 	}
 
+	
+	@Override
+	public void visitEnhancedForLoopLine(EnhancedForIntermediate line) {
+		if(seen.contains(line)) {
+			//do nothing.
+			return;
+		}
+		else {
+			seen.add(line);
+		}
+		
+		EnhancedForBlock efb = new EnhancedForBlock(line);
+		current.addChild(efb);
+		current = efb;
+		
+		processBoolean(efb, line);
+	}
 	
 	@Override
 	public void visitForLoopLine(ForIntermediate line) {
