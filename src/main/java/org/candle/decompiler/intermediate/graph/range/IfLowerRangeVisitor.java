@@ -2,6 +2,7 @@ package org.candle.decompiler.intermediate.graph.range;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
@@ -11,6 +12,11 @@ public class IfLowerRangeVisitor extends GraphIntermediateVisitor {
 
 	public IfLowerRangeVisitor(IntermediateGraphContext igc) {
 		super(igc);
+	}
+	
+	@Override
+	public void visitElseIfLine(ElseIfIntermediate line) {
+		visitIfLine(line);
 	}
 	
 	@Override

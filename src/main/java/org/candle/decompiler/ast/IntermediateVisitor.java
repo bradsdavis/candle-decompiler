@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.ast.conditional.ElseIfBlock;
 import org.candle.decompiler.ast.conditional.IfBlock;
 import org.candle.decompiler.ast.tcf.CatchBlock;
 import org.candle.decompiler.ast.tcf.FinallyBlock;
@@ -20,6 +21,7 @@ import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
+import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
@@ -197,6 +199,51 @@ public class IntermediateVisitor extends GraphIntermediateVisitor {
 		if(this.current == finallyBlock) {
 			moveUp();
 		}
+	}
+	
+	@Override
+	public void visitElseIfLine(ElseIfIntermediate line) {
+		if(seen.contains(line)) {
+			//do nothing.
+			return;
+		}
+		else {
+			seen.add(line);
+		}
+
+		ElseIfBlock elseIfBlock = new ElseIfBlock(line);
+		current.addChild(elseIfBlock);
+		this.current = elseIfBlock;
+		
+		List<AbstractIntermediate> successors = getUnseenSuccessors(line);
+		//assign true... and go through true.
+		
+		BooleanBranchOutcome trueOutcome = null;
+		BooleanBranchOutcome falseOutcome = null;
+		for(AbstractIntermediate successor : successors) {
+			if(successor instanceof BooleanBranchOutcome) {
+				if(((BooleanBranchOutcome) successor).getExpressionOutcome() == Boolean.TRUE) {
+					trueOutcome = (BooleanBranchOutcome)successor;
+				}
+				else {
+					falseOutcome = (BooleanBranchOutcome)successor;
+				}
+			}
+			else {
+				throw new IllegalStateException("Outcome of If expected to be boolean.");
+			}
+		}
+		
+		trueOutcome.accept(this);
+		
+		//now, go back to if...
+		this.current = elseIfBlock;
+		falseOutcome.accept(this);
+
+		if(this.current == elseIfBlock) {
+			moveUp();
+		}
+		
 	}
 	
 	@Override

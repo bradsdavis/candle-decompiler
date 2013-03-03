@@ -392,7 +392,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new RetractOrphanGoto(lc.getIntermediateGraph()));
 		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
 		
-		enhancers.add(new HealGoto(lc.getIntermediateGraph()));
+		//enhancers.add(new HealGoto(lc.getIntermediateGraph()));
 		enhancers.add(new RemoveImpliedVoidReturn(lc.getIntermediateGraph()));
 		
 		enhancers.add(new Else(lc.getIntermediateGraph()));

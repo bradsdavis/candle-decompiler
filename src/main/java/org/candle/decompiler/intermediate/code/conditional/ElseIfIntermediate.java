@@ -27,7 +27,7 @@ public class ElseIfIntermediate extends IfIntermediate {
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitIfLine(this);
+		visitor.visitAbstractLine(this);
 		visitor.visitElseIfLine(this);
 	}
 
