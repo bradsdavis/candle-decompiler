@@ -22,8 +22,8 @@ public class ElseIntermediate extends AbstractIntermediate implements BlockSeria
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitElseLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitElseIntermediate(this);
 	}
 
 	@Override

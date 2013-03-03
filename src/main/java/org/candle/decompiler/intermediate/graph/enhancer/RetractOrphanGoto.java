@@ -15,7 +15,7 @@ public class RetractOrphanGoto extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitGoToLine(GoToIntermediate line) {
+	public void visitGoToIntermediate(GoToIntermediate line) {
 		List<AbstractIntermediate> candidates = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		if(candidates.size() == 0) {
 			igc.getIntermediateGraph().removeVertex(line);

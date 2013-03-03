@@ -15,22 +15,22 @@ public class WhileRangeVisitor extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitWhileLoopLine(WhileIntermediate line) {
+	public void visitWhileIntermediate(WhileIntermediate line) {
 		AbstractIntermediate falseTarget = igc.getFalseTarget(line);
 		AbstractIntermediate trueTarget = igc.getTrueTarget(line);
 		
 		line.getBlockRange().setStart(trueTarget.getInstruction());
 		line.getBlockRange().setEnd(falseTarget.getInstruction().getPrev());
-		super.visitWhileLoopLine(line);
+		super.visitWhileIntermediate(line);
 	}
 	
 	@Override
-	public void visitForLoopLine(ForIntermediate line) {
-		this.visitWhileLoopLine(line);
+	public void visitForIntermediate(ForIntermediate line) {
+		this.visitWhileIntermediate(line);
 	}
 	
 	@Override
-	public void visitEnhancedForLoopLine(EnhancedForIntermediate line) {
-		this.visitWhileLoopLine(line);
+	public void visitEnhancedForLoopIntermediate(EnhancedForIntermediate line) {
+		this.visitWhileIntermediate(line);
 	}
 }

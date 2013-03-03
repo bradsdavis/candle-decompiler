@@ -54,7 +54,7 @@ public class MultiBranchIntermediate extends AbstractIntermediate {
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitMultiConditionalLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitMultiBranchIntermediate(this);
 	}
 }

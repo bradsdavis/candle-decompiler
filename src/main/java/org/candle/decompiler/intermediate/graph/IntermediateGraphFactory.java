@@ -49,7 +49,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitCompleteLine(StatementIntermediate line) {
+	public void visitStatementIntermediate(StatementIntermediate line) {
 		AbstractIntermediate next = ilc.getNext(line);
 		
 		//check to see if it is a return statement.
@@ -73,7 +73,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	}
 
 	@Override
-	public void visitGoToLine(GoToIntermediate line) {
+	public void visitGoToIntermediate(GoToIntermediate line) {
 		
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate intermediate = ilc.getNext(line);
@@ -118,7 +118,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitMultiConditionalLine(MultiBranchIntermediate line) {
+	public void visitMultiBranchIntermediate(MultiBranchIntermediate line) {
 		
 		Select select = (Select)line.getInstruction().getInstruction();
 		
@@ -178,7 +178,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	}
 
 	@Override
-	public void visitAbstractLine(AbstractIntermediate line) {
+	public void visitAbstractIntermediate(AbstractIntermediate line) {
 		//add the vertex.
 		igc.getIntermediateGraph().addVertex(line);
 	}

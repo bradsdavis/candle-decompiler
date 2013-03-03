@@ -36,7 +36,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitForLoopLine(ForIntermediate line) {
+	public void visitForIntermediate(ForIntermediate line) {
 		//we need to look at the previous 2 statements and the first statement child.
 		AbstractIntermediate arrayLenthCandidate = getForExteriorPredecessor(line);
 		

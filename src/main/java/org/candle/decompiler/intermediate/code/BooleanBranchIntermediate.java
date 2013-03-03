@@ -60,7 +60,7 @@ public class BooleanBranchIntermediate extends AbstractIntermediate {
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
+		visitor.visitAbstractIntermediate(this);
 		visitor.visitBooleanBranchIntermediate(this);
 	}
 }

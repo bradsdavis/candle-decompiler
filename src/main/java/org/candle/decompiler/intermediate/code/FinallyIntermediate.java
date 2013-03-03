@@ -32,7 +32,7 @@ public class FinallyIntermediate extends AbstractIntermediate implements BlockSe
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
+		visitor.visitAbstractIntermediate(this);
 		visitor.visitFinallyIntermediate(this);
 	}
 

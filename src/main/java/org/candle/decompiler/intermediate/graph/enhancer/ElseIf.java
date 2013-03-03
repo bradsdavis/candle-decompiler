@@ -22,7 +22,7 @@ public class ElseIf extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitIfLine(IfIntermediate line) {
+	public void visitIfIntermediate(IfIntermediate line) {
 		//check to see if the predecessor is an if block.
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		

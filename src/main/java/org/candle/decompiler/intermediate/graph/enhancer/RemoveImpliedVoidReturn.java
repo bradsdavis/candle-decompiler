@@ -12,7 +12,7 @@ public class RemoveImpliedVoidReturn extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitCompleteLine(StatementIntermediate line) {
+	public void visitStatementIntermediate(StatementIntermediate line) {
 		//find out if this is the last statement...
 		if(line.getExpression() instanceof Return) {
 			Return returnStatement = (Return)line.getExpression();

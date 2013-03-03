@@ -15,12 +15,12 @@ public class IfLowerRangeVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitElseIfLine(ElseIfIntermediate line) {
-		visitIfLine(line);
+	public void visitElseIfIntermediate(ElseIfIntermediate line) {
+		visitIfIntermediate(line);
 	}
 	
 	@Override
-	public void visitIfLine(IfIntermediate line) {
+	public void visitIfIntermediate(IfIntermediate line) {
 		AbstractIntermediate l = igc.getTrueTarget(line);
 		InstructionHandle lower = l.getInstruction();
 		line.getBlockRange().setStart(lower);

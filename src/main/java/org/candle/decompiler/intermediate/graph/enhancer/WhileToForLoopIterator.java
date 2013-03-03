@@ -25,7 +25,7 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitWhileLoopLine(WhileIntermediate line) {
+	public void visitWhileIntermediate(WhileIntermediate line) {
 		//check to see if the while loop is a method invocation of hasNext.
 		
 		if(line.getExpression() instanceof SingleConditional) {

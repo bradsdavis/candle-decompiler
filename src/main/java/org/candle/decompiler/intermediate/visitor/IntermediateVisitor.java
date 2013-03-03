@@ -9,6 +9,7 @@ import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
+import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
@@ -21,25 +22,27 @@ public interface IntermediateVisitor {
 	//branch pseudo
 	public void visitBooleanBranchOutcome(BooleanBranchOutcome line);
 	
-	public void visitEnhancedForLoopLine(EnhancedForIntermediate line);
-	public void visitForLoopLine(ForIntermediate line);
-	public void visitWhileLoopLine(WhileIntermediate line);
+	public void visitEnhancedForLoopIntermediate(EnhancedForIntermediate line);
+	public void visitForIntermediate(ForIntermediate line);
+	public void visitWhileIntermediate(WhileIntermediate line);
 	
 	public void visitTryIntermediate(TryIntermediate line);
 	public void visitFinallyIntermediate(FinallyIntermediate line);
-	public void visitCatchLine(CatchIntermediate line);
-	public void visitCaseLine(CaseIntermediate line);
+	public void visitCatchIntermediate(CatchIntermediate line);
+	public void visitCaseIntermediate(CaseIntermediate line);
+	
+	public void visitSwitchIntermediate(SwitchIntermediate line);
+	
+	public void visitIfIntermediate(IfIntermediate line);
+	public void visitElseIfIntermediate(ElseIfIntermediate line);
+	public void visitElseIntermediate(ElseIntermediate line);
 	
 	
-	public void visitIfLine(IfIntermediate line);
-	public void visitElseIfLine(ElseIfIntermediate line);
-	public void visitElseLine(ElseIntermediate line);
-	
-	
-	public void visitCompleteLine(StatementIntermediate line);
-	public void visitGoToLine(GoToIntermediate line);
-	public void visitMultiConditionalLine(MultiBranchIntermediate line);
+	public void visitStatementIntermediate(StatementIntermediate line);
+	public void visitGoToIntermediate(GoToIntermediate line);
+	public void visitMultiBranchIntermediate(MultiBranchIntermediate line);
 	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line);
-	public void visitAbstractLine(AbstractIntermediate line);
+	public void visitAbstractIntermediate(AbstractIntermediate line);
+	
 	
 }

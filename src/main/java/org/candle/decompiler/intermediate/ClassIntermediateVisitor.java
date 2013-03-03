@@ -59,6 +59,7 @@ import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
@@ -77,15 +78,18 @@ import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
 import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanOutcomes;
+import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
 import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.SwitchRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
@@ -384,6 +388,12 @@ public class ClassIntermediateVisitor implements Visitor {
 		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new FinallyRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
+
+		enhancers.add(new MultiConditionalToSwitchIntermediate(lc.getIntermediateGraph()));
+		enhancers.add(new SwitchRangeVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new SwitchGotoToBreak(lc.getIntermediateGraph()));
+		
+		
 		
 		enhancers.add(new FinallyRemoveThrows(lc.getIntermediateGraph()));
 		enhancers.add(new RetractDuplicateFinally(lc.getIntermediateGraph()));
@@ -396,7 +406,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		/*
 		
-		enhancers.add(new GotoToBreak(lc.getIntermediateGraph()));
+		enhancers.add(new LoopGotoToBreak(lc.getIntermediateGraph()));
 
 	*/
 		
@@ -476,7 +486,7 @@ public class ClassIntermediateVisitor implements Visitor {
         StringBuilder builder = new StringBuilder(signature);
         if (methodGen.getExceptions().length > 0) {
             for (String excep : methodGen.getExceptions()) {
-                builder.append("\nthrows ").append(excep);
+                builder.append(" throws ").append(excep);
             }
         }
         

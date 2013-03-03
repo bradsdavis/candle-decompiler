@@ -19,7 +19,7 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitWhileLoopLine(WhileIntermediate line) {
+	public void visitWhileIntermediate(WhileIntermediate line) {
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		
 		//look at the predecessor lines;  validate there are only 2 predecessors.

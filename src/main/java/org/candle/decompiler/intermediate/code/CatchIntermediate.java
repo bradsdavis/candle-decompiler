@@ -56,8 +56,8 @@ public class CatchIntermediate extends AbstractIntermediate implements BlockSeri
 	
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitCatchLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitCatchIntermediate(this);
 	}
 
 	@Override

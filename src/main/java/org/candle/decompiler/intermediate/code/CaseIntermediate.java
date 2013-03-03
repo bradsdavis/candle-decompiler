@@ -34,8 +34,8 @@ public class CaseIntermediate extends AbstractIntermediate {
 	
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitCaseLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitCaseIntermediate(this);
 	}
 
 }

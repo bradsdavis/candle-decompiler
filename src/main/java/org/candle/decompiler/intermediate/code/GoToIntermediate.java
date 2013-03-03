@@ -22,8 +22,8 @@ public class GoToIntermediate extends AbstractIntermediate {
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitGoToLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitGoToIntermediate(this);
 	}
 
 	@Override

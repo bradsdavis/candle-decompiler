@@ -58,8 +58,8 @@ public class EnhancedForIntermediate extends WhileIntermediate {
 	
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitEnhancedForLoopLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitEnhancedForLoopIntermediate(this);
 	}
 	
 	

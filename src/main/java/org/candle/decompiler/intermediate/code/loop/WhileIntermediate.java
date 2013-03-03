@@ -38,8 +38,8 @@ public class WhileIntermediate extends BooleanBranchIntermediate implements Bloc
 	
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitWhileLoopLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitWhileIntermediate(this);
 	}
 
 	@Override

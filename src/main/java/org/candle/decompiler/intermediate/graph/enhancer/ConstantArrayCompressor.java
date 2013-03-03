@@ -32,7 +32,7 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitCompleteLine(StatementIntermediate line) {
+	public void visitStatementIntermediate(StatementIntermediate line) {
 		//first, look for the 
 		Assignment assignment = extractConstantArrayAssignment(line.getExpression());
 		if(assignment == null) {

@@ -25,6 +25,7 @@ import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
+import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
@@ -64,7 +65,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 
 	@Override
-	public void visitAbstractLine(AbstractIntermediate line) {
+	public void visitAbstractIntermediate(AbstractIntermediate line) {
 		while(!current.within(line.getInstruction())) {
 			if(LOG.isDebugEnabled()) {
 				LOG.debug("Line: "+ReflectionToStringBuilder.toString(line)+" not within: "+ReflectionToStringBuilder.toString(current));
@@ -75,7 +76,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 
 	
 	@Override
-	public void visitEnhancedForLoopLine(EnhancedForIntermediate line) {
+	public void visitEnhancedForLoopIntermediate(EnhancedForIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -92,7 +93,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitForLoopLine(ForIntermediate line) {
+	public void visitForIntermediate(ForIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -109,7 +110,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitWhileLoopLine(WhileIntermediate line) {
+	public void visitWhileIntermediate(WhileIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -126,7 +127,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitCompleteLine(StatementIntermediate line) {
+	public void visitStatementIntermediate(StatementIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -151,7 +152,14 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitElseLine(ElseIntermediate line) {
+	public void visitSwitchIntermediate(SwitchIntermediate line) {
+		SwitchBlock switchBlock = new SwitchBlock(line);
+		current.addChild(switchBlock);
+		current = switchBlock;
+	}
+	
+	@Override
+	public void visitElseIntermediate(ElseIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -268,7 +276,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitCatchLine(CatchIntermediate line) {
+	public void visitCatchIntermediate(CatchIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -321,7 +329,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitElseIfLine(ElseIfIntermediate line) {
+	public void visitElseIfIntermediate(ElseIfIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;
@@ -366,7 +374,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitIfLine(IfIntermediate line) {
+	public void visitIfIntermediate(IfIntermediate line) {
 		if(seen.contains(line)) {
 			//do nothing.
 			return;

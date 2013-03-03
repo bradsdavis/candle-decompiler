@@ -18,7 +18,6 @@ public class TestSwitch {
 		}
 		
 		
-		
 		switch (val) {
 		case 3:
 			System.out.println("Case 3.");

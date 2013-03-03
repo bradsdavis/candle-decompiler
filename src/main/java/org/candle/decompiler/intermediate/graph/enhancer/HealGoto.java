@@ -23,7 +23,7 @@ public class HealGoto extends GraphIntermediateVisitor {
 
 	
 	@Override
-	public void visitGoToLine(GoToIntermediate line) {
+	public void visitGoToIntermediate(GoToIntermediate line) {
 		AbstractIntermediate predecessor = igc.getSinglePredecessor(line);
 		AbstractIntermediate successor = igc.getSingleSuccessor(line);
 		

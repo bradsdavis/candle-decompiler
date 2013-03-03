@@ -47,8 +47,8 @@ public class StatementIntermediate extends AbstractIntermediate implements Block
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitCompleteLine(this); 
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitStatementIntermediate(this); 
 	}
 
 	@Override

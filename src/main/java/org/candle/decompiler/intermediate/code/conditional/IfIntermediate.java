@@ -14,8 +14,7 @@ public class IfIntermediate extends BooleanBranchIntermediate implements BlockSe
 
 	private BlockRange blockRange;
 	
-	public IfIntermediate(InstructionHandle instruction,
-			ConditionalExpression expression) {
+	public IfIntermediate(InstructionHandle instruction, ConditionalExpression expression) {
 		super(instruction, expression);
 		
 		this.blockRange = new BlockRange();
@@ -35,8 +34,8 @@ public class IfIntermediate extends BooleanBranchIntermediate implements BlockSe
 
 	@Override
 	public void accept(IntermediateVisitor visitor) {
-		visitor.visitAbstractLine(this);
-		visitor.visitIfLine(this);
+		visitor.visitAbstractIntermediate(this);
+		visitor.visitIfIntermediate(this);
 	}
 
 	@Override

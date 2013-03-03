@@ -43,7 +43,7 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 	}
 	
 	@Override
-	public void visitCatchLine(CatchIntermediate line) {
+	public void visitCatchIntermediate(CatchIntermediate line) {
 		//first, check if the line has an end already..
 		if(line.getBlockRange().getEnd()!=null) {
 			return;

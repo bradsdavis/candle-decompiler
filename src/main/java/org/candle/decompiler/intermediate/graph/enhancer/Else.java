@@ -24,7 +24,7 @@ public class Else extends GraphIntermediateVisitor {
 
 
 	@Override
-	public void visitAbstractLine(AbstractIntermediate line) {
+	public void visitAbstractIntermediate(AbstractIntermediate line) {
 		//for all lines...
 		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
 		if(predecessors.size() == 0) {
