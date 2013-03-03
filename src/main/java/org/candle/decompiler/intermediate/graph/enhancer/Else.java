@@ -60,7 +60,7 @@ public class Else extends GraphIntermediateVisitor {
 			if(firstElseBlockElement instanceof StatementIntermediate) {
 				//we should add the ELSE right away...
 				
-				addElseBlock(firstElseBlockElement);
+				addElseBlock(firstElseBlockElement, maxGotoForBranch);
 				return;
 			}
 			
@@ -81,14 +81,14 @@ public class Else extends GraphIntermediateVisitor {
 					igc.getIntermediateGraph().removeVertex(firstElseBlockElement);
 					
 					//add the else between this conditional.
-					addElseBlock(ifIntermediate);
+					addElseBlock(ifIntermediate, maxGotoForBranch);
 				}
 			}
 		}
 	}
 	
 	
-	protected void addElseBlock(AbstractIntermediate ai) {
+	protected void addElseBlock(AbstractIntermediate ai, GoToIntermediate maxGoto) {
 
 		ElseIntermediate elseIntermediate = new ElseIntermediate(ai.getInstruction().getPrev());
 		igc.getIntermediateGraph().addVertex(elseIntermediate);
@@ -96,5 +96,7 @@ public class Else extends GraphIntermediateVisitor {
 		//add a link to the statement.
 		
 		igc.getIntermediateGraph().addEdge(elseIntermediate, ai);
+		
+		elseIntermediate.getBlockRange().setEnd(maxGoto.getTarget().getInstruction().getPrev());
 	}
 }
