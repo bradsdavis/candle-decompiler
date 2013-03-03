@@ -57,7 +57,7 @@ public class VariableResolver {
 	public IntermediateVariable addLocalVariable(int index, InstructionHandle ih, String name, Type type) {
 		IntermediateVariable iv = new IntermediateVariable(name, type);
 		VariableIndex varIndex = VariableIndex.Factory.createFromInstructionHandle(ih, index);
-		LOG.info("Adding index: "+varIndex);
+		LOG.debug("Adding index: "+varIndex);
 		localGeneratedVariables.put(varIndex, iv);
 		
 		return iv;
@@ -65,7 +65,7 @@ public class VariableResolver {
 	
 	public IntermediateVariable addLocalVariable(int index, InstructionHandle ih, Type type) {
 		String name = RandomStringUtils.randomAlphabetic(3) + "$";
-		LOG.info("Adding variable: "+index + " type: "+type + " name: "+name);
+		LOG.debug("Adding variable: "+index + " type: "+type + " name: "+name);
 		return addLocalVariable(index, ih, name, type);
 	}
 	

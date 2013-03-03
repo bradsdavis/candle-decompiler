@@ -56,7 +56,6 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	
 	public void process() {
 		if(igc.getOrderedIntermediate().size() < 1) {
-			LOG.warn("No instructions.");
 			return;
 		}
 		
@@ -67,7 +66,9 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	@Override
 	public void visitAbstractLine(AbstractIntermediate line) {
 		while(!current.within(line.getInstruction())) {
-			LOG.warn("Line: "+ReflectionToStringBuilder.toString(line)+" not within: "+ReflectionToStringBuilder.toString(current));
+			if(LOG.isDebugEnabled()) {
+				LOG.debug("Line: "+ReflectionToStringBuilder.toString(line)+" not within: "+ReflectionToStringBuilder.toString(current));
+			}
 			moveUp();
 		}
 	}

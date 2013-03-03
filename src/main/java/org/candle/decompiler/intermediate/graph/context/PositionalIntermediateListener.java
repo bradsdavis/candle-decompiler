@@ -35,7 +35,9 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 		if(!this.igc.getOrderedIntermediate().add(e.getVertex())) {
 			//queue it up.
 			queuePosition.add(e.getVertex());
-			LOG.info("Queueing up vertex: "+e.getVertex());
+			if(LOG.isDebugEnabled()) {
+				LOG.debug("Queueing up vertex: "+e.getVertex());
+			}
 		}
 		
 		Integer position = e.getVertex().getInstruction().getPosition();
@@ -53,9 +55,10 @@ public class PositionalIntermediateListener implements GraphListener<AbstractInt
 		for(AbstractIntermediate ai : queuePosition) {
 			if(ai.getInstruction() == e.getVertex().getInstruction()) {
 				
-				LOG.info("Removed vertex: "+e.getVertex()+" Instruction: "+ai.getInstruction().getPosition());
-				LOG.info("\tLocated queued vertex: "+ai);
-				
+				if(LOG.isDebugEnabled()) {
+					LOG.debug("Removed vertex: "+e.getVertex()+" Instruction: "+ai.getInstruction().getPosition());
+					LOG.debug("\tLocated queued vertex: "+ai);
+				}
 				this.igc.getOrderedIntermediate().add(ai);
 				placedQueued = true;
 				break;

@@ -1,8 +1,6 @@
 package org.candle.decompiler.intermediate;
 
-import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,9 +54,9 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
-import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
@@ -77,7 +75,6 @@ import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor
 import org.candle.decompiler.intermediate.graph.enhancer.Else;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
 import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
-import org.candle.decompiler.intermediate.graph.enhancer.HealGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
@@ -359,11 +356,11 @@ public class ClassIntermediateVisitor implements Visitor {
 		IntermediateLineContext illc = new IntermediateLineContext(intermediate);
 		IntermediateGraphFactory lc = new IntermediateGraphFactory(illc);
 
-		System.out.println("Before ======");
+		LOG.debug("Before ======");
 		Writer w = new OutputStreamWriter(System.out);
 		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()), new IntermediateVertexAttributeProvider(), new IntermediateEdgeAttributeProvider());
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
-		System.out.println("End Before ======");
+		LOG.debug("End Before ======");
 		
 		IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, lc.getIntermediateGraph());
 		itc.process();
@@ -407,26 +404,13 @@ public class ClassIntermediateVisitor implements Visitor {
 			giv.process();
 		}
 		
-		System.out.println("After ======");
+		LOG.debug("After ======");
 		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
-		System.out.println("End After ======");
+		LOG.debug("End After ======");
 		
 
 		BlockVisitor iv = new BlockVisitor(lc.getIntermediateGraph(), method);
 		iv.process();
-		
-		if(LOG.isDebugEnabled()) {
-			LOG.debug("Method: ");
-			StringWriter writer = new StringWriter();
-			try {
-				method.write(writer);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			LOG.debug(writer.toString());
-		}
-		
 	}
 
 	@Override

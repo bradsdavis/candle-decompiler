@@ -7,6 +7,8 @@ import org.apache.bcel.generic.BasicType;
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Select;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
@@ -25,6 +27,8 @@ import org.jgrapht.graph.ListenableDirectedGraph;
 
 public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 
+	private static final Log LOG = LogFactory.getLog(IntermediateGraphFactory.class);
+	
 	private final IntermediateLineContext ilc;
 	private final IntermediateGraphContext igc;
 	
@@ -150,10 +154,10 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 			igc.getIntermediateGraph().addEdge(line, si);
 
 			//add edge from outcome to edge.
-			System.out.println(si);
+			LOG.debug(si);
 			AbstractIntermediate target = ilc.getNext(line.getDefaultCase().getTarget().getPosition());
 			
-			System.out.println("TargeT:"+target);
+			LOG.debug("TargeT:"+target);
 			igc.getIntermediateGraph().addVertex(target);
 			igc.getIntermediateGraph().addEdge(si, target);
 		}

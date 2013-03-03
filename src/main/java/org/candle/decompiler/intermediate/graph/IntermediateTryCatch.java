@@ -11,6 +11,8 @@ import java.util.TreeSet;
 import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.MethodGen;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
 import org.candle.decompiler.intermediate.code.BlockRangeComparator;
@@ -24,6 +26,8 @@ import org.candle.decompiler.intermediate.graph.context.NullIntermediate;
 
 public class IntermediateTryCatch {
 
+	private static final Log LOG = LogFactory.getLog(IntermediateTryCatch.class);
+	
 	private final MethodGen method;
 	private final IntermediateGraphContext igc;
 	
@@ -50,8 +54,8 @@ public class IntermediateTryCatch {
 			
 			
 			AbstractIntermediate handle = igc.findNextNode(ceg.getHandlerPC());
-			System.out.println("RANGE: "+ceg);
-			System.out.println("Range: "+tryRange+" , Target: "+handle.getInstruction().getPosition()+" , Handle: "+handle.getInstruction());
+			LOG.debug("RANGE: "+ceg);
+			LOG.debug("Range: "+tryRange+" , Target: "+handle.getInstruction().getPosition()+" , Handle: "+handle.getInstruction());
 			
 			
 			if(ceg.getCatchType() == null) {
@@ -117,13 +121,13 @@ public class IntermediateTryCatch {
 	}
 
 	private void generateCatch(TryIntermediate tryIntermediate, CodeExceptionGen ceg) {
-		System.out.println("CEG: "+ceg);
+		LOG.debug("CEG: "+ceg);
 		
 		
 		//convert the node to catch blocks...
 		AbstractIntermediate catchDeclaration = igc.getOrderedIntermediate().ceiling(new NullIntermediate(ceg.getHandlerPC()));
 		
-		System.out.println("Catch Declaration:"+catchDeclaration);
+		LOG.debug("Catch Declaration:"+catchDeclaration);
 		
 		if(catchDeclaration instanceof StatementIntermediate) {
 			StatementIntermediate declarationStatement = (StatementIntermediate)catchDeclaration;

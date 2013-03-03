@@ -173,7 +173,7 @@ public class MethodIntermediateVisitor implements Visitor {
 			IntermediateVariable localVar = context.getVariableResolver().getLocalVariable(index, context.getCurrentInstruction().getPosition()); 
 
 			if(localVar == null) {
-				LOG.info("Did not find local variable: "+index + " for position: "+context.getCurrentInstruction().getPosition());
+				LOG.debug("Did not find local variable: "+index + " for position: "+context.getCurrentInstruction().getPosition());
 			}
 			Variable variable = null;
 			if(localVar == null) {
@@ -234,8 +234,10 @@ public class MethodIntermediateVisitor implements Visitor {
 		Variable variable = new Variable(context.getCurrentInstruction(), fieldType, fieldName);
 		Assignment assignment = new Assignment(context.getCurrentInstruction(), variable, right);
 		
-		for(Field field : context.getJavaClass().getFields()) {
-			LOG.info(field);
+		if(LOG.isDebugEnabled()) {
+			for(Field field : context.getJavaClass().getFields()) {
+				LOG.debug(field);
+			}
 		}
 		
 		StatementIntermediate complete = new StatementIntermediate(context.getCurrentInstruction(), assignment);
@@ -818,7 +820,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 			if(iv == null) {
 				//probably need to create a variable for enhanced loops...
-				LOG.info("Adding index: "+instruction.getIndex() + " as: "+type);
+				LOG.debug("Adding index: "+instruction.getIndex() + " as: "+type);
 				
 				//try and resolve the type for the variable from the right hand side.
 				if(type == Type.OBJECT) {
@@ -1177,7 +1179,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 
 	public void visitNOP(NOP instruction) {
-		LOG.info("No operation expression: "+instruction);
+		LOG.debug("No operation expression: "+instruction);
 	}
 
 	public void visitPopInstruction(PopInstruction instruction) {
@@ -1185,11 +1187,11 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 
 	public void visitPOP(POP instruction) {
-		LOG.info("Pop.");
+		LOG.debug("Pop.");
 		context.getExpressions().pop();
 	}
 	public void visitPOP2(POP2 instruction) {
-		LOG.info("Double Pop.");
+		LOG.debug("Double Pop.");
 		context.getExpressions().pop();
 		context.getExpressions().pop();
 	}
@@ -1250,7 +1252,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Type type = instruction.getType(cpg);
 		
 		//now see what type it is.
-		LOG.info("To Type: "+type);
+		LOG.debug("To Type: "+type);
 		
 		Resolved resolve = new Resolved(context.getCurrentInstruction(), type, type.toString());
 		

@@ -2,6 +2,8 @@ package org.candle.decompiler.intermediate.graph.enhancer;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
@@ -13,6 +15,8 @@ import org.jgrapht.Graphs;
 
 public class ElseIf extends GraphIntermediateVisitor {
 
+	private static final Log LOG = LogFactory.getLog(ElseIf.class);
+	
 	public ElseIf(IntermediateGraphContext igc) {
 		super(igc, false);
 	}
@@ -31,7 +35,7 @@ public class ElseIf extends GraphIntermediateVisitor {
 			
 			//check to see whether it is on the ELSE side.
 			BooleanBranchIntermediate parent = (BooleanBranchIntermediate)igc.getSinglePredecessor(((BooleanBranchOutcome)predecessors.get(0)));
-			System.out.println(parent.getClass());
+			LOG.debug(parent.getClass());
 			if(!(parent instanceof IfIntermediate)) {
 				return;
 			}

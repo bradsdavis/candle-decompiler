@@ -55,7 +55,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		InstructionHandle min = getLowestBound(line.getCodeExceptions());
 		InstructionHandle max = getHighestBound(line.getCodeExceptions());
 		
-		System.out.println("Finally Range: "+min.getPosition() + " -> "+max.getPosition());
+		LOG.debug("Finally Range: "+min.getPosition() + " -> "+max.getPosition());
 		
 		//TODO: Add support for the max.
 		TryIntermediate matched = matchTryBlock(min, max);
@@ -92,7 +92,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		AbstractIntermediate gotoIntermediate = null;
 		//check to see if this is loop...
 		if(tryEndNode instanceof StatementIntermediate) {
-			System.out.println("Position: "+tryEndNode.getInstruction().getPosition()+" Value: "+tryEndNode);
+			LOG.debug("Position: "+tryEndNode.getInstruction().getPosition()+" Value: "+tryEndNode);
 			gotoIntermediate = igc.getSingleSuccessor(tryEndNode);
 		}
 		else if(tryEndNode instanceof BooleanBranchIntermediate) {
@@ -126,13 +126,13 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		for(CodeExceptionGen ceg : finallyIntermediate.getCodeExceptions()) {
 			int position = ceg.getEndPC().getPosition();
 			if(catchIntermediate.getBlockRange().containsNumber(position))  {
-				System.out.println("Relevant: "+position);
+				LOG.debug("Relevant: "+position);
 				
 				//we found the relevant position, now we need to find the next...
 				AbstractIntermediate lastNode = igc.findNextNode(ceg.getEndPC());
 				
 				AbstractIntermediate finallyStart = igc.getSingleSuccessor(lastNode);
-				System.out.println("Finally start: "+finallyStart);
+				LOG.debug("Finally start: "+finallyStart);
 				
 				//start eliminating nodes from this point.
 				eliminateNode(finallyStart, offsets);
@@ -156,7 +156,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 			int nextPosition = next.getInstruction().getPosition();
 			
 			int offset = nextPosition - position;
-			System.out.println("Offset: "+offset);
+			LOG.debug("Offset: "+offset);
 			offsets.add(offset);
 		}
 		
@@ -195,7 +195,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		for(AbstractIntermediate ai : igc.getIntermediateGraph().vertexSet()) {
 			if(ai instanceof TryIntermediate) {
 				TryIntermediate tryIntermediate = ((TryIntermediate) ai);
-				System.out.println("Finally: "+tryIntermediate+ " , "+tryIntermediate.getInstruction().getPosition()+" , "+tryIntermediate.getBlockRange().getStart());
+				LOG.debug("Finally: "+tryIntermediate+ " , "+tryIntermediate.getInstruction().getPosition()+" , "+tryIntermediate.getBlockRange().getStart());
 				if(tryIntermediate.getBlockRange().getStart().getPosition() == min.getPosition()) {
 					
 					//only add where max > try's max range...
@@ -217,7 +217,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 					return 0;
 				}
 			});
-			System.out.println("Match: "+matches.peekFirst()+" Range: "+matches.peekFirst().getBlockRange());
+			LOG.debug("Match: "+matches.peekFirst()+" Range: "+matches.peekFirst().getBlockRange());
 			return matches.getFirst();
 		}
 		

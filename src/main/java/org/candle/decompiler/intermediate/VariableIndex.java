@@ -46,7 +46,9 @@ public class VariableIndex {
 				if(next == null) {
 					break;
 				}
-				LOG.info("Skipping forward: "+next);
+				if(LOG.isDebugEnabled()) {
+					LOG.debug("Skipping forward: "+next);
+				}
 				ih = next;
 			}
 			//check ih.
@@ -61,7 +63,9 @@ public class VariableIndex {
 				}
 				
 				int t2 = t2handle.getPosition();
-				LOG.info("Skipping forward: "+t2);
+				if(LOG.isDebugEnabled()) {
+					LOG.debug("Skipping forward: "+t2);
+				}
 				end = t1 > t2 ? t1 : t2;
 			}
 			else {

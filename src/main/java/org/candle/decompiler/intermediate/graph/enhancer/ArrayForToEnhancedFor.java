@@ -83,7 +83,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 		
 		if(firstMatchesGeneratedVariables(childDeclarationStatement, generatedArrayReference, arrayIteratorValue)) {
 			
-			LOG.info("Likely a enhanced for loop for array: "+generatedArrayLength + " , "+ generatedArrayReference);
+			LOG.debug("Likely a enhanced for loop for array: "+generatedArrayLength + " , "+ generatedArrayReference);
 			
 			//we are good to go here.  Now we just need to reorganize the graph.  Start by creating the new enhanced for loop.
 			EnhancedForIntermediate efl = new EnhancedForIntermediate(line.getInstruction(), line.getConditionalIntermediate(), childDeclaration.getVariable(), extractExpressionFromGeneratedArrayAssignment(tempArrayCandidate));

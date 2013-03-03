@@ -6,6 +6,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
@@ -34,6 +36,8 @@ import org.jgrapht.traverse.BreadthFirstIterator;
  */
 public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 
+	private static final Log LOG = LogFactory.getLog(CatchUpperRangeVisitor.class);
+	
 	public CatchUpperRangeVisitor(IntermediateGraphContext igc) {
 		super(igc);
 	}
@@ -53,7 +57,7 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 			AbstractIntermediate next = bfi.next();
 			if(next instanceof GoToIntermediate) {
 				//this would be a possible GOTO... find previous.
-				System.out.println("Catch GOGO: "+next+" goto:"+next.getInstruction().getPosition());
+				LOG.debug("Catch GOGO: "+next+" goto:"+next.getInstruction().getPosition());
 				lastStatement = igc.getSinglePredecessor(next);
 				break;
 			}
@@ -104,7 +108,7 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 		}
 		
 		for(AbstractIntermediate element : elements) {
-			System.out.println("Element: "+element+" Position: "+element.getInstruction().getPosition());
+			LOG.debug("Element: "+element+" Position: "+element.getInstruction().getPosition());
 		}
 		
 		if(elements.size() == 1) {
