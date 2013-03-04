@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 
 import com.sun.org.apache.bcel.internal.classfile.Utility;
@@ -69,7 +68,7 @@ public class ClassBlock extends Block {
 	
 	@Override
 	public void write(Writer builder) throws IOException {
-		builder.append("package ").append(packageName);
+		builder.append("package ").append(packageName).append(";");
 		builder.append(Block.NL);
 		builder.append(Block.NL);
 		

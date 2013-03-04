@@ -7,13 +7,17 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.expression.Case;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
-public class CaseIntermediate extends AbstractIntermediate {
+public class CaseIntermediate extends AbstractIntermediate implements BlockSerializable {
 
+	private final BlockRange blockRange;
 	private final Case caseEntry;
 	
 	public CaseIntermediate(InstructionHandle instruction, Case caseVal) {
 		super(instruction);
 		this.caseEntry = caseVal;
+		this.blockRange = new BlockRange();
+		
+		this.blockRange.setStart(this.caseEntry.getTarget());
 	}
 	
 	public Case getCaseEntry() {
@@ -36,6 +40,11 @@ public class CaseIntermediate extends AbstractIntermediate {
 	public void accept(IntermediateVisitor visitor) {
 		visitor.visitAbstractIntermediate(this);
 		visitor.visitCaseIntermediate(this);
+	}
+
+	@Override
+	public BlockRange getBlockRange() {
+		return blockRange;
 	}
 
 }

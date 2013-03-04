@@ -15,12 +15,15 @@ import org.candle.decompiler.ast.conditional.IfBlock;
 import org.candle.decompiler.ast.loop.EnhancedForBlock;
 import org.candle.decompiler.ast.loop.ForBlock;
 import org.candle.decompiler.ast.loop.WhileBlock;
+import org.candle.decompiler.ast.swtch.SwitchBlock;
+import org.candle.decompiler.ast.swtch.SwitchCaseBlock;
 import org.candle.decompiler.ast.tcf.CatchBlock;
 import org.candle.decompiler.ast.tcf.FinallyBlock;
 import org.candle.decompiler.ast.tcf.TryBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
+import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
@@ -55,6 +58,8 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		this.current = method;
 	}
 	
+	
+	
 	public void process() {
 		if(igc.getOrderedIntermediate().size() < 1) {
 			return;
@@ -64,6 +69,8 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		this.start.accept(this);
 	}
 
+	
+	
 	@Override
 	public void visitAbstractIntermediate(AbstractIntermediate line) {
 		while(!current.within(line.getInstruction())) {
@@ -153,10 +160,46 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	
 	@Override
 	public void visitSwitchIntermediate(SwitchIntermediate line) {
+		if(seen.contains(line)) {
+			//do nothing.
+			return;
+		}
+		else {
+			seen.add(line);
+		}
+
 		SwitchBlock switchBlock = new SwitchBlock(line);
 		current.addChild(switchBlock);
 		current = switchBlock;
+		
+		List<CaseIntermediate> cases = igc.getCases(line);
+		
+		for(CaseIntermediate switchCase : cases) {
+			switchCase.accept(this);
+			
+			//reset current to switch
+			current = switchBlock;
+		}
 	}
+	
+	@Override
+	public void visitCaseIntermediate(CaseIntermediate line) {
+		SwitchCaseBlock switchCaseBlock = new SwitchCaseBlock(line);
+		current.addChild(switchCaseBlock);
+		current = switchCaseBlock;
+
+
+		//now, visit the successor, if any.
+		List<AbstractIntermediate> candidates = getUnseenSuccessors(line);
+		
+		if(candidates.size() > 0) {
+			for(AbstractIntermediate candidate : candidates) {
+				//move to the next.
+				candidate.accept(this);
+			}
+		}
+	}
+	
 	
 	@Override
 	public void visitElseIntermediate(ElseIntermediate line) {

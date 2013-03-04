@@ -79,6 +79,7 @@ import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
@@ -86,6 +87,7 @@ import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanOutcomes;
 import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
+import org.candle.decompiler.intermediate.graph.range.CaseEndRangeIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
@@ -382,17 +384,19 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		enhancers.add(new If(lc.getIntermediateGraph()));
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
-		enhancers.add(new Else(lc.getIntermediateGraph()));
+		//enhancers.add(new Else(lc.getIntermediateGraph()));
 		
 		enhancers.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new FinallyRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
 
+
 		enhancers.add(new MultiConditionalToSwitchIntermediate(lc.getIntermediateGraph()));
 		enhancers.add(new SwitchRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new SwitchGotoToBreak(lc.getIntermediateGraph()));
-		
+		enhancers.add(new CaseEndRangeIntermediateVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new RemoveCaseToCaseEdge(lc.getIntermediateGraph()));
 		
 		
 		enhancers.add(new FinallyRemoveThrows(lc.getIntermediateGraph()));
