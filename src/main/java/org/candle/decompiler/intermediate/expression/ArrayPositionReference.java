@@ -3,8 +3,6 @@ package org.candle.decompiler.intermediate.expression;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 
@@ -47,12 +45,4 @@ public class ArrayPositionReference extends Expression {
 		return sw.toString();
 	}
 	
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		expressions.add(arrayPosition);
-		expressions.add(arrayReference);
-		
-		return expressions;
-	}
 }

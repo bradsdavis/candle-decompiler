@@ -73,6 +73,10 @@ public class ClassBlock extends Block {
 		builder.append(Block.NL);
 		
 		for(String imp : imports) {
+			if(StringUtils.startsWith(imp, "[")) {
+				continue;
+			}
+			
 			builder.append("import ").append(imp).append(";");
 			builder.append(Block.NL);
 		}

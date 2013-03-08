@@ -57,7 +57,6 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		
 		LOG.debug("Finally Range: "+min.getPosition() + " -> "+max.getPosition());
 		
-		//TODO: Add support for the max.
 		TryIntermediate matched = matchTryBlock(min, max);
 		if(matched != null) {
 			final Set<Integer> offsets = collectOffsets(line);
@@ -77,7 +76,6 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		
 		AbstractIntermediate finallyLast = igc.findNextNode(finallyEnd);
 		AbstractIntermediate afterFinally = igc.findNextNode(finallyEnd.getNext());
-		
 		
 		igc.redirectPredecessors(finallyLast, afterFinally);
 		igc.getIntermediateGraph().removeVertex(finallyLast);
@@ -172,7 +170,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 			
 			ih = igc.getInstructionHandle(target);
 			if(ih == null) {
-				LOG.warn("Did not found expected InstructionHandle: "+(position+offset));
+				LOG.warn("Not found expected InstructionHandle: "+(position+offset));
 				continue;
 			}
 			
@@ -220,8 +218,6 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 			LOG.debug("Match: "+matches.peekFirst()+" Range: "+matches.peekFirst().getBlockRange());
 			return matches.getFirst();
 		}
-		
-		
 		
 		return null;
 	}

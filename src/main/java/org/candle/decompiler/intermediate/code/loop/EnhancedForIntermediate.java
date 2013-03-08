@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
+import org.candle.decompiler.ast.SignatureUtility;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.Variable;
@@ -38,7 +39,7 @@ public class EnhancedForIntermediate extends WhileIntermediate {
 	public String toString() {
 		StringWriter sw = new StringWriter();
 		try {
-			String outputType = Utility.signatureToString(variable.getType().getSignature());
+			String outputType = SignatureUtility.signatureToString(variable.getType().getSignature());
 			
 			if(StringUtils.contains(outputType, ".")) {
 				outputType = StringUtils.substringAfterLast(outputType, ".");

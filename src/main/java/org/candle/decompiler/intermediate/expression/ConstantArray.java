@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 
@@ -33,12 +32,5 @@ public class ConstantArray extends Expression {
 		}
 		writer.append("}");
 	}
-
-	@Override
-	public Set<Expression> nestedExpression() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	
 }

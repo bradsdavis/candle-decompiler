@@ -310,10 +310,12 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		//set the current up.
 		moveUp();
 		for(AbstractIntermediate catchBlock : catchBlocks) {
+			current = tryBlock;
 			catchBlock.accept(this);
 		}
 		
 		if(finallyIntermediate != null) {
+			current = tryBlock;
 			finallyIntermediate.accept(this);
 		}
 	}

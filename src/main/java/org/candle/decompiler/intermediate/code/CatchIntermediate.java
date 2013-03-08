@@ -7,6 +7,7 @@ import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
+import org.candle.decompiler.ast.SignatureUtility;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
@@ -37,7 +38,7 @@ public class CatchIntermediate extends AbstractIntermediate implements BlockSeri
 	public String toString() {
 		StringWriter sw = new StringWriter();
 		
-		String outputType = Utility.signatureToString(catchVariable.getType().getSignature());
+		String outputType = SignatureUtility.signatureToString(catchVariable.getType().getSignature());
 		if(StringUtils.contains(outputType, ".")) {
 			outputType = StringUtils.substringAfterLast(outputType, ".");
 		}

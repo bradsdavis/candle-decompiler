@@ -5,6 +5,7 @@ import java.io.Writer;
 
 import org.apache.bcel.classfile.Utility;
 import org.candle.decompiler.ast.SerializableBlock;
+import org.candle.decompiler.ast.SignatureUtility;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.expression.Variable;
 
@@ -21,7 +22,7 @@ public class CatchBlock extends SerializableBlock<CatchIntermediate> {
 		builder.append("catch(");
 		
 		Variable catchVariable = intermediate.getCatchVariable();
-		String type = Utility.signatureToString(catchVariable.getType().getSignature());
+		String type = SignatureUtility.signatureToString(catchVariable.getType().getSignature());
 		
 		builder.append(type);
 		builder.append(" ");

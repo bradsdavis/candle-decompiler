@@ -59,7 +59,6 @@ import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateEdge;
@@ -71,11 +70,11 @@ import org.candle.decompiler.intermediate.graph.IntermediateLineContext;
 import org.candle.decompiler.intermediate.graph.IntermediateTryCatch;
 import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
+import org.candle.decompiler.intermediate.graph.enhancer.ConditionExternalToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
 import org.candle.decompiler.intermediate.graph.enhancer.Else;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
-import org.candle.decompiler.intermediate.graph.enhancer.FinallyRemoveThrows;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
@@ -374,9 +373,18 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		
 		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
+		
 		enhancers.add(new MergeConditionExpression(lc.getIntermediateGraph()));
 		enhancers.add(new ConstantArrayCompressor(lc.getIntermediateGraph()));
 		
+		enhancers.add(new FinallyRangeVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
+		
+		enhancers.add(new RetractDuplicateFinally(lc.getIntermediateGraph()));
+		enhancers.add(new RetractOrphanGoto(lc.getIntermediateGraph()));
+		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
+		
+		enhancers.add(new ConditionExternalToWhileLoop(lc.getIntermediateGraph()));
 		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
 		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));
@@ -384,35 +392,22 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		enhancers.add(new If(lc.getIntermediateGraph()));
 		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
-		//enhancers.add(new Else(lc.getIntermediateGraph()));
-		
-		enhancers.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new FinallyRangeVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
-
+		enhancers.add(new Else(lc.getIntermediateGraph()));
 
 		enhancers.add(new MultiConditionalToSwitchIntermediate(lc.getIntermediateGraph()));
 		enhancers.add(new SwitchRangeVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new SwitchGotoToBreak(lc.getIntermediateGraph()));
 		enhancers.add(new CaseEndRangeIntermediateVisitor(lc.getIntermediateGraph()));
 		enhancers.add(new RemoveCaseToCaseEdge(lc.getIntermediateGraph()));
+
+		enhancers.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
+		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
 		
-		
-		enhancers.add(new FinallyRemoveThrows(lc.getIntermediateGraph()));
-		enhancers.add(new RetractDuplicateFinally(lc.getIntermediateGraph()));
-		enhancers.add(new RetractOrphanGoto(lc.getIntermediateGraph()));
-		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
 		
 		//enhancers.add(new HealGoto(lc.getIntermediateGraph()));
 		enhancers.add(new RemoveImpliedVoidReturn(lc.getIntermediateGraph()));
 		
 		
-		/*
-		
-		enhancers.add(new LoopGotoToBreak(lc.getIntermediateGraph()));
-
-	*/
 		
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();

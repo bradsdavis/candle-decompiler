@@ -11,13 +11,22 @@ public class BCELMainTest {
 
 	  public static void main(String[] argv) throws DecompilerException
 	  {
-		 // String className = "org.candle.decompiler.test.TestSimpleCondition";
-		 //String className = "org.candle.decompiler.test.TestSimpleLoops";
-		 // String className = "org.candle.decompiler.test.TestTryCatch";
-		  //String className = "org.candle.decompiler.test.TestConditionsBlock";
-		 String className = "org.candle.decompiler.test.TestSwitch";
-		  //String className = "org.candle.decompiler.test.TestArrayAssignment";
 		  
+		  //TODO: Fix TRY/CATCH/Finally
+		  //Fix: Array Iterator
+		  //Fix: Else clause in last switch statement.
+		  
+		  //String className = "org.candle.decompiler.test.TestSimpleCondition";
+		 //String className = "org.candle.decompiler.test.TestTryCatch";
+
+		 //String className = "org.candle.decompiler.test.TestConditionsBlock";
+		 //String className = "org.candle.decompiler.test.TestSwitch";
+		  String className = "org.candle.decompiler.test.TestFinallyAdvanced";
+		  
+		  //works
+		  //String className = "org.candle.decompiler.test.TestArrayAssignment";
+		  //String className = "org.candle.decompiler.test.TestSimpleLoops";
+			  
 		  CandleDecompiler decompiler = new CandleDecompiler();
 		  decompiler.decompile(className);
 		  

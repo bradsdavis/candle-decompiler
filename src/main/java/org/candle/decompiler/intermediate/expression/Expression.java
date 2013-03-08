@@ -2,8 +2,6 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.Sourceable;
@@ -23,8 +21,6 @@ public abstract class Expression implements Sourceable, Cloneable {
 	public void setInstructionHandle(InstructionHandle instructionHandle) {
 		this.instructionHandle = instructionHandle;
 	}
-	
-	public abstract Set<Expression> nestedExpression();
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException {

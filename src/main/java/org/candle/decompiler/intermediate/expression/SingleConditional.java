@@ -2,8 +2,6 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 
@@ -45,16 +43,6 @@ public class SingleConditional extends ConditionalExpression {
 	@Override
 	public void negate() {
 		this.negated = !negated;
-	}
-	
-
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		if(left!=null) {
-			expressions.add(left);
-		}
-		return expressions;
 	}
 	
 }

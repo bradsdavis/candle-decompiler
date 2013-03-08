@@ -2,15 +2,13 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
+import org.candle.decompiler.ast.SignatureUtility;
 
 public class NewArrayInstance extends NewInstance {
 
@@ -32,7 +30,7 @@ public class NewArrayInstance extends NewInstance {
 		
 		int dimensions = StringUtils.countMatches(type.getSignature(), "[");
 		
-		String signature = Utility.signatureToString(type.getSignature());
+		String signature = SignatureUtility.signatureToString(type.getSignature());
 		signature = StringUtils.substringBefore(signature, "[]");
 		builder.append(signature);
 		
@@ -46,13 +44,6 @@ public class NewArrayInstance extends NewInstance {
 			builder.append("]");
 		}
 		
-	}
-	
-
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		return expressions;
 	}
 	
 }

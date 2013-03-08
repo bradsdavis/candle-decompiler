@@ -39,6 +39,7 @@ import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.expression.SingleConditional;
 import org.candle.decompiler.intermediate.expression.Switch;
+import org.candle.decompiler.intermediate.expression.Ternary;
 import org.candle.decompiler.intermediate.expression.Throw;
 import org.candle.decompiler.intermediate.expression.TypedExpression;
 import org.candle.decompiler.intermediate.expression.Variable;
@@ -1366,7 +1367,6 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 	
 
-
 	protected void processComparator() {
 		Expression left = context.getExpressions().pop();
 		Expression right = context.getExpressions().pop();
@@ -1389,8 +1389,22 @@ public class MethodIntermediateVisitor implements Visitor {
 		processComparator();
 	}
 	public void visitLCMP(LCMP instruction) {
-		processComparator();
+		Expression left = context.getExpressions().pop();
+		Expression right = context.getExpressions().pop();
+		
+		MultiConditional eq = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
+		MultiConditional logic = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.GREATER);
+		
+		Resolved r0 = new Resolved(context.getCurrentInstruction(), Type.INT, "0");
+		Resolved rN = new Resolved(context.getCurrentInstruction(), Type.INT, "-1");
+		Resolved rP = new Resolved(context.getCurrentInstruction(), Type.INT, "1");
+		
+		Ternary tern2 = new Ternary(context.getCurrentInstruction(), ObjectType.INT, logic, rP, rN);
+		Ternary tern1 = new Ternary(context.getCurrentInstruction(), Type.INT, eq, r0, tern2);
+		
+		context.getExpressions().push(tern1);
 	}
+
 
 
 	public void visitLOOKUPSWITCH(LOOKUPSWITCH instruction) {

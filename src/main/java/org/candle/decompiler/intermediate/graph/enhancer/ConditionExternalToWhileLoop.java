@@ -17,9 +17,9 @@ import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.CycleDetector;
 
-public class ConditionToWhileLoop extends GraphIntermediateVisitor {
+public class ConditionExternalToWhileLoop extends GraphIntermediateVisitor {
 	
-	public ConditionToWhileLoop(IntermediateGraphContext igc) {
+	public ConditionExternalToWhileLoop(IntermediateGraphContext igc) {
 		super(igc, true);
 	}
 
@@ -63,7 +63,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				return;
 			}
 			
-			nestedLine = incomingGotoNonNested.pollLast();
+			nestedLine = incomingGotoNested.pollLast();
 			
 			//stop if both conditions aren't met.
 			if(nestedLine == null || otherLine == null) {

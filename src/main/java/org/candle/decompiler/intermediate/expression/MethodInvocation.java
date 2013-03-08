@@ -2,9 +2,7 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 
@@ -52,14 +50,4 @@ public class MethodInvocation extends Expression {
 		}
 		val.append(")");
 	}
-	
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		expressions.add(target);
-		expressions.addAll(parameters);
-		
-		return expressions;
-	}
-	
 }

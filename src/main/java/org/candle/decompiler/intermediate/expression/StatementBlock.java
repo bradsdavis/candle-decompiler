@@ -2,8 +2,6 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 
@@ -22,15 +20,6 @@ public class StatementBlock extends Expression {
 		left.write(writer);
 		writer.append("\n");
 		right.write(writer);
-	}
-	
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		expressions.add(left);
-		expressions.add(right);
-		
-		return expressions;
 	}
 }
 

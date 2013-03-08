@@ -2,8 +2,6 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 public class LogicalGateConditionalExpression extends ConditionalExpression {
 
@@ -50,12 +48,4 @@ public class LogicalGateConditionalExpression extends ConditionalExpression {
 		}
 	}
 
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		expressions.add(left);
-		expressions.add(right);
-		
-		return expressions;
-	}
 }

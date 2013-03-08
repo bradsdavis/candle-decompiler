@@ -2,8 +2,6 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.logging.Log;
@@ -66,12 +64,4 @@ public class MultiConditional extends ConditionalExpression {
 		}
 	}
 	
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		expressions.add(left);
-		expressions.add(right);
-		
-		return expressions;
-	}
 }

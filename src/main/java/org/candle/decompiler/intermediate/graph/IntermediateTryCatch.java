@@ -59,7 +59,6 @@ public class IntermediateTryCatch {
 			
 			
 			if(ceg.getCatchType() == null) {
-				System.out.println("FINALLY!");
 				if(!tryRangeFinally.containsKey(ceg.getHandlerPC())) {
 					tryRangeFinally.put(ceg.getHandlerPC(), new LinkedList<CodeExceptionGen>());
 				}

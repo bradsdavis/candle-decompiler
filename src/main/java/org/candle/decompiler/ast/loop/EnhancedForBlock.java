@@ -6,6 +6,7 @@ import java.io.Writer;
 import org.apache.bcel.classfile.Utility;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.SerializableBlock;
+import org.candle.decompiler.ast.SignatureUtility;
 import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 
 public class EnhancedForBlock extends SerializableBlock<EnhancedForIntermediate> {
@@ -20,7 +21,7 @@ public class EnhancedForBlock extends SerializableBlock<EnhancedForIntermediate>
 		builder.append(indent);
 		builder.append("for(");
 		try {
-			String outputType = Utility.signatureToString(intermediate.getVariable().getType().getSignature());
+			String outputType = SignatureUtility.signatureToString(intermediate.getVariable().getType().getSignature());
 			
 			if(StringUtils.contains(outputType, ".")) {
 				outputType = StringUtils.substringAfterLast(outputType, ".");

@@ -2,12 +2,10 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
-import org.apache.bcel.classfile.Utility;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
+import org.candle.decompiler.ast.SignatureUtility;
 
 public class ObjectType extends Expression implements TypedExpression {
 
@@ -24,7 +22,7 @@ public class ObjectType extends Expression implements TypedExpression {
 	
 	@Override
 	public void write(Writer writer) throws IOException {
-		String signature = Utility.signatureToString(type.getSignature());
+		String signature = SignatureUtility.signatureToString(type.getSignature());
 		writer.append(signature);
 	}
 	
@@ -43,11 +41,5 @@ public class ObjectType extends Expression implements TypedExpression {
 		} else if (!type.equals(other.type))
 			return false;
 		return true;
-	}
-	
-	@Override
-	public Set<Expression> nestedExpression() {
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		return expressions;
 	}
 }

@@ -2,8 +2,6 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
@@ -33,12 +31,5 @@ public class Resolved extends Expression implements TypedExpression {
 	
 	public String getValue() {
 		return value;
-	}
-	
-	@Override
-	public Set<Expression> nestedExpression() {
-		LOG.debug("Calling nested on RESOLVED!");
-		Set<Expression> expressions = new HashSet<Expression>(2);
-		return expressions;
 	}
 }
