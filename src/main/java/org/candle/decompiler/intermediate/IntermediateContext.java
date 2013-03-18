@@ -14,13 +14,17 @@ public class IntermediateContext {
 	private final JavaClass clazz;
 	private final MethodGen methodGen;
 	
-	private final Stack<Expression> expressions = new Stack<Expression>();
+	private Stack<Expression> expressions;
 	private final VariableResolver variableResolver;
 	
 	public IntermediateContext(JavaClass clazz, MethodGen methodGen) {
 		this.clazz = clazz;
 		this.methodGen = methodGen;
 		this.variableResolver = new VariableResolver(this.methodGen);
+	}
+	
+	public void setExpressions(Stack<Expression> expressions) {
+		this.expressions = expressions;
 	}
 
 	public VariableResolver getVariableResolver() {
@@ -48,7 +52,7 @@ public class IntermediateContext {
 	public InstructionHandle getCurrentInstruction() {
 		return currentInstruction;
 	}
-	
+
 	public void pushIntermediateToInstruction(final AbstractIntermediate ai) {
 		System.out.println("Pushing: "+ai+" to: "+this.currentInstruction);
 		this.currentInstruction.addAttribute(INTERMEDIATE_KEY, ai);

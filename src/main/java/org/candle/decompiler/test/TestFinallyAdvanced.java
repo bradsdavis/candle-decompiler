@@ -15,12 +15,13 @@ public class TestFinallyAdvanced {
 					break;
 				}
 			}
+			/*
 			finally {
 				if(a) {
 					break;
 				}
 				System.out.println("2");
-			}
+			}*/
 			
 			System.out.println("3");
 		}
