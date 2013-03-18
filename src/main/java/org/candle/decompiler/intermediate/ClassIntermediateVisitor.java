@@ -337,6 +337,8 @@ public class ClassIntermediateVisitor implements Visitor {
 		}
 		
 
+		writeGraph("before.dot", igc);
+
 		GraphIterator<InstructionHandle, InstructionEdge> iterator = new DepthFirstIterator<InstructionHandle, InstructionEdge>(igc.getGraph());
 		iterator.addTraversalListener(new InstructionTransversalListener(intermediateContext));
 		
@@ -344,21 +346,7 @@ public class ClassIntermediateVisitor implements Visitor {
 			iterator.next();
 		}
 		
-
-		LOG.debug("Instruction Graph ======");
-		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/inst.dot");
-		Writer x;
-		try {
-			x = new FileWriter(a);
-			DOTExporter<InstructionHandle, InstructionEdge> f = new DOTExporter<InstructionHandle, InstructionEdge>(new IntegerNameProvider<InstructionHandle>(), new InstructionLabelProvider(), null, null, new InstructionEdgeAttributeProvider());
-			f.export(x, igc.getGraph());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		LOG.debug("End Instruction Graph ======");
-		
-
+		writeGraph("after.dot", igc);
 		
 		
 		if(true) return;
@@ -522,6 +510,25 @@ public class ClassIntermediateVisitor implements Visitor {
 	public void visitStackMapEntry(StackMapEntry obj) {
 		// TODO Auto-generated method stub
 	}
+	
+	
+	private void writeGraph(String name, InstructionGraphContext igc) {
+		LOG.debug("Instruction Graph ======");
+		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/"+name);
+		Writer x;
+		try {
+			x = new FileWriter(a);
+			DOTExporter<InstructionHandle, InstructionEdge> f = new DOTExporter<InstructionHandle, InstructionEdge>(new IntegerNameProvider<InstructionHandle>(), new InstructionLabelProvider(), null, null, new InstructionEdgeAttributeProvider());
+			f.export(x, igc.getGraph());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LOG.debug("End Instruction Graph ======");
+		
+
+	}
+	
 
 	protected MethodBlock extractMethodSignature(MethodGen methodGen) {
 		

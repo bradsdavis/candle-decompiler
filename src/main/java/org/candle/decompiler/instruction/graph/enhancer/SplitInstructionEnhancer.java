@@ -2,6 +2,7 @@ package org.candle.decompiler.instruction.graph.enhancer;
 
 import java.util.List;
 
+import org.apache.bcel.generic.DuplicateHandle;
 import org.apache.bcel.generic.GOTO;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.PopInstruction;
@@ -57,7 +58,7 @@ public class SplitInstructionEnhancer extends InstructionGraphEnhancer {
 			if(i>0) {
 				//clone IV.
 				try {
-					target = (InstructionHandle)iv;
+					target = new DuplicateHandle(iv);
 					igc.getGraph().addVertex(target);
 					
 					for(InstructionHandle successor : sucs) {

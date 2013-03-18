@@ -22,7 +22,7 @@ public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 
 	@Override
 	public void process() {
-
+		if(true)return;
 		Set<Integer> positions = new HashSet<Integer>();
 		
 		for(CodeExceptionGen ceg : exceptions) {
