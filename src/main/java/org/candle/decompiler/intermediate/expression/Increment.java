@@ -1,7 +1,7 @@
 package org.candle.decompiler.intermediate.expression;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
+import org.apache.bcel.generic.InstructionHandle;
 
 public class Increment extends Resolved {
 

@@ -8,18 +8,18 @@ import org.candle.decompiler.Sourceable;
 
 public abstract class Expression implements Sourceable, Cloneable {
 
-	protected InstructionHandle instructionHandle;
+	protected InstructionHandle InstructionHandle;
 	
-	public Expression(InstructionHandle instructionHandle) {
-		this.instructionHandle = instructionHandle;
+	public Expression(InstructionHandle InstructionHandle) {
+		this.InstructionHandle = InstructionHandle;
 	}
 	
 	public InstructionHandle getInstructionHandle() {
-		return instructionHandle;
+		return InstructionHandle;
 	}
 	
 	public void setInstructionHandle(InstructionHandle instructionHandle) {
-		this.instructionHandle = instructionHandle;
+		this.InstructionHandle = instructionHandle;
 	}
 	
 	@Override

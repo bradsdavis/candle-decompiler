@@ -50,7 +50,7 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 		}
 		//processLastCatch(line);
 		
-		BreadthFirstIterator<AbstractIntermediate, IntermediateEdge> bfi = new BreadthFirstIterator<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph(), line);
+		BreadthFirstIterator<AbstractIntermediate, IntermediateEdge> bfi = new BreadthFirstIterator<AbstractIntermediate, IntermediateEdge>(igc.getGraph(), line);
 		
 		AbstractIntermediate lastStatement = null;
 		while(bfi.hasNext()) {
@@ -98,7 +98,7 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 		AbstractIntermediate target = gotoHandle.getTarget();
 		//now, look backwards and find the non-GOTO statement.
 		
-		List<AbstractIntermediate> candidates = Graphs.predecessorListOf(igc.getIntermediateGraph(), target);
+		List<AbstractIntermediate> candidates = Graphs.predecessorListOf(igc.getGraph(), target);
 		Set<AbstractIntermediate> elements = new HashSet<AbstractIntermediate>();
 		
 		for(AbstractIntermediate candidate : candidates) {

@@ -1,7 +1,7 @@
 package org.candle.decompiler.intermediate.code;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.math.Range;
+import org.apache.bcel.generic.InstructionHandle;
 
 
 public class BlockRange extends Range {

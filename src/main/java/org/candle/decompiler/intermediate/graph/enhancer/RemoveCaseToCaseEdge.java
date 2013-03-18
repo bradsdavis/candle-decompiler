@@ -28,13 +28,13 @@ public class RemoveCaseToCaseEdge extends GraphIntermediateVisitor {
 		AbstractIntermediate ai = igc.getSingleSuccessor(line);
 		
 		//find the previous node...
-		Set<AbstractIntermediate> predecessors = new HashSet<AbstractIntermediate>(Graphs.predecessorListOf(igc.getIntermediateGraph(), ai));
+		Set<AbstractIntermediate> predecessors = new HashSet<AbstractIntermediate>(Graphs.predecessorListOf(igc.getGraph(), ai));
 		predecessors.remove(line);
 		
 		//remove line.
 		for(AbstractIntermediate predecessor : predecessors) {
 			//remove line...
-			igc.getIntermediateGraph().removeEdge(predecessor, ai);
+			igc.getGraph().removeEdge(predecessor, ai);
 		}
 	}
 }

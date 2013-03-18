@@ -28,14 +28,14 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 
 		GraphUpdatedListener gul = new GraphUpdatedListener();
 		if(listenForUpdates) {
-			igc.getIntermediateGraph().addGraphListener(gul);
+			igc.getGraph().addGraphListener(gul);
 		}
 		while(true) {
 			Set<AbstractIntermediate> snapshot = new HashSet<AbstractIntermediate>();
-			snapshot.addAll(igc.getIntermediateGraph().vertexSet());
+			snapshot.addAll(igc.getGraph().vertexSet());
 			
 			for(AbstractIntermediate vertex : snapshot) {
-				if(igc.getIntermediateGraph().containsVertex(vertex)) {
+				if(igc.getGraph().containsVertex(vertex)) {
 					vertex.accept(this);
 				}
 			}
@@ -47,6 +47,6 @@ public abstract class GraphIntermediateVisitor extends EmptyIntermediateVisitor 
 				gul.reset();
 			}
 		}
-		igc.getIntermediateGraph().removeGraphListener(gul);
+		igc.getGraph().removeGraphListener(gul);
 	}
 }

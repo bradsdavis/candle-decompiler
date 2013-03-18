@@ -78,7 +78,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		AbstractIntermediate afterFinally = igc.findNextNode(finallyEnd.getNext());
 		
 		igc.redirectPredecessors(finallyLast, afterFinally);
-		igc.getIntermediateGraph().removeVertex(finallyLast);
+		igc.getGraph().removeVertex(finallyLast);
 	}
 	
 	protected void processTry(TryIntermediate tryIntermediate, FinallyIntermediate finallyIntermediate, Set<Integer> offsets) {
@@ -115,8 +115,8 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 			eliminateNode(tryFinallyFirst, offsets);
 			
 			//now, eliminate the GOTO.
-			igc.getIntermediateGraph().removeVertex(gotoIntermediate);
-			igc.getIntermediateGraph().addEdge(tryIntermediate, finallyIntermediate);
+			igc.getGraph().removeVertex(gotoIntermediate);
+			igc.getGraph().addEdge(tryIntermediate, finallyIntermediate);
 		}
 	}
 	
@@ -146,7 +146,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 		//now, store the instruction position.
 		int position = first.getInstruction().getPosition();
 		
-		BreadthFirstIterator<AbstractIntermediate, IntermediateEdge> bfi = new BreadthFirstIterator<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph(), first);
+		BreadthFirstIterator<AbstractIntermediate, IntermediateEdge> bfi = new BreadthFirstIterator<AbstractIntermediate, IntermediateEdge>(igc.getGraph(), first);
 		
 		Set<Integer> offsets = new TreeSet<Integer>();
 		while(bfi.hasNext()) {
@@ -177,7 +177,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 			//loop through...
 			AbstractIntermediate ai = igc.findNextNode(ih);
 			if(ai.getInstruction().getPosition() == target) {
-				igc.getIntermediateGraph().removeVertex(ai);
+				igc.getGraph().removeVertex(ai);
 			}
 			else {
 				LOG.warn("Did not find vertex: "+target);
@@ -190,7 +190,7 @@ public class RetractDuplicateFinally extends GraphIntermediateVisitor {
 	protected TryIntermediate matchTryBlock(InstructionHandle min, InstructionHandle max) {
 		LinkedList<TryIntermediate> matches = new LinkedList<TryIntermediate>();
 		//find the try block...
-		for(AbstractIntermediate ai : igc.getIntermediateGraph().vertexSet()) {
+		for(AbstractIntermediate ai : igc.getGraph().vertexSet()) {
 			if(ai instanceof TryIntermediate) {
 				TryIntermediate tryIntermediate = ((TryIntermediate) ai);
 				LOG.debug("Finally: "+tryIntermediate+ " , "+tryIntermediate.getInstruction().getPosition()+" , "+tryIntermediate.getBlockRange().getStart());

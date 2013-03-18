@@ -3,9 +3,9 @@ package org.candle.decompiler.intermediate.expression;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.SignatureUtility;
+import org.apache.bcel.generic.InstructionHandle;
 
 public class Declaration extends Expression {
 

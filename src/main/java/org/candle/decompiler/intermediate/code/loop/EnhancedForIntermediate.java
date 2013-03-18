@@ -3,10 +3,9 @@ package org.candle.decompiler.intermediate.code.loop;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.apache.bcel.classfile.Utility;
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.SignatureUtility;
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.Variable;

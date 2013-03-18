@@ -5,10 +5,10 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.Sourceable;
+import org.apache.bcel.generic.InstructionHandle;
 
 public abstract class Block implements Sourceable {
 	private static final Log LOG = LogFactory.getLog(Block.class);

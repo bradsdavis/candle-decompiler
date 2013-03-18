@@ -4,6 +4,7 @@ import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.bcel.generic.InstructionHandle;
 
 public class VariableIndex {
 	private static final Log LOG = LogFactory.getLog(VariableIndex.class);

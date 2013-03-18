@@ -13,6 +13,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
 import org.candle.decompiler.intermediate.code.BlockRangeComparator;
@@ -84,12 +85,12 @@ public class IntermediateTryCatch {
 			tryIntermediate.getBlockRange().setEnd(tryRange.getEnd());
 			
 			
-			igc.getIntermediateGraph().addVertex(tryIntermediate);
+			igc.getGraph().addVertex(tryIntermediate);
 			
 			//add line between try and node.
 			AbstractIntermediate tryFirst = igc.findNextNode(start);
 			igc.redirectPredecessors(tryFirst, tryIntermediate);
-			igc.getIntermediateGraph().addEdge(tryIntermediate, tryFirst);
+			igc.getGraph().addEdge(tryIntermediate, tryFirst);
 			
 			
 			if(tryRangeGen.containsKey(tryRange)) {
@@ -108,12 +109,12 @@ public class IntermediateTryCatch {
 			
 			//change the instruction to a finally...
 			FinallyIntermediate finallyIntermediate = new FinallyIntermediate(finallyTargetNode.getInstruction(), new HashSet<CodeExceptionGen>(tryRangeFinally.get(finallyTargetHandle)));
-			igc.getIntermediateGraph().addVertex(finallyIntermediate);
+			igc.getGraph().addVertex(finallyIntermediate);
 			
 			//now, we need to redirect from the existing throws to finally.
 			igc.redirectSuccessors(finallyTargetNode, finallyIntermediate);
 			//retract existing.
-			igc.getIntermediateGraph().removeVertex(finallyTargetNode);
+			igc.getGraph().removeVertex(finallyTargetNode);
 		}
 		
 		
@@ -135,20 +136,20 @@ public class IntermediateTryCatch {
 				
 				//now, we can convert this into a catch block.
 				CatchIntermediate catchIntermediate = new CatchIntermediate(declarationStatement.getInstruction(), ceg, declaration.getVariable());
-				igc.getIntermediateGraph().addVertex(catchIntermediate);
+				igc.getGraph().addVertex(catchIntermediate);
 				
 				//redirect statement to catch.
 				igc.redirectPredecessors(declarationStatement, catchIntermediate);
 				igc.redirectSuccessors(declarationStatement, catchIntermediate);
 				
 				//now, we just need to remove the statement.
-				igc.getIntermediateGraph().removeVertex(declarationStatement);
+				igc.getGraph().removeVertex(declarationStatement);
 				
 				//populate the bounds..
 				
 				
 				//add the link between try and catch.
-				igc.getIntermediateGraph().addEdge(tryIntermediate, catchIntermediate);
+				igc.getGraph().addEdge(tryIntermediate, catchIntermediate);
 			}
 			
 		}

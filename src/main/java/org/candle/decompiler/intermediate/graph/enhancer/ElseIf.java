@@ -24,7 +24,7 @@ public class ElseIf extends GraphIntermediateVisitor {
 	@Override
 	public void visitIfIntermediate(IfIntermediate line) {
 		//check to see if the predecessor is an if block.
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 		
 		if(predecessors.size() != 1) {
 			return;
@@ -44,13 +44,13 @@ public class ElseIf extends GraphIntermediateVisitor {
 			if(igc.getFalseTarget(parent) == line) {
 				//then this could be an IF block.
 				ElseIfIntermediate eii = new ElseIfIntermediate(line.getInstruction(), line.getExpression());
-				igc.getIntermediateGraph().addVertex(eii);
+				igc.getGraph().addVertex(eii);
 				
 				igc.replaceBooleanBranchIntermediate(line, eii);
 				igc.redirectPredecessors(line, eii);
 				igc.redirectSuccessors(line, eii);
 				
-				igc.getIntermediateGraph().removeVertex(line);
+				igc.getGraph().removeVertex(line);
 			}
 		}
 		

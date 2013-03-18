@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
+import org.apache.bcel.generic.InstructionHandle;
 
 public class NewConstantArrayInstance extends NewArrayInstance {
 

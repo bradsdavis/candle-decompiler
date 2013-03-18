@@ -3,13 +3,13 @@ package org.candle.decompiler.intermediate;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.LocalVariableGen;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.expression.NewArrayInstance;
 
 public class VariableResolver {

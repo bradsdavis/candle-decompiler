@@ -11,6 +11,20 @@ public class TestTryCatch {
 		int i = 5;
 		
 		try {
+			System.out.println("try");
+		}
+		catch(RuntimeException e) {
+			System.out.println("catch");
+		}
+		/*
+		finally {
+			System.out.println("Finally.");
+		}*/
+		
+		
+		System.out.println("after");
+/*
+		try {
 			try {
 				System.out.println("Inner try");
 				for(int j=0; j<5; j++) {
@@ -40,6 +54,6 @@ public class TestTryCatch {
 				System.out.println("Less!!");
 			}
 		}
-		System.out.println("After block.");
+		System.out.println("After block.");*/
 	}
 }

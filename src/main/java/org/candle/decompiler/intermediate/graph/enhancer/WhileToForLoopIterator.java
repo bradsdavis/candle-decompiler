@@ -43,7 +43,7 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 				if(StringUtils.equals("hasNext", mi.getMethodName())) {
 					
 					//probably an iterator.
-					List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+					List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 					
 					//look at the predecessor lines;  validate there are only 2 predecessors.
 					if(predecessors.size() == 2) {
@@ -110,7 +110,7 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 																enhancedFor.setTrueBranch(line.getTrueBranch());
 																enhancedFor.setFalseBranch(line.getFalseBranch());
 																
-																igc.getIntermediateGraph().addVertex(enhancedFor);
+																igc.getGraph().addVertex(enhancedFor);
 																
 																igc.redirectSuccessors(line, enhancedFor);
 																igc.redirectPredecessors(line, enhancedFor);
@@ -118,9 +118,9 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 																igc.redirectSuccessors(nextStatement, enhancedFor);
 																
 																//remove the declaration, next, and line 
-																igc.getIntermediateGraph().removeVertex(line);
-																igc.getIntermediateGraph().removeVertex(declaration);
-																igc.getIntermediateGraph().removeVertex(nextStatement);
+																igc.getGraph().removeVertex(line);
+																igc.getGraph().removeVertex(declaration);
+																igc.getGraph().removeVertex(nextStatement);
 															}
 														}
 														

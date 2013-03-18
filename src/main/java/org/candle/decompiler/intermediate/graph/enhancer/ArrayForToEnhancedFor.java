@@ -90,7 +90,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 			efl.setTrueBranch(line.getTrueBranch());
 			efl.setFalseBranch(line.getFalseBranch());
 			//add the new node...
-			this.igc.getIntermediateGraph().addVertex(efl);
+			this.igc.getGraph().addVertex(efl);
 			
 			//now, we just need to redirect.
 			igc.redirectPredecessors(tempArrayCandidate, efl);
@@ -101,10 +101,10 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 			igc.redirectPredecessors(firstChild, nextChild);
 			
 			//remove line.
-			igc.getIntermediateGraph().removeVertex(line);
-			igc.getIntermediateGraph().removeVertex(tempArrayCandidate);
-			igc.getIntermediateGraph().removeVertex(firstChild);
-			igc.getIntermediateGraph().removeVertex(arrayLenthCandidate);
+			igc.getGraph().removeVertex(line);
+			igc.getGraph().removeVertex(tempArrayCandidate);
+			igc.getGraph().removeVertex(firstChild);
+			igc.getGraph().removeVertex(arrayLenthCandidate);
 		}
 	}
 	
@@ -154,7 +154,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	
 	
 	private AbstractIntermediate getForExteriorPredecessor(ForIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 		
 		//loop max min
 		int min = line.getInstruction().getPosition();
@@ -178,7 +178,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	}
 	
 	private AbstractIntermediate getSingleSuccessor(AbstractIntermediate line) {
-		List<AbstractIntermediate> successor = Graphs.successorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> successor = Graphs.successorListOf(igc.getGraph(), line);
 		
 		if(successor.size() == 1) {
 			return successor.get(0);
@@ -188,7 +188,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	
 	
 	private AbstractIntermediate getSinglePredecessor(AbstractIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 		
 		if(predecessors.size() == 1) {
 			return predecessors.get(0);

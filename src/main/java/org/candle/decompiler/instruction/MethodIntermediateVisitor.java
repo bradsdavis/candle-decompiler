@@ -1,4 +1,4 @@
-package org.candle.decompiler.intermediate;
+package org.candle.decompiler.instruction;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,6 +12,8 @@ import org.apache.bcel.generic.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.intermediate.IntermediateContext;
+import org.candle.decompiler.intermediate.IntermediateVariable;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
@@ -93,7 +95,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	
 	protected void processReturn(Return ret) {
 		StatementIntermediate complete = new StatementIntermediate(context.getCurrentInstruction(), ret);
-		context.getIntermediate().push(complete);
+		context.pushIntermediateToInstruction(complete);
 	}
 	
 	public void visitFRETURN(FRETURN instruction) {
@@ -143,7 +145,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 	public void visitGotoInstruction(GotoInstruction instruction) {
 		GoToIntermediate line = new GoToIntermediate(context.getCurrentInstruction());
-		context.getIntermediate().push(line);
+		context.pushIntermediateToInstruction(line);
 	}
 	
 	//Process load instructions
@@ -243,7 +245,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		StatementIntermediate complete = new StatementIntermediate(context.getCurrentInstruction(), assignment);
 		
-		context.getIntermediate().add(complete);
+		context.pushIntermediateToInstruction(complete);
 	}
 	
 	public void visitPUTFIELD(PUTFIELD instruction) {
@@ -259,7 +261,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		StatementIntermediate complete = new StatementIntermediate(context.getCurrentInstruction(), assignment);
 		
-		context.getIntermediate().add(complete);
+		context.pushIntermediateToInstruction(complete);
 	}
 	
 	
@@ -378,7 +380,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		}
 		
 		Expression exp = new Increment(context.getCurrentInstruction(), variable, Type.INT, incrementerBuilder.toString());
-		context.getIntermediate().add(new StatementIntermediate(context.getCurrentInstruction(), exp));
+		context.pushIntermediateToInstruction(new StatementIntermediate(context.getCurrentInstruction(), exp));
 	}
 
 	
@@ -421,7 +423,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression left = context.getExpressions().pop();
 		SingleConditional conditional = new SingleConditional(context.getCurrentInstruction(), left, false);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
-		context.getIntermediate().add(line);
+		context.pushIntermediateToInstruction(line);
 	}
 	
 	@Override
@@ -429,7 +431,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression left = context.getExpressions().pop();
 		SingleConditional conditional = new SingleConditional(context.getCurrentInstruction(), left);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
-		context.getIntermediate().add(line);
+		context.pushIntermediateToInstruction(line);
 	}
 	
 	@Override
@@ -439,7 +441,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
-		context.getIntermediate().add(line);
+		context.pushIntermediateToInstruction(line);
 	}
 
 	@Override
@@ -449,7 +451,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.NE);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
-		context.getIntermediate().add(line);
+		context.pushIntermediateToInstruction(line);
 	}
 	
 
@@ -517,7 +519,7 @@ public class MethodIntermediateVisitor implements Visitor {
 			line.getExpression().negate();
 		}
 		
-		context.getIntermediate().add(line);
+		context.pushIntermediateToInstruction(line);
 	}
 	
 	
@@ -697,7 +699,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		if(returned == BasicType.VOID) {
 			LOG.debug("This is a void return type!!");
 			StatementIntermediate completeLine = new StatementIntermediate(context.getCurrentInstruction(), methodInvocation);
-			context.getIntermediate().push(completeLine);
+			context.pushIntermediateToInstruction(completeLine);
 		}
 		else {
 			context.getExpressions().push(methodInvocation);
@@ -736,7 +738,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		if(returned == BasicType.VOID) {
 			StatementIntermediate completeLine = new StatementIntermediate(context.getCurrentInstruction(), methodInvocation);
-			context.getIntermediate().push(completeLine);
+			context.pushIntermediateToInstruction(completeLine);
 			LOG.debug("Pushed complete line: "+completeLine.toString());
 		}
 		else {
@@ -771,7 +773,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		if(returned == BasicType.VOID) {
 			StatementIntermediate completeLine = new StatementIntermediate(context.getCurrentInstruction(), methodInvocation);
-			context.getIntermediate().push(completeLine);
+			context.pushIntermediateToInstruction(completeLine);
 			LOG.debug("Pushed complete line: "+completeLine.toString());
 		}
 		else {
@@ -854,7 +856,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		}
 		
 		StatementIntermediate cl = new StatementIntermediate(context.getCurrentInstruction(), left);
-		context.getIntermediate().add(cl);
+		context.pushIntermediateToInstruction(cl);
 
 		LOG.debug("Stored.");
 	}
@@ -1069,7 +1071,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		StatementIntermediate si = new StatementIntermediate(context.getCurrentInstruction(), assignment);
 		
 		//add it to the intermediate lines.
-		context.getIntermediate().add(si);
+		context.pushIntermediateToInstruction(si);
 	}
 
 	//array length instruction
@@ -1305,7 +1307,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Throw throwException = new Throw(context.getCurrentInstruction(), expression);
 		
 		StatementIntermediate complete = new StatementIntermediate(context.getCurrentInstruction(), throwException);
-		context.getIntermediate().add(complete);
+		context.pushIntermediateToInstruction(complete);
 	}
 
 
@@ -1373,7 +1375,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(this.context.getCurrentInstruction(), conditional);
-		context.getIntermediate().add(line);
+		context.pushIntermediateToInstruction(line);
 	}
 	
 	public void visitDCMPG(DCMPG instruction) {
@@ -1420,7 +1422,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Switch switchExpression = new Switch(context.getCurrentInstruction(), switchVal);
 
 		MultiBranchIntermediate mbi = new MultiBranchIntermediate(context.getCurrentInstruction(), switchExpression);
-		context.getIntermediate().add(mbi);
+		context.pushIntermediateToInstruction(mbi);
 	}
 	
 	public void visitIMPDEP1(IMPDEP1 instruction) {

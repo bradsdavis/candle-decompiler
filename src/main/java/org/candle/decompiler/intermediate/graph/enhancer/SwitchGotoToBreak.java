@@ -43,11 +43,11 @@ public class SwitchGotoToBreak extends GraphIntermediateVisitor {
 		Break breakExpression = new Break(gotoStatement.getInstruction());
 		StatementIntermediate breakStatement = new StatementIntermediate(gotoStatement.getInstruction(), breakExpression);
 		
-		igc.getIntermediateGraph().addVertex(breakStatement);
+		igc.getGraph().addVertex(breakStatement);
 		igc.redirectPredecessors(gotoStatement, breakStatement);
 		igc.redirectSuccessors(gotoStatement, breakStatement);
 		
-		igc.getIntermediateGraph().removeVertex(gotoStatement);
+		igc.getGraph().removeVertex(gotoStatement);
 	}
 	
 }

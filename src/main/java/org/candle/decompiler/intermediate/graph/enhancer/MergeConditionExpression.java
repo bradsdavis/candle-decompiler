@@ -47,18 +47,18 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 			igc.redirectPredecessors(bbo2, bbo1);
 			
 			//remove vertexes of bbo2.
-			igc.getIntermediateGraph().removeVertex(bbo2.getFalseBranch());
-			igc.getIntermediateGraph().removeVertex(bbo2.getTrueBranch());
-			igc.getIntermediateGraph().removeVertex(bbo2);
+			igc.getGraph().removeVertex(bbo2.getFalseBranch());
+			igc.getGraph().removeVertex(bbo2.getTrueBranch());
+			igc.getGraph().removeVertex(bbo2);
 		}
 	}
 	
 	@Override
 	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate bbo1) {
-		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), bbo1);
+		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getGraph(), bbo1);
 		
 		for(AbstractIntermediate i : predecessor) {
-			if(!igc.getIntermediateGraph().containsVertex(i)) {
+			if(!igc.getGraph().containsVertex(i)) {
 				continue;
 			}
 			

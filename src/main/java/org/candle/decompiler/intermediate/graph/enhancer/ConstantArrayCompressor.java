@@ -84,7 +84,7 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		
 		
 		//excellent.  we have reordered the statements into the appropriate ContantArray assignment.  Now, we need to remove the dead nodes and heal the graph.
-		AbstractIntermediate next = Graphs.successorListOf(igc.getIntermediateGraph(), line).get(0);
+		AbstractIntermediate next = Graphs.successorListOf(igc.getGraph(), line).get(0);
 		
 		//loop through the dead elements...
 		//we know the number of dead items is equal to the number of values we found.
@@ -101,12 +101,12 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 			
 			AbstractIntermediate temp = null;
 			//move back..
-			List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), current);
+			List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getGraph(), current);
 			if(predecessor.size() > 0) {
 				temp = predecessor.get(0);
 			}
 			//retract current..
-			igc.getIntermediateGraph().removeVertex(current);
+			igc.getGraph().removeVertex(current);
 			
 			//set next... 
 			current = temp;
@@ -127,7 +127,7 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		ArrayPositionReference apr = (ArrayPositionReference)assignment.getLeft();
 		assignments.put(toInteger(apr.getArrayPosition()), right);
 		
-		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getIntermediateGraph(), current);
+		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getGraph(), current);
 		
 		if(predecessor.size() != 1) {
 			return;
@@ -154,7 +154,7 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 	}
 	
 	public Declaration extractNextDeclaration(StatementIntermediate statement) {
-		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getIntermediateGraph(), statement);
+		List<AbstractIntermediate> successors = Graphs.successorListOf(igc.getGraph(), statement);
 		if(successors.size() != 1) {
 			return null;
 		}

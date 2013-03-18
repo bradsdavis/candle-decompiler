@@ -482,7 +482,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 	}
 	
 	protected List<AbstractIntermediate> getUnseenSuccessors(AbstractIntermediate line) {
-		List<AbstractIntermediate> candidates = Graphs.successorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> candidates = Graphs.successorListOf(igc.getGraph(), line);
 		return candidates;
 	}
 	

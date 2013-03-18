@@ -9,12 +9,12 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 
 public class IntermediateContext {
+	public static final String INTERMEDIATE_KEY = "INTERMEDIATE_KEY";
 	
 	private final JavaClass clazz;
 	private final MethodGen methodGen;
 	
 	private final Stack<Expression> expressions = new Stack<Expression>();
-	private final Stack<AbstractIntermediate> intermediate = new Stack<AbstractIntermediate>();
 	private final VariableResolver variableResolver;
 	
 	public IntermediateContext(JavaClass clazz, MethodGen methodGen) {
@@ -39,10 +39,6 @@ public class IntermediateContext {
 		return expressions;
 	}
 	
-	public Stack<AbstractIntermediate> getIntermediate() {
-		return intermediate;
-	}
-	
 	private InstructionHandle currentInstruction;
 	
 	public void setCurrentInstruction(InstructionHandle currentInstruction) {
@@ -51,6 +47,11 @@ public class IntermediateContext {
 	
 	public InstructionHandle getCurrentInstruction() {
 		return currentInstruction;
+	}
+	
+	public void pushIntermediateToInstruction(final AbstractIntermediate ai) {
+		System.out.println("Pushing: "+ai+" to: "+this.currentInstruction);
+		this.currentInstruction.addAttribute(INTERMEDIATE_KEY, ai);
 	}
 	
 }

@@ -44,7 +44,7 @@ public class LoopGotoToBreak extends GraphIntermediateVisitor {
 		TreeSet<AbstractIntermediate> loopElements = (TreeSet<AbstractIntermediate>)igc.getOrderedIntermediate().subSet(igc.getTrueTarget(loop), true, igc.getFalseTarget(loop), false);
 		
 		
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), igc.getFalseTarget(loop));
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), igc.getFalseTarget(loop));
 		
 		Set<GoToIntermediate> gotoToBreak = new HashSet<GoToIntermediate>();
 		for(AbstractIntermediate predecessor : predecessors) 
@@ -67,11 +67,11 @@ public class LoopGotoToBreak extends GraphIntermediateVisitor {
 		Break breakExpression = new Break(gotoStatement.getInstruction());
 		StatementIntermediate breakStatement = new StatementIntermediate(gotoStatement.getInstruction(), breakExpression);
 		
-		igc.getIntermediateGraph().addVertex(breakStatement);
+		igc.getGraph().addVertex(breakStatement);
 		igc.redirectPredecessors(gotoStatement, breakStatement);
 		igc.redirectSuccessors(gotoStatement, breakStatement);
 		
-		igc.getIntermediateGraph().removeVertex(gotoStatement);
+		igc.getGraph().removeVertex(gotoStatement);
 	}
 	
 }

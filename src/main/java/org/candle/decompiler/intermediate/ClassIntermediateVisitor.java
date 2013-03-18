@@ -1,5 +1,8 @@
 package org.candle.decompiler.intermediate;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -58,6 +61,19 @@ import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
+import org.candle.decompiler.instruction.InstructionTransversalListener;
+import org.candle.decompiler.instruction.MethodIntermediateVisitor;
+import org.candle.decompiler.instruction.graph.InstructionGraphContext;
+import org.candle.decompiler.instruction.graph.InstructionGraphFactory;
+import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
+import org.candle.decompiler.instruction.graph.edge.InstructionEdgeAttributeProvider;
+import org.candle.decompiler.instruction.graph.enhancer.BackEdgeEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.HealGotoEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.InstructionGraphEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.SplitInstructionEnhancer;
+import org.candle.decompiler.instruction.graph.vertex.InstructionLabelProvider;
+import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
@@ -94,6 +110,8 @@ import org.candle.decompiler.intermediate.graph.range.SwitchRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
+import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
 
 import com.sun.org.apache.bcel.internal.classfile.Utility;
 
@@ -298,14 +316,54 @@ public class ClassIntermediateVisitor implements Visitor {
 		// TODO Auto-generated method stub
 		MethodGen methodGenerator = new MethodGen(obj, this.javaClass.getClassName(), this.constantPool);
 		
-		
 		LOG.debug("Processing MethodInvocation: "+methodGenerator.toString());
 		IntermediateContext intermediateContext = new IntermediateContext(this.javaClass, methodGenerator);
-		MethodIntermediateVisitor intermediateVisitor = new MethodIntermediateVisitor(intermediateContext);
 		
 		InstructionList instructions = methodGenerator.getInstructionList();
 		instructions.setPositions(true);
+		
+		InstructionGraphFactory igf = new InstructionGraphFactory(instructions, methodGenerator.getExceptionHandlers());
+		InstructionGraphContext igc = igf.process();
+		
+		List<InstructionGraphEnhancer> iges = new ArrayList<InstructionGraphEnhancer>();
+		iges.add(new HealGotoEnhancer(igc));
+		iges.add(new BackEdgeEnhancer(igc));
+		iges.add(new SplitInstructionEnhancer(igc));
+		iges.add(new ExceptionEdgeEnhancer(igc, methodGenerator.getExceptionHandlers()));
+		
+		for(InstructionGraphEnhancer ige : iges)
+		{
+			ige.process();
+		}
+		
 
+		GraphIterator<InstructionHandle, InstructionEdge> iterator = new DepthFirstIterator<InstructionHandle, InstructionEdge>(igc.getGraph());
+		iterator.addTraversalListener(new InstructionTransversalListener(intermediateContext));
+		
+		while (iterator.hasNext()) {
+			iterator.next();
+		}
+		
+
+		LOG.debug("Instruction Graph ======");
+		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/inst.dot");
+		Writer x;
+		try {
+			x = new FileWriter(a);
+			DOTExporter<InstructionHandle, InstructionEdge> f = new DOTExporter<InstructionHandle, InstructionEdge>(new IntegerNameProvider<InstructionHandle>(), new InstructionLabelProvider(), null, null, new InstructionEdgeAttributeProvider());
+			f.export(x, igc.getGraph());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LOG.debug("End Instruction Graph ======");
+		
+
+		
+		
+		if(true) return;
+		
+		/*
 		Iterator<InstructionHandle> debugIterator = instructions.iterator();
 		while(debugIterator.hasNext()) {
 			InstructionHandle instruction = debugIterator.next();
@@ -315,8 +373,6 @@ public class ClassIntermediateVisitor implements Visitor {
 
 		Map<InstructionHandle, ObjectType> catchPosition = new HashMap<InstructionHandle, ObjectType>();
 		for(CodeExceptionGen e : methodGenerator.getExceptionHandlers()) {
-			System.out.println(e);
-			
 			catchPosition.put(e.getHandlerPC(), e.getCatchType());
 		}
 		 
@@ -361,14 +417,23 @@ public class ClassIntermediateVisitor implements Visitor {
 		IntermediateLineContext illc = new IntermediateLineContext(intermediate);
 		IntermediateGraphFactory lc = new IntermediateGraphFactory(illc);
 
+		 
+		
+		
+		
 		LOG.debug("Before ======");
 		Writer w = new OutputStreamWriter(System.out);
 		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()), new IntermediateVertexAttributeProvider(), new IntermediateEdgeAttributeProvider());
-		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
+		dot.export(w, lc.getIntermediateGraph().getGraph());
 		LOG.debug("End Before ======");
 		
 		IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, lc.getIntermediateGraph());
 		itc.process();
+		
+		
+		
+		
+		
 		
 		
 		
@@ -414,12 +479,13 @@ public class ClassIntermediateVisitor implements Visitor {
 		}
 		
 		LOG.debug("After ======");
-		dot.export(w, lc.getIntermediateGraph().getIntermediateGraph());
+		dot.export(w, lc.getIntermediateGraph().getGraph());
 		LOG.debug("End After ======");
 		
 
 		BlockVisitor iv = new BlockVisitor(lc.getIntermediateGraph(), method);
 		iv.process();
+			*/
 	}
 
 	@Override

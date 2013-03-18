@@ -21,7 +21,7 @@ public class RemoveImpliedVoidReturn extends GraphIntermediateVisitor {
 			if(returnStatement.getChild() == null) {
 				//is this the last statement?
 				if(line == igc.getOrderedIntermediate().last()) {
-					igc.getIntermediateGraph().removeVertex(line);
+					igc.getGraph().removeVertex(line);
 				}
 			}
 		}

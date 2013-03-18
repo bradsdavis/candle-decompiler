@@ -3,10 +3,10 @@ package org.candle.decompiler.intermediate.expression;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.bcel.generic.InstructionHandle;
 
 
 public class Resolved extends Expression implements TypedExpression {

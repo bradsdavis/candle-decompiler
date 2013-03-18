@@ -23,7 +23,7 @@ public class If extends GraphIntermediateVisitor {
 		//transform to IF block.
 		
 		IfIntermediate ifIntermediate = new IfIntermediate(line.getInstruction(), line.getExpression());
-		igc.getIntermediateGraph().addVertex(ifIntermediate);
+		igc.getGraph().addVertex(ifIntermediate);
 		
 		igc.replaceBooleanBranchIntermediate(line, ifIntermediate);
 		
@@ -31,7 +31,7 @@ public class If extends GraphIntermediateVisitor {
 		igc.redirectPredecessors(line, ifIntermediate);
 		igc.redirectSuccessors(line, ifIntermediate);
 		
-		igc.getIntermediateGraph().removeVertex(line);
+		igc.getGraph().removeVertex(line);
 	}
 	
 

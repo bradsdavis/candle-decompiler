@@ -20,7 +20,7 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 
 	@Override
 	public void visitWhileIntermediate(WhileIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 		
 		//look at the predecessor lines;  validate there are only 2 predecessors.
 		if(predecessors.size() == 2) {
@@ -73,7 +73,7 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 								forIntermediate.setTrueBranch(line.getTrueBranch());
 								forIntermediate.setFalseBranch(line.getFalseBranch());
 								
-								igc.getIntermediateGraph().addVertex(forIntermediate);
+								igc.getGraph().addVertex(forIntermediate);
 								
 								igc.redirectSuccessors(line, forIntermediate);
 								igc.redirectPredecessors(iteration, forIntermediate);
@@ -81,9 +81,9 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 								
 								
 								//remove the while loop, increment, and declaration.
-								igc.getIntermediateGraph().removeVertex(line);
-								igc.getIntermediateGraph().removeVertex(declaration);
-								igc.getIntermediateGraph().removeVertex(iteration);
+								igc.getGraph().removeVertex(line);
+								igc.getGraph().removeVertex(declaration);
+								igc.getGraph().removeVertex(iteration);
 							}
 							
 							

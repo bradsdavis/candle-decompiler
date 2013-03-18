@@ -15,7 +15,7 @@ public class FinallyRangeVisitor extends GraphIntermediateVisitor {
 
 	@Override
 	public void visitFinallyIntermediate(FinallyIntermediate line) {
-		NonGotoIterator iter = new NonGotoIterator(igc.getIntermediateGraph(), line);
+		NonGotoIterator iter = new NonGotoIterator(igc.getGraph(), line);
 		//walk until we find a THROW.
 		
 		AbstractIntermediate throwsStatement = null;

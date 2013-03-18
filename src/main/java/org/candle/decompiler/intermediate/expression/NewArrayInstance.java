@@ -5,10 +5,10 @@ import java.io.Writer;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.SignatureUtility;
+import org.apache.bcel.generic.InstructionHandle;
 
 public class NewArrayInstance extends NewInstance {
 

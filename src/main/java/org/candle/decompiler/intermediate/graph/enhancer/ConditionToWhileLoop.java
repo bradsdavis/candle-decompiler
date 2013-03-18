@@ -25,9 +25,9 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 
 	@Override
 	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line) {
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 		
-		CycleDetector<AbstractIntermediate, IntermediateEdge> cycleDetector = new CycleDetector<AbstractIntermediate, IntermediateEdge>(igc.getIntermediateGraph());
+		CycleDetector<AbstractIntermediate, IntermediateEdge> cycleDetector = new CycleDetector<AbstractIntermediate, IntermediateEdge>(igc.getGraph());
 		if(!cycleDetector.detectCyclesContainingVertex(line)) {
 			return;
 		}
@@ -87,18 +87,18 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				whileIntermediate.setFalseBranch(line.getFalseBranch());
 				
 				//add this to the graph.
-				this.igc.getIntermediateGraph().addVertex(whileIntermediate);
+				this.igc.getGraph().addVertex(whileIntermediate);
 				
 				//get the incoming from the goto...
 				igc.redirectPredecessors(nestedLine, whileIntermediate);
 				igc.redirectSuccessors(line, whileIntermediate);
 								
 				//now, create line from other to while.
-				this.igc.getIntermediateGraph().addEdge(otherLine, whileIntermediate);
+				this.igc.getGraph().addEdge(otherLine, whileIntermediate);
 				
 				//now, remove the GOTO and Conditional Vertext from graph.
-				igc.getIntermediateGraph().removeVertex(nestedLine);
-				igc.getIntermediateGraph().removeVertex(line);
+				igc.getGraph().removeVertex(nestedLine);
+				igc.getGraph().removeVertex(line);
 				
 				//now, the other GOTO lines coming in should all be CONTINUE statements...
 				for(GoToIntermediate gotoIntermediate : incomingGotoNested) {
@@ -106,13 +106,13 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 					StatementIntermediate continueIntermediate = new StatementIntermediate(gotoIntermediate.getInstruction(), continueExpression);
 
 					//add the node...
-					igc.getIntermediateGraph().addVertex(continueIntermediate);
+					igc.getGraph().addVertex(continueIntermediate);
 					igc.redirectPredecessors(gotoIntermediate, continueIntermediate);
 					//remove vertex.
-					igc.getIntermediateGraph().removeVertex(gotoIntermediate);
+					igc.getGraph().removeVertex(gotoIntermediate);
 					
 					//now, add line to the loop.
-					igc.getIntermediateGraph().addEdge(continueIntermediate, whileIntermediate);
+					igc.getGraph().addEdge(continueIntermediate, whileIntermediate);
 				}
 			}
 		}

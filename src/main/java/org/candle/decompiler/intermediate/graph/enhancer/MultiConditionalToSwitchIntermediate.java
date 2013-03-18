@@ -14,10 +14,10 @@ public class MultiConditionalToSwitchIntermediate extends GraphIntermediateVisit
 	@Override
 	public void visitMultiBranchIntermediate(MultiBranchIntermediate line) {
 		SwitchIntermediate si = new SwitchIntermediate(line.getInstruction(), line);
-		igc.getIntermediateGraph().addVertex(si);
+		igc.getGraph().addVertex(si);
 		igc.redirectPredecessors(line, si);
 		igc.redirectSuccessors(line, si);
-		igc.getIntermediateGraph().removeVertex(line);
+		igc.getGraph().removeVertex(line);
 	}
 
 }

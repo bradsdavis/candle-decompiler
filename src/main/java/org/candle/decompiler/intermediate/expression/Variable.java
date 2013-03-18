@@ -3,8 +3,8 @@ package org.candle.decompiler.intermediate.expression;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.Type;
+import org.apache.bcel.generic.InstructionHandle;
 
 public class Variable extends ObjectType {
 

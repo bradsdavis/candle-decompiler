@@ -26,7 +26,7 @@ public class Else extends GraphIntermediateVisitor {
 	@Override
 	public void visitAbstractIntermediate(AbstractIntermediate line) {
 		//for all lines...
-		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getIntermediateGraph(), line);
+		List<AbstractIntermediate> predecessors = Graphs.predecessorListOf(igc.getGraph(), line);
 		if(predecessors.size() == 0) {
 			return;
 		}
@@ -79,10 +79,10 @@ public class Else extends GraphIntermediateVisitor {
 					ifIntermediate.setFalseBranch(((BooleanBranchIntermediate) firstElseBlockElement).getFalseBranch());
 					
 					
-					igc.getIntermediateGraph().addVertex(ifIntermediate);
+					igc.getGraph().addVertex(ifIntermediate);
 					igc.redirectPredecessors(firstElseBlockElement, ifIntermediate);
 					igc.redirectSuccessors(firstElseBlockElement, ifIntermediate);
-					igc.getIntermediateGraph().removeVertex(firstElseBlockElement);
+					igc.getGraph().removeVertex(firstElseBlockElement);
 					
 					
 					
@@ -97,11 +97,11 @@ public class Else extends GraphIntermediateVisitor {
 	protected void addElseBlock(AbstractIntermediate ai, GoToIntermediate maxGoto) {
 
 		ElseIntermediate elseIntermediate = new ElseIntermediate(ai.getInstruction().getPrev());
-		igc.getIntermediateGraph().addVertex(elseIntermediate);
+		igc.getGraph().addVertex(elseIntermediate);
 		igc.redirectPredecessors(ai, elseIntermediate);
 		//add a link to the statement.
 		
-		igc.getIntermediateGraph().addEdge(elseIntermediate, ai);
+		igc.getGraph().addEdge(elseIntermediate, ai);
 		
 		elseIntermediate.getBlockRange().setEnd(maxGoto.getTarget().getInstruction().getPrev());
 	}

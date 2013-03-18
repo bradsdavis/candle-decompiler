@@ -67,8 +67,8 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 			AbstractIntermediate intermediate = next;
 			
 			//now, we just add this into the graph.
-			igc.getIntermediateGraph().addVertex(intermediate);
-			igc.getIntermediateGraph().addEdge(line, intermediate);
+			igc.getGraph().addVertex(intermediate);
+			igc.getGraph().addEdge(line, intermediate);
 		}
 	}
 
@@ -77,11 +77,11 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate intermediate = ilc.getNext(line);
-		igc.getIntermediateGraph().addVertex(intermediate);
+		igc.getGraph().addVertex(intermediate);
 		line.setTarget(intermediate);
 		
 		//now, we just add this into the graph.
-		igc.getIntermediateGraph().addEdge(line, intermediate);
+		igc.getGraph().addEdge(line, intermediate);
 	}
 
 	@Override
@@ -90,11 +90,11 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate nextIntermediate = ilc.getNext(next.getPosition());
-		igc.getIntermediateGraph().addVertex(nextIntermediate);
+		igc.getGraph().addVertex(nextIntermediate);
 		
 		BranchHandle bi = ((BranchHandle)line.getInstruction());
 		AbstractIntermediate targetIntermediate = ilc.getNext(bi.getTarget().getPosition());
-		igc.getIntermediateGraph().addVertex(targetIntermediate);
+		igc.getGraph().addVertex(targetIntermediate);
 		
 		AbstractIntermediate lowest = targetIntermediate.getInstruction().getPosition() < nextIntermediate.getInstruction().getPosition() ? targetIntermediate : nextIntermediate;
 		AbstractIntermediate highest = targetIntermediate.getInstruction().getPosition() > nextIntermediate.getInstruction().getPosition() ? targetIntermediate : nextIntermediate;
@@ -104,17 +104,17 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		//add true path... (Conditional) -> (True) -> (Node A)
 		BooleanBranchOutcome trueOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.TRUE);
 		line.setTrueBranch(trueOutcome);
-		igc.getIntermediateGraph().addVertex(trueOutcome);
-		igc.getIntermediateGraph().addEdge(line, trueOutcome);
-		igc.getIntermediateGraph().addEdge(trueOutcome, lowest);
+		igc.getGraph().addVertex(trueOutcome);
+		igc.getGraph().addEdge(line, trueOutcome);
+		igc.getGraph().addEdge(trueOutcome, lowest);
 		
 		
 		//add false path... (Conditional) -> (False) -> (Node A)
 		BooleanBranchOutcome falseOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.FALSE);
 		line.setFalseBranch(falseOutcome);
-		igc.getIntermediateGraph().addVertex(falseOutcome);
-		igc.getIntermediateGraph().addEdge(line, falseOutcome);
-		igc.getIntermediateGraph().addEdge(falseOutcome, highest);
+		igc.getGraph().addVertex(falseOutcome);
+		igc.getGraph().addEdge(line, falseOutcome);
+		igc.getGraph().addEdge(falseOutcome, highest);
 	}
 	
 	@Override
@@ -145,41 +145,41 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		
 		//now, create the graph.
 		
-		igc.getIntermediateGraph().addVertex(line);
+		igc.getGraph().addVertex(line);
 		if(line.getDefaultCase() != null) {
 			CaseIntermediate si = new CaseIntermediate(line.getInstruction(), line.getDefaultCase());
-			igc.getIntermediateGraph().addVertex(si);
+			igc.getGraph().addVertex(si);
 			
 			//add an edge.
-			igc.getIntermediateGraph().addEdge(line, si);
+			igc.getGraph().addEdge(line, si);
 
 			//add edge from outcome to edge.
 			LOG.debug(si);
 			AbstractIntermediate target = ilc.getNext(line.getDefaultCase().getTarget().getPosition());
 			
 			LOG.debug("TargeT:"+target);
-			igc.getIntermediateGraph().addVertex(target);
-			igc.getIntermediateGraph().addEdge(si, target);
+			igc.getGraph().addVertex(target);
+			igc.getGraph().addEdge(si, target);
 		}
 		
 		
 		for(Case caseVal : line.getCases()) {
 			CaseIntermediate si = new CaseIntermediate(line.getInstruction(), caseVal);
-			igc.getIntermediateGraph().addVertex(si);
+			igc.getGraph().addVertex(si);
 			
 			//add an edge.
-			igc.getIntermediateGraph().addEdge(line, si);
+			igc.getGraph().addEdge(line, si);
 			
 			//add edge from outcome to edge.
 			AbstractIntermediate target = ilc.getNext(caseVal.getTarget().getPosition());
-			igc.getIntermediateGraph().addVertex(target);
-			igc.getIntermediateGraph().addEdge(si, target);
+			igc.getGraph().addVertex(target);
+			igc.getGraph().addEdge(si, target);
 		}
 	}
 
 	@Override
 	public void visitAbstractIntermediate(AbstractIntermediate line) {
 		//add the vertex.
-		igc.getIntermediateGraph().addVertex(line);
+		igc.getGraph().addVertex(line);
 	}
 }
