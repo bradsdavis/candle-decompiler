@@ -3,9 +3,10 @@ package org.candle.decompiler.util;
 import java.util.List;
 
 import org.jgrapht.Graphs;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
-public class GraphUtil<T, E> {
+public class GraphUtil<T, E extends DefaultEdge> {
 
 	protected final ListenableDirectedGraph<T, E> graph;
 	
@@ -63,4 +64,14 @@ public class GraphUtil<T, E> {
 			graph.removeEdge(source, s);
 		}
 	}
+	
+	public List<T> getSuccessors(T iv) {
+		return Graphs.successorListOf(this.graph, iv);
+	}
+	
+	public List<T> getPredecessors(T iv) {
+		return Graphs.predecessorListOf(this.graph, iv);
+	}
+	
+
 }

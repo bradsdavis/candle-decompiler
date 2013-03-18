@@ -11,17 +11,14 @@ public class TestFinallyAdvanced {
 				System.out.println("1");
 			}
 			catch(RuntimeException e) {
-				if(a) {
-					break;
-				}
+				System.out.println("Catch");
 			}
-			/*
 			finally {
 				if(a) {
 					break;
 				}
 				System.out.println("2");
-			}*/
+			}
 			
 			System.out.println("3");
 		}

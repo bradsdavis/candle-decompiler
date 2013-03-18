@@ -6,13 +6,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.bcel.generic.CodeExceptionGen;
+import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.Type;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.intermediate.expression.Resolved;
-import org.apache.bcel.generic.InstructionHandle;
 
 public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 

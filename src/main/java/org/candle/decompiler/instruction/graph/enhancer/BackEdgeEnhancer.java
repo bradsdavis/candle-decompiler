@@ -8,33 +8,27 @@ import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.apache.bcel.generic.InstructionHandle;
 import org.jgrapht.Graphs;
 
-public class BackEdgeEnhancer extends InstructionGraphEnhancer {
+public class BackEdgeEnhancer extends InstructionHandleEnhancer {
 
 	public BackEdgeEnhancer(InstructionGraphContext igc) {
 		super(igc);
 	}
 
 	@Override
-	public void process() {
-		for(InstructionHandle iv : igc.getGraph().vertexSet()) {
-			List<InstructionHandle> successors = Graphs.successorListOf(igc.getGraph(), iv);
+	public void process(InstructionHandle ih) {
+		List<InstructionHandle> successors = Graphs.successorListOf(igc.getGraph(), ih);
+		
+		for(InstructionHandle successor : successors) {
+			InstructionEdge ie = igc.getGraph().getEdge(ih, successor);
 			
-			for(InstructionHandle successor : successors) {
-				InstructionEdge ie = igc.getGraph().getEdge(iv, successor);
-				
-				//color back...
-				int t1 = iv.getPosition();
-				int t2 = successor.getPosition();
-				
-				if(t2 < t1) {
-					ie.setType(EdgeType.BACK);
-				}
-				
+			//color back...
+			int t1 = ih.getPosition();
+			int t2 = successor.getPosition();
+			
+			if(t2 < t1) {
+				ie.setType(EdgeType.BACK);
 			}
 			
-			
 		}
-		
-		
 	}
 }

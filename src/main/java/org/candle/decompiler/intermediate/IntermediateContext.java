@@ -52,10 +52,8 @@ public class IntermediateContext {
 	public InstructionHandle getCurrentInstruction() {
 		return currentInstruction;
 	}
-
+	
 	public void pushIntermediateToInstruction(final AbstractIntermediate ai) {
-		System.out.println("Pushing: "+ai+" to: "+this.currentInstruction);
 		this.currentInstruction.addAttribute(INTERMEDIATE_KEY, ai);
 	}
-	
 }

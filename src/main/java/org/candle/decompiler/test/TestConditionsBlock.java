@@ -14,7 +14,7 @@ public class TestConditionsBlock {
 		
 		if(i == 5 || i == 4) {
 			System.out.println("I < 3");
-		}/*
+		}
 		else {
 			System.out.println("Not first condition.");
 		}
@@ -62,7 +62,6 @@ public class TestConditionsBlock {
 		}
 		int y = 5;
 		LOG.info("Another!!"+y);
-		*/
 	}
 	
 }

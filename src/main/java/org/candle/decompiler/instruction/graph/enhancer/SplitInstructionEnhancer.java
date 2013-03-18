@@ -11,7 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 
-public class SplitInstructionEnhancer extends InstructionGraphEnhancer {
+public class SplitInstructionEnhancer extends JVMInstructionEnhancer {
 	private static final Log LOG = LogFactory.getLog(SplitInstructionEnhancer.class);
 	
 	public SplitInstructionEnhancer(InstructionGraphContext igc) {
@@ -21,7 +21,6 @@ public class SplitInstructionEnhancer extends InstructionGraphEnhancer {
 	@Override
 	public void visitPopInstruction(PopInstruction obj) {
 		//check instruction in map.
-		
 		List<InstructionHandle> ivs = this.igc.getPredecessors(this.current);
 		if(ivs.size() > 1) {
 			//check to see if the predecessors pushed.

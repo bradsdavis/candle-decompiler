@@ -53,7 +53,6 @@ import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
-import org.candle.decompiler.instruction.StackClonePointListener;
 import org.candle.decompiler.instruction.InstructionTransversalListener;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.InstructionGraphFactory;
@@ -61,8 +60,10 @@ import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdgeAttributeProvider;
 import org.candle.decompiler.instruction.graph.enhancer.BackEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
-import org.candle.decompiler.instruction.graph.enhancer.HealGotoEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.InstructionGraphEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.InstructionHandleEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.InstructionToIntermediateEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.NonIntermediateEliminator;
 import org.candle.decompiler.instruction.graph.enhancer.SplitInstructionEnhancer;
 import org.candle.decompiler.instruction.graph.vertex.InstructionLabelProvider;
 import org.jgrapht.ext.DOTExporter;
@@ -283,24 +284,15 @@ public class ClassIntermediateVisitor implements Visitor {
 		InstructionGraphContext igc = igf.process();
 		
 		List<InstructionGraphEnhancer> iges = new ArrayList<InstructionGraphEnhancer>();
-		//iges.add(new HealGotoEnhancer(igc));
 		iges.add(new BackEdgeEnhancer(igc));
 		iges.add(new SplitInstructionEnhancer(igc));
 		iges.add(new ExceptionEdgeEnhancer(igc, methodGenerator.getExceptionHandlers()));
+		iges.add(new InstructionToIntermediateEnhancer(igc, intermediateContext));
+		iges.add(new NonIntermediateEliminator(igc));
 		
 		for(InstructionGraphEnhancer ige : iges)
 		{
 			ige.process();
-		}
-		
-
-		writeGraph("before.dot", igc);
-
-		GraphIterator<InstructionHandle, InstructionEdge> iterator = new DepthFirstIterator<InstructionHandle, InstructionEdge>(igc.getGraph());
-		iterator.addTraversalListener(new InstructionTransversalListener(igc, intermediateContext));
-		
-		while (iterator.hasNext()) {
-			iterator.next();
 		}
 		
 		writeGraph("after.dot", igc);
