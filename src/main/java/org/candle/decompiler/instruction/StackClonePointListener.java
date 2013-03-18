@@ -5,8 +5,12 @@ import java.util.Stack;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
+import org.candle.decompiler.instruction.graph.edge.EdgeType;
+import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
+import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
 import org.candle.decompiler.intermediate.IntermediateContext;
 import org.candle.decompiler.intermediate.expression.Expression;
+import org.jgrapht.event.EdgeTraversalEvent;
 import org.jgrapht.event.VertexTraversalEvent;
 
 public class StackClonePointListener {
@@ -20,19 +24,21 @@ public class StackClonePointListener {
 		this.ic = ic;
 	}
 	
-	public void setup(VertexTraversalEvent<InstructionHandle> e) {
-		InstructionHandle ih = e.getVertex();
-		
+	public void setup(InstructionHandle ih) {
 		//set new stack on first...
 		if(igc.getPredecessors(ih).size() == 0) {
 			addExpressionStack(ih, new Stack<Expression>());
 			System.out.println("Must be first: "+ih);
-			
 		}
-		
-		//set current stack.
 		switchStack(ih);
-		
+	}
+	
+	public void setup(EdgeTraversalEvent<InstructionHandle, InstructionEdge> e) {
+		switchStack((InstructionHandle)e.getEdge().getTarget());
+		if(e.getEdge().getType() == EdgeType.EXCEPTION) {
+			Expression exExp = (Expression)e.getEdge().getAttributes().get(ExceptionEdgeEnhancer.EXCEPTION_STACK_KEY);
+			ic.getExpressions().add(exExp);
+		}
 	}
 	
 	public void finish(VertexTraversalEvent<InstructionHandle> e) {

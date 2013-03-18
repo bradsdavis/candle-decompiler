@@ -4,6 +4,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.intermediate.IntermediateContext;
+import org.jgrapht.event.EdgeTraversalEvent;
 import org.jgrapht.event.TraversalListenerAdapter;
 import org.jgrapht.event.VertexTraversalEvent;
 
@@ -20,12 +21,15 @@ public class InstructionTransversalListener extends TraversalListenerAdapter<Ins
 		this.miv = new MethodIntermediateVisitor(ic);
 	}
 	
-	
+	@Override
+	public void edgeTraversed(EdgeTraversalEvent<InstructionHandle, InstructionEdge> e) {
+		cpl.setup(e);
+	}
 	
 	@Override
 	public void vertexTraversed(VertexTraversalEvent<InstructionHandle> e) {
-		//setup.
-		cpl.setup(e);
+		cpl.setup(e.getVertex());
+		//process instruction handle.
 		InstructionHandle jvm = e.getVertex();
 		intermediateContext.setCurrentInstruction(jvm);
 		jvm.getInstruction().accept(miv);

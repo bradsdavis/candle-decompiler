@@ -6,13 +6,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.bcel.generic.CodeExceptionGen;
+import org.apache.bcel.generic.ObjectType;
+import org.apache.bcel.generic.Type;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
+import org.candle.decompiler.intermediate.expression.Resolved;
 import org.apache.bcel.generic.InstructionHandle;
 
 public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 
+	public static final String CEG_KEY = "CEG_KEY";
+	public static final String EXCEPTION_STACK_KEY = "EXCEPTION_STACK_KEY";
+	 
 	private final CodeExceptionGen[] exceptions;
 	
 	public ExceptionEdgeEnhancer(InstructionGraphContext igc, CodeExceptionGen[] exceptions) {
@@ -32,7 +38,6 @@ public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 		}
 
 		Map<Integer, InstructionHandle> ivc = new HashMap<Integer, InstructionHandle>();
-
 		
 		for(InstructionHandle iv : igc.getGraph().vertexSet()) {
 			if(positions.contains(iv.getPosition())) {
@@ -47,12 +52,24 @@ public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 			
 			InstructionHandle source = ivc.get(t1);
 			InstructionHandle target = ivc.get(t2);
-			
+
 			InstructionEdge ie = new InstructionEdge();
+			addExceptionHandle(ie, ceg);
 			ie.setType(EdgeType.EXCEPTION);
 			igc.getGraph().addEdge(source, target, ie);
 		}
+	}
+	
+	private void addExceptionHandle(InstructionEdge ie, CodeExceptionGen ceg) {
+		ObjectType ot = ceg.getCatchType();
+		Resolved resolved = null;
+		if(ot == null) {
+			resolved = new Resolved((InstructionHandle)ie.getTarget(), Type.THROWABLE, "e");
+		}
+		else {
+			resolved = new Resolved((InstructionHandle)ie.getTarget(), ot, ot.toString());
+		}
 		
-		
+		ie.getAttributes().put(EXCEPTION_STACK_KEY, resolved);
 	}
 }
