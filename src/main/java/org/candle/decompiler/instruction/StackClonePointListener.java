@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Stack;
 
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
@@ -14,6 +16,8 @@ import org.jgrapht.event.EdgeTraversalEvent;
 import org.jgrapht.event.VertexTraversalEvent;
 
 public class StackClonePointListener {
+	private static final Log LOG = LogFactory.getLog(StackClonePointListener.class);
+	
 	public final String STACK_KEY = "STACK_KEY";
 	
 	private final IntermediateContext ic;
@@ -28,7 +32,7 @@ public class StackClonePointListener {
 		//set new stack on first...
 		if(igc.getPredecessors(ih).size() == 0) {
 			addExpressionStack(ih, new Stack<Expression>());
-			System.out.println("Must be first: "+ih);
+			LOG.debug("Must be first: "+ih);
 		}
 		switchStack(ih);
 	}
@@ -47,7 +51,7 @@ public class StackClonePointListener {
 		List<InstructionHandle> successors = igc.getSuccessors(ih);
 		if(successors.size() > 1) {
 			//duplicate the stack to all children...
-			System.out.println("Must duplicate stack to all children: "+ih);
+			LOG.debug("Must duplicate stack to all children: "+ih);
 			
 			for(InstructionHandle successor : successors) {
 				addExpressionStack(successor, (Stack)ic.getExpressions().clone());
@@ -64,7 +68,7 @@ public class StackClonePointListener {
 		{
 			Stack<Expression> expressionStack = (Stack<Expression>)ih.getAttribute(STACK_KEY);
 			
-			System.out.println("@ Instruction: "+ih+ "   | Switching : ["+ic.getExpressions() +"] to ... ["+expressionStack+"]");
+			LOG.debug("@ Instruction: "+ih+ "   | Switching : ["+ic.getExpressions() +"] to ... ["+expressionStack+"]");
 			ic.setExpressions(expressionStack);
 		}
 	}

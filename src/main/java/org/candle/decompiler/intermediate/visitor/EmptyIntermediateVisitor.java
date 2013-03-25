@@ -14,12 +14,18 @@ import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
+import org.candle.decompiler.intermediate.code.loop.ContinuousWhileIntermediate;
 import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
 
 public class EmptyIntermediateVisitor implements IntermediateVisitor {
 
+	@Override
+	public void visitContinuousWhileIntermediate(ContinuousWhileIntermediate line) {
+		
+	}
+	
 	@Override
 	public void visitForIntermediate(ForIntermediate line) {
 

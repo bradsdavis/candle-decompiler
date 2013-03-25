@@ -14,6 +14,7 @@ import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.ElseIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
+import org.candle.decompiler.intermediate.code.loop.ContinuousWhileIntermediate;
 import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
@@ -25,6 +26,7 @@ public interface IntermediateVisitor {
 	public void visitEnhancedForLoopIntermediate(EnhancedForIntermediate line);
 	public void visitForIntermediate(ForIntermediate line);
 	public void visitWhileIntermediate(WhileIntermediate line);
+	public void visitContinuousWhileIntermediate(ContinuousWhileIntermediate line);
 	
 	public void visitTryIntermediate(TryIntermediate line);
 	public void visitFinallyIntermediate(FinallyIntermediate line);

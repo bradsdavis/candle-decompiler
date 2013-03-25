@@ -3,6 +3,8 @@ package org.candle.decompiler.instruction.graph.enhancer;
 import java.util.List;
 
 import org.apache.bcel.generic.InstructionHandle;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 
 /***
@@ -14,6 +16,8 @@ import org.candle.decompiler.instruction.graph.InstructionGraphContext;
  */
 public class NonIntermediateEliminator extends InstructionHandleEnhancer {
 
+	private static final Log LOG = LogFactory.getLog(NonIntermediateEliminator.class);
+	
 	public NonIntermediateEliminator(InstructionGraphContext igc) {
 		super(igc);
 	}
@@ -30,7 +34,11 @@ public class NonIntermediateEliminator extends InstructionHandleEnhancer {
 			}
 			
 			InstructionHandle target = successors.get(0);
-			System.out.println("Remove vertex:" + ih);
+			
+			if(LOG.isDebugEnabled()) {
+				LOG.debug("Remove vertex:" + ih);
+			}
+			
 			igc.redirectPredecessors(ih, target);
 			igc.getGraph().removeVertex(ih);
 		}

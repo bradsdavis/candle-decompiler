@@ -4,6 +4,17 @@ package org.candle.decompiler.test;
 public class TestFinallyAdvanced {
 
 	public static void main(String[] args) {
+		String s;
+		boolean f = false;
+		
+		if(f == true) {
+			s = "a";
+		}
+		else {
+			s = "b";
+		}
+		System.out.println(s);
+		
 		boolean a = System.currentTimeMillis() < 0;
 		
 		while(true) {

@@ -36,7 +36,7 @@ public class SplitInstructionEnhancer extends JVMInstructionEnhancer {
 			}
 			
 			if(count > 1) {
-				LOG.info("Split vertex.");
+				LOG.debug("Split vertex.");
 				splitVertex(this.current);
 			}
 		}
@@ -54,8 +54,9 @@ public class SplitInstructionEnhancer extends JVMInstructionEnhancer {
 		int i=0;
 		InstructionHandle target = iv;
 		for(InstructionHandle source : preds) {
+			//source = findSource(source);
 			if(i>0) {
-				//clone IV.
+				//clone.
 				try {
 					target = new DuplicateHandle(iv);
 					igc.getGraph().addVertex(target);

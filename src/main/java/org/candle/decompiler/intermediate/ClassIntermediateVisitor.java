@@ -53,23 +53,22 @@ import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
-import org.candle.decompiler.instruction.InstructionTransversalListener;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.InstructionGraphFactory;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdgeAttributeProvider;
 import org.candle.decompiler.instruction.graph.enhancer.BackEdgeEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.ContinuousLoop;
 import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.InstructionGraphEnhancer;
-import org.candle.decompiler.instruction.graph.enhancer.InstructionHandleEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.InstructionToIntermediateEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.LoopHeader;
 import org.candle.decompiler.instruction.graph.enhancer.NonIntermediateEliminator;
 import org.candle.decompiler.instruction.graph.enhancer.SplitInstructionEnhancer;
 import org.candle.decompiler.instruction.graph.vertex.InstructionLabelProvider;
+import org.candle.decompiler.intermediate.code.loop.ContinuousWhileIntermediate;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
-import org.jgrapht.traverse.DepthFirstIterator;
-import org.jgrapht.traverse.GraphIterator;
 
 import com.sun.org.apache.bcel.internal.classfile.Utility;
 
@@ -283,11 +282,16 @@ public class ClassIntermediateVisitor implements Visitor {
 		InstructionGraphFactory igf = new InstructionGraphFactory(instructions, methodGenerator.getExceptionHandlers());
 		InstructionGraphContext igc = igf.process();
 		
+		writeGraph("before.dot", igc);
+		
 		List<InstructionGraphEnhancer> iges = new ArrayList<InstructionGraphEnhancer>();
-		iges.add(new BackEdgeEnhancer(igc));
 		iges.add(new SplitInstructionEnhancer(igc));
 		iges.add(new ExceptionEdgeEnhancer(igc, methodGenerator.getExceptionHandlers()));
 		iges.add(new InstructionToIntermediateEnhancer(igc, intermediateContext));
+		
+		iges.add(new BackEdgeEnhancer(igc));
+		iges.add(new LoopHeader(igc));
+		iges.add(new ContinuousLoop(igc));
 		iges.add(new NonIntermediateEliminator(igc));
 		
 		for(InstructionGraphEnhancer ige : iges)

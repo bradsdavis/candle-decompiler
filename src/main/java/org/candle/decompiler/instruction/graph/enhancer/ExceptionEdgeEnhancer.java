@@ -1,4 +1,4 @@
-package org.candle.decompiler.instruction.graph.enhancer;
+	package org.candle.decompiler.instruction.graph.enhancer;
 
 import java.util.HashMap;
 import java.util.HashSet;

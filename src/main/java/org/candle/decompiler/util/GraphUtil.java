@@ -39,7 +39,7 @@ public class GraphUtil<T, E extends DefaultEdge> {
 	}
 	
 	public void redirectPredecessors(T source, T target) {
-		List<T> predecessors = Graphs.predecessorListOf(graph, source);
+		 List<T> predecessors = Graphs.predecessorListOf(graph, source);
 		
 		//remove edges between predecessor and source.
 		for(T p : predecessors) {

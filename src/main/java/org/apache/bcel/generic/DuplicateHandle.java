@@ -3,6 +3,7 @@ package org.apache.bcel.generic;
 
 public class DuplicateHandle extends InstructionHandle {
 
+	private static final long serialVersionUID = -6019766747175365797L;
 	protected final InstructionHandle original;
 	
 	public DuplicateHandle(InstructionHandle ih) {
