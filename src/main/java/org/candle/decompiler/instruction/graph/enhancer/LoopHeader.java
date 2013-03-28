@@ -8,7 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graphs;
 
 public class LoopHeader extends InstructionHandleEnhancer {
@@ -30,7 +30,7 @@ public class LoopHeader extends InstructionHandleEnhancer {
 		}
 		
 		for(InstructionHandle pred : preds) {
-			InstructionEdge ie = igc.getGraph().getEdge(pred, ih);
+			IntermediateEdge ie = igc.getGraph().getEdge(pred, ih);
 			
 			if(ie.getType() == EdgeType.BACK) {
 				LOG.debug("Has back edge.");
@@ -48,9 +48,9 @@ public class LoopHeader extends InstructionHandleEnhancer {
 		
 		List<InstructionHandle> preds = Graphs.predecessorListOf(igc.getGraph(), ih);
 		for(InstructionHandle pred : preds) {
-			InstructionEdge ie = igc.getGraph().getEdge(pred, ih);
+			IntermediateEdge ie = igc.getGraph().getEdge(pred, ih);
 			
-			InstructionEdge in = igc.getGraph().addEdge(pred, duplicate);
+			IntermediateEdge in = igc.getGraph().addEdge(pred, duplicate);
 			in.setType(ie.getType());
 			
 			//now remove the original edge.

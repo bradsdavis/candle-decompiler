@@ -2,7 +2,7 @@ package org.candle.decompiler.intermediate.graph.range;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 

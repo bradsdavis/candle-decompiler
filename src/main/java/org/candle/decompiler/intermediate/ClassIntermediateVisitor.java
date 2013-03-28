@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.bcel.Constants;
@@ -55,9 +56,9 @@ import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.InstructionGraphFactory;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.instruction.graph.edge.InstructionEdgeAttributeProvider;
 import org.candle.decompiler.instruction.graph.enhancer.BackEdgeEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.ConditionEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.ContinuousLoop;
 import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.InstructionGraphEnhancer;
@@ -66,7 +67,38 @@ import org.candle.decompiler.instruction.graph.enhancer.LoopHeader;
 import org.candle.decompiler.instruction.graph.enhancer.NonIntermediateEliminator;
 import org.candle.decompiler.instruction.graph.enhancer.SplitInstructionEnhancer;
 import org.candle.decompiler.instruction.graph.vertex.InstructionLabelProvider;
-import org.candle.decompiler.intermediate.code.loop.ContinuousWhileIntermediate;
+import org.candle.decompiler.intermediate.code.AbstractIntermediate;
+import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.IntermediateGraphTransformer;
+import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
+import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
+import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdgeAttributeProvider;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdgeProvider;
+import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
+import org.candle.decompiler.intermediate.graph.enhancer.ConditionExternalToWhileLoop;
+import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
+import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
+import org.candle.decompiler.intermediate.graph.enhancer.Else;
+import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
+import org.candle.decompiler.intermediate.graph.enhancer.If;
+import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanOutcomes;
+import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
+import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
+import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
+import org.candle.decompiler.intermediate.graph.range.CaseEndRangeIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.SwitchRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 
@@ -267,6 +299,48 @@ public class ClassIntermediateVisitor implements Visitor {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+	public void processIntermediate(IntermediateGraphContext igc) {
+		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
+		
+		enhancers.add(new MergeConditionExpression(igc));
+		enhancers.add(new ConstantArrayCompressor(igc));
+		
+		enhancers.add(new FinallyRangeVisitor(igc));
+		enhancers.add(new CatchUpperRangeVisitor(igc));
+		
+		enhancers.add(new RetractDuplicateFinally(igc));
+		enhancers.add(new RetractOrphanGoto(igc));
+		enhancers.add(new RetractOrphanOutcomes(igc));
+		
+		enhancers.add(new ConditionExternalToWhileLoop(igc));
+		enhancers.add(new ConditionToWhileLoop(igc));
+		enhancers.add(new WhileToForLoopIncrement(igc));
+		enhancers.add(new WhileToForLoopIterator(igc));
+		enhancers.add(new ArrayForToEnhancedFor(igc));
+		
+		enhancers.add(new If(igc));
+		enhancers.add(new ElseIf(igc));
+		enhancers.add(new Else(igc));
+
+		enhancers.add(new MultiConditionalToSwitchIntermediate(igc));
+		enhancers.add(new SwitchRangeVisitor(igc));
+		enhancers.add(new SwitchGotoToBreak(igc));
+		enhancers.add(new CaseEndRangeIntermediateVisitor(igc));
+		enhancers.add(new RemoveCaseToCaseEdge(igc));
+
+		enhancers.add(new WhileRangeVisitor(igc));
+		enhancers.add(new IfLowerRangeVisitor(igc));
+		
+		
+		//enhancers.add(new HealGoto(lc));
+		enhancers.add(new RemoveImpliedVoidReturn(igc));
+		
+		for(GraphIntermediateVisitor giv : enhancers) {
+			giv.process();
+		}
+	}
 
 	@Override
 	public void visitMethod(Method obj) {
@@ -286,6 +360,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		List<InstructionGraphEnhancer> iges = new ArrayList<InstructionGraphEnhancer>();
 		iges.add(new SplitInstructionEnhancer(igc));
+		iges.add(new ConditionEdgeEnhancer(igc));
 		iges.add(new ExceptionEdgeEnhancer(igc, methodGenerator.getExceptionHandlers()));
 		iges.add(new InstructionToIntermediateEnhancer(igc, intermediateContext));
 		
@@ -301,8 +376,12 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		writeGraph("after.dot", igc);
 		
-		
-		if(true) return;
+
+		IntermediateGraphTransformer igt = new IntermediateGraphTransformer(igc);
+		IntermediateGraphContext interGraphContext = igt.getIntermediateGraphContext();
+		writeGraph("ibefore.dot", interGraphContext);
+		processIntermediate(interGraphContext);
+		writeGraph("iafter.dot", interGraphContext);
 		
 		/*
 		Iterator<InstructionHandle> debugIterator = instructions.iterator();
@@ -375,50 +454,6 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		
 		
-		
-		
-		
-		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
-		
-		enhancers.add(new MergeConditionExpression(lc.getIntermediateGraph()));
-		enhancers.add(new ConstantArrayCompressor(lc.getIntermediateGraph()));
-		
-		enhancers.add(new FinallyRangeVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new CatchUpperRangeVisitor(lc.getIntermediateGraph()));
-		
-		enhancers.add(new RetractDuplicateFinally(lc.getIntermediateGraph()));
-		enhancers.add(new RetractOrphanGoto(lc.getIntermediateGraph()));
-		enhancers.add(new RetractOrphanOutcomes(lc.getIntermediateGraph()));
-		
-		enhancers.add(new ConditionExternalToWhileLoop(lc.getIntermediateGraph()));
-		enhancers.add(new ConditionToWhileLoop(lc.getIntermediateGraph()));
-		enhancers.add(new WhileToForLoopIncrement(lc.getIntermediateGraph()));
-		enhancers.add(new WhileToForLoopIterator(lc.getIntermediateGraph()));
-		enhancers.add(new ArrayForToEnhancedFor(lc.getIntermediateGraph()));
-		
-		enhancers.add(new If(lc.getIntermediateGraph()));
-		enhancers.add(new ElseIf(lc.getIntermediateGraph()));
-		enhancers.add(new Else(lc.getIntermediateGraph()));
-
-		enhancers.add(new MultiConditionalToSwitchIntermediate(lc.getIntermediateGraph()));
-		enhancers.add(new SwitchRangeVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new SwitchGotoToBreak(lc.getIntermediateGraph()));
-		enhancers.add(new CaseEndRangeIntermediateVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new RemoveCaseToCaseEdge(lc.getIntermediateGraph()));
-
-		enhancers.add(new WhileRangeVisitor(lc.getIntermediateGraph()));
-		enhancers.add(new IfLowerRangeVisitor(lc.getIntermediateGraph()));
-		
-		
-		//enhancers.add(new HealGoto(lc.getIntermediateGraph()));
-		enhancers.add(new RemoveImpliedVoidReturn(lc.getIntermediateGraph()));
-		
-		
-		
-		for(GraphIntermediateVisitor giv : enhancers) {
-			giv.process();
-		}
-		
 		LOG.debug("After ======");
 		dot.export(w, lc.getIntermediateGraph().getGraph());
 		LOG.debug("End After ======");
@@ -465,21 +500,34 @@ public class ClassIntermediateVisitor implements Visitor {
 	}
 	
 	
+	private void writeGraph(String name, IntermediateGraphContext igc) {
+		LOG.debug("Instruction Graph ======");
+		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/"+name);
+		Writer x;
+		try {
+			x = new FileWriter(a);
+			DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(), new IntermediateVertexAttributeProvider(), new IntermediateEdgeAttributeProvider()); 
+			dot.export(x, igc.getGraph());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		LOG.debug("End Instruction Graph ======");
+	}
+	
 	private void writeGraph(String name, InstructionGraphContext igc) {
 		LOG.debug("Instruction Graph ======");
 		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/"+name);
 		Writer x;
 		try {
 			x = new FileWriter(a);
-			DOTExporter<InstructionHandle, InstructionEdge> f = new DOTExporter<InstructionHandle, InstructionEdge>(new IntegerNameProvider<InstructionHandle>(), new InstructionLabelProvider(), null, null, new InstructionEdgeAttributeProvider());
+			DOTExporter<InstructionHandle, IntermediateEdge> f = new DOTExporter<InstructionHandle, IntermediateEdge>(new IntegerNameProvider<InstructionHandle>(), new InstructionLabelProvider(), new IntermediateEdgeProvider(), null, new InstructionEdgeAttributeProvider());
 			f.export(x, igc.getGraph());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		LOG.debug("End Instruction Graph ======");
-		
-
 	}
 	
 

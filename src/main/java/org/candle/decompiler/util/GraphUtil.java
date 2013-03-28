@@ -2,19 +2,20 @@ package org.candle.decompiler.util;
 
 import java.util.List;
 
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
-public class GraphUtil<T, E extends DefaultEdge> {
+public class GraphUtil<T> {
 
-	protected final ListenableDirectedGraph<T, E> graph;
+	protected final ListenableDirectedGraph<T, IntermediateEdge> graph;
 	
-	public GraphUtil(ListenableDirectedGraph<T, E> graph) {
+	public GraphUtil(ListenableDirectedGraph<T, IntermediateEdge> graph) {
 		this.graph = graph;
 	}
 	
-	public ListenableDirectedGraph<T, E> getGraph() {
+	public ListenableDirectedGraph<T, IntermediateEdge> getGraph() {
 		return graph;
 	}
 	
@@ -37,34 +38,38 @@ public class GraphUtil<T, E extends DefaultEdge> {
 		
 		throw new IllegalStateException("Should only have 1 incoming edge.");
 	}
-	
+
 	public void redirectPredecessors(T source, T target) {
-		 List<T> predecessors = Graphs.predecessorListOf(graph, source);
+		List<T> predecessors = Graphs.predecessorListOf(this.graph, source);
 		
 		//remove edges between predecessor and source.
 		for(T p : predecessors) {
+			IntermediateEdge existing = graph.getEdge(p, source);
+			
 			//remove the edge to ci, add one to line.
 			if(!graph.containsEdge(p, target)) {
-				graph.addEdge(p, target);
+				graph.addEdge(p, target, (IntermediateEdge)existing.clone());
 			}
-			graph.removeEdge(p, source);
+			
+			graph.removeEdge(existing);
 		}
 	}
 	
 	public void redirectSuccessors(T source, T target) {
-		List<T> candidate = Graphs.successorListOf(graph, source);
-
-		//remove edges between successor and source.
-		for(T s : candidate) {
+		List<T> successors = Graphs.successorListOf(this.graph, source);
+		
+		//remove edges between predecessor and source.
+		for(T s : successors) {
+			IntermediateEdge existing = graph.getEdge(source, s);
 			
 			//remove the edge to ci, add one to line.
-			if(!graph.containsEdge(target, s)) {
-				graph.addEdge(target, s);
+			if(!graph.containsEdge(s, target)) {
+				graph.addEdge(target, s, (IntermediateEdge)existing.clone());
 			}
-			graph.removeEdge(source, s);
+			
+			graph.removeEdge(existing);
 		}
 	}
-	
 	public List<T> getSuccessors(T iv) {
 		return Graphs.successorListOf(this.graph, iv);
 	}

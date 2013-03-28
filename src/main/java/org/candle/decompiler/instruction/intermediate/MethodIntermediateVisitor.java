@@ -1,4 +1,4 @@
-package org.candle.decompiler.instruction;
+package org.candle.decompiler.instruction.intermediate;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

@@ -2,13 +2,13 @@ package org.candle.decompiler.instruction.graph.context;
 
 import java.util.Map;
 
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.apache.bcel.generic.InstructionHandle;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
 
-public class PositionalInstructionListener implements GraphListener<InstructionHandle, InstructionEdge> {
+public class PositionalInstructionListener implements GraphListener<InstructionHandle, IntermediateEdge> {
 
 	private final Map<Integer, InstructionHandle> positionMap;
 	
@@ -27,12 +27,12 @@ public class PositionalInstructionListener implements GraphListener<InstructionH
 	}
 
 	@Override
-	public void edgeAdded(GraphEdgeChangeEvent<InstructionHandle, InstructionEdge> e) {
+	public void edgeAdded(GraphEdgeChangeEvent<InstructionHandle, IntermediateEdge> e) {
 		
 	}
 
 	@Override
-	public void edgeRemoved(GraphEdgeChangeEvent<InstructionHandle, InstructionEdge> e) {
+	public void edgeRemoved(GraphEdgeChangeEvent<InstructionHandle, IntermediateEdge> e) {
 		
 	}
 

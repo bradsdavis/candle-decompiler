@@ -20,12 +20,12 @@ import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.candle.decompiler.util.GraphUtil;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
-public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate, IntermediateEdge> {
+public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate> {
 
 	private final TreeSet<AbstractIntermediate> orderedIntermediate;
 	private final Map<Integer, InstructionHandle> instructionHandles;

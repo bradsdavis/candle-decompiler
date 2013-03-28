@@ -1,10 +1,10 @@
 package org.candle.decompiler.instruction.graph.enhancer;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.instruction.InstructionTransversalListener;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
+import org.candle.decompiler.instruction.intermediate.InstructionTransversalListener;
 import org.candle.decompiler.intermediate.IntermediateContext;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
 
@@ -25,7 +25,7 @@ public class InstructionToIntermediateEnhancer extends InstructionGraphEnhancer 
 
 	@Override
 	public void process() {
-		GraphIterator<InstructionHandle, InstructionEdge> iterator = new DepthFirstIterator<InstructionHandle, InstructionEdge>(igc.getGraph());
+		GraphIterator<InstructionHandle, IntermediateEdge> iterator = new DepthFirstIterator<InstructionHandle, IntermediateEdge>(igc.getGraph());
 		iterator.addTraversalListener(new InstructionTransversalListener(igc, intermediateContext));
 		
 		while (iterator.hasNext()) {

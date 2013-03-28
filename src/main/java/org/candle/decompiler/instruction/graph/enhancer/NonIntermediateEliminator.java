@@ -24,15 +24,15 @@ public class NonIntermediateEliminator extends InstructionHandleEnhancer {
 	
 	@Override
 	public void process(InstructionHandle ih) {
+		if(igc.hasIntermediate(ih)) {
+			//don't process if there is an intermediate.
+			return;
+		}
+		
 		List<InstructionHandle> successors = igc.getSuccessors(ih);
 		
 		if(successors.size() == 1) {
 			//now check to see whether there is an intermediate on the objects...
-			if(igc.hasIntermediate(ih)) {
-				//don't process if there is an intermediate.
-				return;
-			}
-			
 			InstructionHandle target = successors.get(0);
 			
 			if(LOG.isDebugEnabled()) {
@@ -42,7 +42,16 @@ public class NonIntermediateEliminator extends InstructionHandleEnhancer {
 			igc.redirectPredecessors(ih, target);
 			igc.getGraph().removeVertex(ih);
 		}
-		
+		else { 
+			List<InstructionHandle> predecessors = igc.getPredecessors(ih);
+			
+			if(predecessors.size() == 1) {
+				//compress backwards...
+				igc.redirectSuccessors(ih, predecessors.get(0));
+				
+				igc.getGraph().removeVertex(ih);
+			}
+		}
 		
 		
 	}

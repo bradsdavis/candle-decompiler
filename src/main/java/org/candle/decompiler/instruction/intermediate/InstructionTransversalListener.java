@@ -1,14 +1,14 @@
-package org.candle.decompiler.instruction;
+package org.candle.decompiler.instruction.intermediate;
 
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.intermediate.IntermediateContext;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.event.EdgeTraversalEvent;
 import org.jgrapht.event.TraversalListenerAdapter;
 import org.jgrapht.event.VertexTraversalEvent;
 
-public class InstructionTransversalListener extends TraversalListenerAdapter<InstructionHandle, InstructionEdge> {
+public class InstructionTransversalListener extends TraversalListenerAdapter<InstructionHandle, IntermediateEdge> {
 	
 	private final StackClonePointListener cpl;
 	private final InstructionGraphContext igc;
@@ -22,7 +22,7 @@ public class InstructionTransversalListener extends TraversalListenerAdapter<Ins
 	}
 	
 	@Override
-	public void edgeTraversed(EdgeTraversalEvent<InstructionHandle, InstructionEdge> e) {
+	public void edgeTraversed(EdgeTraversalEvent<InstructionHandle, IntermediateEdge> e) {
 		cpl.setup(e);
 	}
 	

@@ -20,8 +20,8 @@ import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 public class RetractDuplicateFinally extends GraphIntermediateVisitor {

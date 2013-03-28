@@ -9,7 +9,7 @@ import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.UnconditionalBranch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
 public class InstructionGraphFactory {
@@ -25,7 +25,7 @@ public class InstructionGraphFactory {
 	
 	public InstructionGraphContext process() {
 		
-		ListenableDirectedGraph<InstructionHandle, InstructionEdge> instructionHandleGraph = new ListenableDirectedGraph<InstructionHandle, InstructionEdge>(InstructionEdge.class);
+		ListenableDirectedGraph<InstructionHandle, IntermediateEdge> instructionHandleGraph = new ListenableDirectedGraph<InstructionHandle, IntermediateEdge>(IntermediateEdge.class);
 		InstructionGraphContext igc = new InstructionGraphContext(instructionHandleGraph);
 
 		for(InstructionHandle instructionHandle : instructionList.getInstructionHandles()) {
@@ -56,7 +56,7 @@ public class InstructionGraphFactory {
 		//HAPPY PATH
 		Set<InstructionHandle> happy = new HashSet<InstructionHandle>();
 		InstructionHandle root = createVertex(instructionList.getStart());
-		BreadthFirstIterator<InstructionHandle, InstructionEdge> bfi = new BreadthFirstIterator<InstructionHandle, InstructionEdge>(instructionHandleGraph, root);
+		BreadthFirstIterator<InstructionHandle, IntermediateEdge> bfi = new BreadthFirstIterator<InstructionHandle, IntermediateEdge>(instructionHandleGraph, root);
 		while(bfi.hasNext()) {
 			happy.add(bfi.next());
 		}

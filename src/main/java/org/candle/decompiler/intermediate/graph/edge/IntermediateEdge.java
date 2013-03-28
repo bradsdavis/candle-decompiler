@@ -1,16 +1,17 @@
-package org.candle.decompiler.instruction.graph.edge;
+package org.candle.decompiler.intermediate.graph.edge;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.jgrapht.graph.DefaultEdge;
 
-public class InstructionEdge extends DefaultEdge {
+public class IntermediateEdge extends DefaultEdge {
 
 	protected EdgeType type;
 	protected final Map<String, Object> attributes;
 	
-	public InstructionEdge() {
+	public IntermediateEdge() {
 		attributes = new HashMap<String, Object>();
 	}
 	
@@ -26,6 +27,7 @@ public class InstructionEdge extends DefaultEdge {
 		this.type = type;
 	}
 	
+	
 	public Object getSource() {
 		return super.getSource();
 	}
@@ -34,4 +36,8 @@ public class InstructionEdge extends DefaultEdge {
 		return super.getTarget();
 	}
 	
+	@Override
+	public Object clone() {
+		return super.clone();
+	}
 }

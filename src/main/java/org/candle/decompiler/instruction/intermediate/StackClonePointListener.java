@@ -1,4 +1,4 @@
-package org.candle.decompiler.instruction;
+package org.candle.decompiler.instruction.intermediate;
 
 import java.util.List;
 import java.util.Stack;
@@ -8,10 +8,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
 import org.candle.decompiler.intermediate.IntermediateContext;
 import org.candle.decompiler.intermediate.expression.Expression;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.event.EdgeTraversalEvent;
 import org.jgrapht.event.VertexTraversalEvent;
 
@@ -37,7 +37,7 @@ public class StackClonePointListener {
 		switchStack(ih);
 	}
 	
-	public void setup(EdgeTraversalEvent<InstructionHandle, InstructionEdge> e) {
+	public void setup(EdgeTraversalEvent<InstructionHandle, IntermediateEdge> e) {
 		switchStack((InstructionHandle)e.getEdge().getTarget());
 		if(e.getEdge().getType() == EdgeType.EXCEPTION) {
 			Expression exExp = (Expression)e.getEdge().getAttributes().get(ExceptionEdgeEnhancer.EXCEPTION_STACK_KEY);
@@ -51,7 +51,9 @@ public class StackClonePointListener {
 		List<InstructionHandle> successors = igc.getSuccessors(ih);
 		if(successors.size() > 1) {
 			//duplicate the stack to all children...
-			LOG.debug("Must duplicate stack to all children: "+ih);
+			if(LOG.isDebugEnabled()) {
+				LOG.debug("Must duplicate stack to all children: "+ih);
+			}
 			
 			for(InstructionHandle successor : successors) {
 				addExpressionStack(successor, (Stack)ic.getExpressions().clone());
@@ -68,7 +70,9 @@ public class StackClonePointListener {
 		{
 			Stack<Expression> expressionStack = (Stack<Expression>)ih.getAttribute(STACK_KEY);
 			
-			LOG.debug("@ Instruction: "+ih+ "   | Switching : ["+ic.getExpressions() +"] to ... ["+expressionStack+"]");
+			if(LOG.isDebugEnabled()) {
+				LOG.debug("@ Instruction: "+ih+ "   | Switching : ["+ic.getExpressions() +"] to ... ["+expressionStack+"]");
+			}
 			ic.setExpressions(expressionStack);
 		}
 	}

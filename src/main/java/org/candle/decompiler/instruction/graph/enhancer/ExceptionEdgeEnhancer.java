@@ -11,8 +11,8 @@ import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.Type;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
-import org.candle.decompiler.instruction.graph.edge.InstructionEdge;
 import org.candle.decompiler.intermediate.expression.Resolved;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 
 public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 
@@ -53,14 +53,14 @@ public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 			InstructionHandle source = ivc.get(t1);
 			InstructionHandle target = ivc.get(t2);
 
-			InstructionEdge ie = new InstructionEdge();
+			IntermediateEdge ie = new IntermediateEdge();
 			addExceptionHandle(ie, ceg);
 			ie.setType(EdgeType.EXCEPTION);
 			igc.getGraph().addEdge(source, target, ie);
 		}
 	}
 	
-	private void addExceptionHandle(InstructionEdge ie, CodeExceptionGen ceg) {
+	private void addExceptionHandle(IntermediateEdge ie, CodeExceptionGen ceg) {
 		ObjectType ot = ceg.getCatchType();
 		Resolved resolved = null;
 		if(ot == null) {

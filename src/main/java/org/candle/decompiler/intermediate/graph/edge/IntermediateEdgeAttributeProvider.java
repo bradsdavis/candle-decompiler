@@ -1,4 +1,4 @@
-package org.candle.decompiler.intermediate.graph;
+package org.candle.decompiler.intermediate.graph.edge;
 
 import java.util.HashMap;
 import java.util.Map;

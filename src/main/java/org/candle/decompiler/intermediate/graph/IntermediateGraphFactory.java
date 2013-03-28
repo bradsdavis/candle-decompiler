@@ -22,6 +22,7 @@ import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.expression.Throw;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.candle.decompiler.intermediate.visitor.EmptyIntermediateVisitor;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
@@ -107,7 +108,6 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		igc.getGraph().addVertex(trueOutcome);
 		igc.getGraph().addEdge(line, trueOutcome);
 		igc.getGraph().addEdge(trueOutcome, lowest);
-		
 		
 		//add false path... (Conditional) -> (False) -> (Node A)
 		BooleanBranchOutcome falseOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.FALSE);

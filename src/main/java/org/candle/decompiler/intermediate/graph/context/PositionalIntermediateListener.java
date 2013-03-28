@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;

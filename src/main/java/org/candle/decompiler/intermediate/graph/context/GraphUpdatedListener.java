@@ -1,7 +1,7 @@
 package org.candle.decompiler.intermediate.graph.context;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
-import org.candle.decompiler.intermediate.graph.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.event.GraphEdgeChangeEvent;
 import org.jgrapht.event.GraphListener;
 import org.jgrapht.event.GraphVertexChangeEvent;
