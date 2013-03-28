@@ -19,9 +19,9 @@ public class BCELMainTest {
 		  //String className = "org.candle.decompiler.test.TestSimpleCondition";
 		  //String className = "org.candle.decompiler.test.TestTryCatch";
 
-		  //String className = "org.candle.decompiler.test.TestConditionsBlock";
+		  String className = "org.candle.decompiler.test.TestConditionsBlock";
 		 //String className = "org.candle.decompiler.test.TestSwitch";
-		  String className = "org.candle.decompiler.test.TestFinallyAdvanced";
+		 // String className = "org.candle.decompiler.test.TestFinallyAdvanced";
 		  
 		  //works
 		  //String className = "org.candle.decompiler.test.TestArrayAssignment";

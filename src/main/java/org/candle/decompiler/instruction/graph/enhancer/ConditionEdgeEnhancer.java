@@ -5,12 +5,16 @@ import java.util.List;
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.intermediate.graph.edge.ConditionEdge;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 
 public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
 
+	private static final Log LOG = LogFactory.getLog(ConditionEdgeEnhancer.class);
+	
 	public ConditionEdgeEnhancer(InstructionGraphContext igc) {
 		super(igc);
 	}
@@ -35,9 +39,10 @@ public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
 						
 						//remove existing edge.
 						boolean added = igc.getGraph().addEdge(ih, successor, ce);
-						System.out.println(added+ " from "+ie);
-						
-						System.out.println(ReflectionToStringBuilder.toString(igc.getGraph().getEdge(ih, successor)));
+						if(LOG.isDebugEnabled()) {
+							LOG.debug(added+ " from "+ie);
+							LOG.debug(ReflectionToStringBuilder.toString(igc.getGraph().getEdge(ih, successor)));
+						}
 					}
 					else {
 						//false case.
@@ -45,9 +50,12 @@ public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
 						
 						//remove existing edge.
 						boolean added = igc.getGraph().addEdge(ih, successor, ce);
-						System.out.println(added+ " from "+ie);
 						
-						System.out.println(ReflectionToStringBuilder.toString(igc.getGraph().getEdge(ih, successor)));
+						if(LOG.isDebugEnabled()) {
+							LOG.debug(added+ " from "+ie);
+							LOG.debug(ReflectionToStringBuilder.toString(igc.getGraph().getEdge(ih, successor)));
+						}
+						
 					}
 				}
 			}

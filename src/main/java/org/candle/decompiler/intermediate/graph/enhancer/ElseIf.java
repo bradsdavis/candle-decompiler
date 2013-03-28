@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
-import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.conditional.ElseIfIntermediate;
 import org.candle.decompiler.intermediate.code.conditional.IfIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
@@ -31,10 +30,10 @@ public class ElseIf extends GraphIntermediateVisitor {
 		}
 		
 		//otherwise, see if it is another IF.
-		if(predecessors.get(0) instanceof BooleanBranchOutcome) {
+		if(predecessors.get(0) instanceof BooleanBranchIntermediate) {
 			
 			//check to see whether it is on the ELSE side.
-			BooleanBranchIntermediate parent = (BooleanBranchIntermediate)igc.getSinglePredecessor(((BooleanBranchOutcome)predecessors.get(0)));
+			BooleanBranchIntermediate parent = (BooleanBranchIntermediate)predecessors.get(0);
 			LOG.debug(parent.getClass());
 			if(!(parent instanceof IfIntermediate)) {
 				return;
@@ -46,7 +45,6 @@ public class ElseIf extends GraphIntermediateVisitor {
 				ElseIfIntermediate eii = new ElseIfIntermediate(line.getInstruction(), line.getExpression());
 				igc.getGraph().addVertex(eii);
 				
-				igc.replaceBooleanBranchIntermediate(line, eii);
 				igc.redirectPredecessors(line, eii);
 				igc.redirectSuccessors(line, eii);
 				

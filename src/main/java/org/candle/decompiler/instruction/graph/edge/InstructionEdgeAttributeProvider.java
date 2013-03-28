@@ -22,9 +22,7 @@ public class InstructionEdgeAttributeProvider implements ComponentAttributeProvi
 			attributes.put("color", "blue");
 		}
 		
-		
 		if(edge instanceof ConditionEdge) {
-			System.out.println("here");
 			attributes.put("color", "orange");
 		}
 		

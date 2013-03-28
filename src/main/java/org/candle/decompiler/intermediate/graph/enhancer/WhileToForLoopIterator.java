@@ -107,8 +107,8 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 																//now, we are pretty certain this is an enhanced for loop...  we can chop up the graph.
 																
 																EnhancedForIntermediate enhancedFor = new EnhancedForIntermediate(line, nextDeclaration.getVariable(), iteratorInvocation.getTarget());
-																enhancedFor.setTrueBranch(line.getTrueBranch());
-																enhancedFor.setFalseBranch(line.getFalseBranch());
+																//enhancedFor.setTrueBranch(line.getTrueBranch());
+																//enhancedFor.setFalseBranch(line.getFalseBranch());
 																
 																igc.getGraph().addVertex(enhancedFor);
 																

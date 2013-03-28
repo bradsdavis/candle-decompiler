@@ -87,8 +87,8 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 			
 			//we are good to go here.  Now we just need to reorganize the graph.  Start by creating the new enhanced for loop.
 			EnhancedForIntermediate efl = new EnhancedForIntermediate(line.getInstruction(), line.getConditionalIntermediate(), childDeclaration.getVariable(), extractExpressionFromGeneratedArrayAssignment(tempArrayCandidate));
-			efl.setTrueBranch(line.getTrueBranch());
-			efl.setFalseBranch(line.getFalseBranch());
+			//efl.setTrueBranch(line.getTrueBranch());
+			//efl.setFalseBranch(line.getFalseBranch());
 			//add the new node...
 			this.igc.getGraph().addVertex(efl);
 			

@@ -70,8 +70,8 @@ public class WhileToForLoopIncrement extends GraphIntermediateVisitor {
 							if(incrementExpression.getVariable().getName().equals(declarationExpression.getVariable().getName())) {
 								//we can actually convert this to a for loop.
 								ForIntermediate forIntermediate = new ForIntermediate(line, declarationExpression, incrementExpression);
-								forIntermediate.setTrueBranch(line.getTrueBranch());
-								forIntermediate.setFalseBranch(line.getFalseBranch());
+								//forIntermediate.setTrueBranch(line.getTrueBranch());
+								//forIntermediate.setFalseBranch(line.getFalseBranch());
 								
 								igc.getGraph().addVertex(forIntermediate);
 								

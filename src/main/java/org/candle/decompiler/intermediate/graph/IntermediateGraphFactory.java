@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
-import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.MultiBranchIntermediate;
@@ -79,7 +78,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		//find how that actually maps to the abstract line..
 		AbstractIntermediate intermediate = ilc.getNext(line);
 		igc.getGraph().addVertex(intermediate);
-		line.setTarget(intermediate);
+		//line.setTarget(intermediate);
 		
 		//now, we just add this into the graph.
 		igc.getGraph().addEdge(line, intermediate);
@@ -101,20 +100,20 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 		AbstractIntermediate highest = targetIntermediate.getInstruction().getPosition() > nextIntermediate.getInstruction().getPosition() ? targetIntermediate : nextIntermediate;
 		
 		
-		
+		/*
 		//add true path... (Conditional) -> (True) -> (Node A)
 		BooleanBranchOutcome trueOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.TRUE);
-		line.setTrueBranch(trueOutcome);
+		//line.setTrueBranch(trueOutcome);
 		igc.getGraph().addVertex(trueOutcome);
 		igc.getGraph().addEdge(line, trueOutcome);
 		igc.getGraph().addEdge(trueOutcome, lowest);
 		
 		//add false path... (Conditional) -> (False) -> (Node A)
 		BooleanBranchOutcome falseOutcome = new BooleanBranchOutcome(line.getInstruction(), line, Boolean.FALSE);
-		line.setFalseBranch(falseOutcome);
+		//line.setFalseBranch(falseOutcome);
 		igc.getGraph().addVertex(falseOutcome);
 		igc.getGraph().addEdge(line, falseOutcome);
-		igc.getGraph().addEdge(falseOutcome, highest);
+		igc.getGraph().addEdge(falseOutcome, highest);*/
 	}
 	
 	@Override

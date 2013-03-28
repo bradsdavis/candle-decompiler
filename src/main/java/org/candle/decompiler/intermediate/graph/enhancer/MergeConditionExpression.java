@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
-import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.expression.ConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateConditionalExpression;
 import org.candle.decompiler.intermediate.expression.LogicalGateType;
@@ -47,8 +46,8 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 			igc.redirectPredecessors(bbo2, bbo1);
 			
 			//remove vertexes of bbo2.
-			igc.getGraph().removeVertex(bbo2.getFalseBranch());
-			igc.getGraph().removeVertex(bbo2.getTrueBranch());
+			//igc.getGraph().removeVertex(bbo2.getFalseBranch());
+			//igc.getGraph().removeVertex(bbo2.getTrueBranch());
 			igc.getGraph().removeVertex(bbo2);
 		}
 	}
@@ -63,14 +62,8 @@ public class MergeConditionExpression extends GraphIntermediateVisitor {
 			}
 			
 			//check to see whether the incoming is a conditional..
-			if(i instanceof BooleanBranchOutcome) {
-				BooleanBranchOutcome booleanBranchOutcome = (BooleanBranchOutcome)i;
-				
-				//get a reference to the parent...
-				BooleanBranchIntermediate bbo2 = (BooleanBranchIntermediate)igc.getSinglePredecessor(booleanBranchOutcome);
-				//ok, we have two branches coming in...
-				
-				mergeConditions(bbo1, bbo2);
+			if(i instanceof BooleanBranchIntermediate) {
+				mergeConditions(bbo1, (BooleanBranchIntermediate)i);
 			}
 		}
 	}

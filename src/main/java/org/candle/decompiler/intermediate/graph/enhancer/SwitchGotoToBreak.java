@@ -31,7 +31,7 @@ public class SwitchGotoToBreak extends GraphIntermediateVisitor {
 				if(element instanceof GoToIntermediate) {
 					GoToIntermediate gti = (GoToIntermediate)element;
 					
-					if(gti.getTarget().getInstruction().getPosition() > position) {
+					if(igc.getTarget(gti).getInstruction().getPosition() > position) {
 						transformGotoToBreak(gti);
 					}
 				}

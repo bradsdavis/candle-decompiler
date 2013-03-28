@@ -95,7 +95,7 @@ public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {
 		//no finally clause...
 		ordered.addAll(igc.getCatchClauses(tryBlock));
 		
-		AbstractIntermediate target = gotoHandle.getTarget();
+		AbstractIntermediate target = igc.getTarget(gotoHandle);
 		//now, look backwards and find the non-GOTO statement.
 		
 		List<AbstractIntermediate> candidates = Graphs.predecessorListOf(igc.getGraph(), target);

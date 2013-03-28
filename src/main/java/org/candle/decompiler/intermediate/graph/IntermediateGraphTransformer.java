@@ -8,6 +8,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
+import org.candle.decompiler.instruction.graph.edge.InstructionEdgeAttributeProvider;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
@@ -67,8 +68,7 @@ public class IntermediateGraphTransformer {
 					continue;
 				}
 					
-				IntermediateEdge ie = intermediateGraph.addEdge(predIntermediate, nodeIntermediate);
-				mapFields(insEdge, ie);
+				intermediateGraph.addEdge(predIntermediate, nodeIntermediate, (IntermediateEdge)insEdge.clone());
 			}
 			
 			for(InstructionHandle successor : successors) {
@@ -85,16 +85,11 @@ public class IntermediateGraphTransformer {
 				IntermediateEdge insEdge = igc.getGraph().getEdge(ih, successor);
 				
 				//add an edge to the intermediate graph.
-				IntermediateEdge ie = intermediateGraph.addEdge(nodeIntermediate, successorIntermediate);
-				mapFields(insEdge, ie);
+				intermediateGraph.addEdge(nodeIntermediate, successorIntermediate, (IntermediateEdge)insEdge.clone());
 			}
 		}
 		
 		return new IntermediateGraphContext(intermediateGraph);
 	}
 	
-	private void mapFields(IntermediateEdge insEdge, IntermediateEdge intEdge) {
-		intEdge.setType(insEdge.getType());
-		intEdge.getAttributes().putAll(insEdge.getAttributes());
-	}
 }

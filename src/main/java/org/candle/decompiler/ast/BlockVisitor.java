@@ -22,7 +22,6 @@ import org.candle.decompiler.ast.tcf.FinallyBlock;
 import org.candle.decompiler.ast.tcf.TryBlock;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
-import org.candle.decompiler.intermediate.code.BooleanBranchOutcome;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
@@ -231,9 +230,10 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		List<AbstractIntermediate> successors = getUnseenSuccessors(bbi);
 		//assign true... and go through true.
 		
-		BooleanBranchOutcome trueOutcome = null;
-		BooleanBranchOutcome falseOutcome = null;
-		for(AbstractIntermediate successor : successors) {
+		
+		AbstractIntermediate trueOutcome = igc.getTrueTarget(bbi);
+		AbstractIntermediate falseOutcome = igc.getFalseTarget(bbi);
+		/*for(AbstractIntermediate successor : successors) {
 			if(successor instanceof BooleanBranchOutcome) {
 				if(((BooleanBranchOutcome) successor).getExpressionOutcome() == Boolean.TRUE) {
 					trueOutcome = (BooleanBranchOutcome)successor;
@@ -245,7 +245,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 			else {
 				throw new IllegalStateException("Outcome of If expected to be boolean.");
 			}
-		}
+		}*/
 		
 		trueOutcome.accept(this);
 		
@@ -390,8 +390,10 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		List<AbstractIntermediate> successors = getUnseenSuccessors(line);
 		//assign true... and go through true.
 		
-		BooleanBranchOutcome trueOutcome = null;
-		BooleanBranchOutcome falseOutcome = null;
+		AbstractIntermediate trueOutcome = igc.getTrueTarget(line);
+		AbstractIntermediate falseOutcome = igc.getFalseTarget(line);
+		
+		/*
 		for(AbstractIntermediate successor : successors) {
 			if(successor instanceof BooleanBranchOutcome) {
 				if(((BooleanBranchOutcome) successor).getExpressionOutcome() == Boolean.TRUE) {
@@ -404,7 +406,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 			else {
 				throw new IllegalStateException("Outcome of If expected to be boolean.");
 			}
-		}
+		}*/
 		
 		trueOutcome.accept(this);
 		
@@ -436,8 +438,9 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		List<AbstractIntermediate> successors = getUnseenSuccessors(line);
 		//assign true... and go through true.
 		
-		BooleanBranchOutcome trueOutcome = null;
-		BooleanBranchOutcome falseOutcome = null;
+		AbstractIntermediate trueOutcome = igc.getTrueTarget(line);
+		AbstractIntermediate falseOutcome = igc.getFalseTarget(line);
+		/*
 		for(AbstractIntermediate successor : successors) {
 			if(successor instanceof BooleanBranchOutcome) {
 				if(((BooleanBranchOutcome) successor).getExpressionOutcome() == Boolean.TRUE) {
@@ -450,7 +453,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 			else {
 				throw new IllegalStateException("Outcome of If expected to be boolean.");
 			}
-		}
+		}*/
 		
 		trueOutcome.accept(this);
 		
@@ -462,23 +465,6 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 			moveUp();
 		}
 		
-	}
-	
-	@Override
-	public void visitBooleanBranchOutcome(BooleanBranchOutcome line) {
-		if(seen.contains(line)) {
-			//do nothing.
-			return;
-		}
-		else {
-			seen.add(line);
-		}
-
-		//process successors...
-		List<AbstractIntermediate> successors = getUnseenSuccessors(line);
-		for(AbstractIntermediate successor : successors) {
-			successor.accept(this);
-		}
 	}
 	
 	protected List<AbstractIntermediate> getUnseenSuccessors(AbstractIntermediate line) {

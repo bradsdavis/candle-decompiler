@@ -74,7 +74,6 @@ import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
 import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
-import org.candle.decompiler.intermediate.graph.edge.IntermediateEdgeAttributeProvider;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdgeProvider;
 import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionExternalToWhileLoop;
@@ -89,7 +88,6 @@ import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
-import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanOutcomes;
 import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
@@ -312,7 +310,6 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		enhancers.add(new RetractDuplicateFinally(igc));
 		enhancers.add(new RetractOrphanGoto(igc));
-		enhancers.add(new RetractOrphanOutcomes(igc));
 		
 		enhancers.add(new ConditionExternalToWhileLoop(igc));
 		enhancers.add(new ConditionToWhileLoop(igc));
@@ -506,7 +503,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		Writer x;
 		try {
 			x = new FileWriter(a);
-			DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(), new IntermediateVertexAttributeProvider(), new IntermediateEdgeAttributeProvider()); 
+			DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(), new IntermediateVertexAttributeProvider(), new InstructionEdgeAttributeProvider()); 
 			dot.export(x, igc.getGraph());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

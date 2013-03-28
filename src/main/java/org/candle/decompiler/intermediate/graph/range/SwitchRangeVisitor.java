@@ -30,8 +30,8 @@ public class SwitchRangeVisitor extends GraphIntermediateVisitor {
 			if(element instanceof GoToIntermediate) {
 				GoToIntermediate gti = (GoToIntermediate)element;
 				
-				if(gti.getTarget().getInstruction().getPosition() > position) {
-					line.getBlockRange().setEnd(gti.getTarget().getInstruction().getPrev());
+				if(igc.getTarget(gti).getInstruction().getPosition() > position) {
+					line.getBlockRange().setEnd(igc.getTarget(gti).getInstruction().getPrev());
 					foundUpper = true;
 					break;
 				}

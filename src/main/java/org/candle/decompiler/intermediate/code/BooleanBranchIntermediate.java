@@ -10,28 +10,10 @@ import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 public class BooleanBranchIntermediate extends AbstractIntermediate {
 
 	protected ConditionalExpression expression;
-	protected BooleanBranchOutcome trueBranch;
-	protected BooleanBranchOutcome falseBranch;
 	
 	public BooleanBranchIntermediate(InstructionHandle instruction, ConditionalExpression expression) {
 		super(instruction);
 		this.expression = expression;
-	}
-
-	public void setTrueBranch(BooleanBranchOutcome trueBranch) {
-		this.trueBranch = trueBranch;
-	}
-	
-	public void setFalseBranch(BooleanBranchOutcome falseBranch) {
-		this.falseBranch = falseBranch;
-	}
-	
-	public BooleanBranchOutcome getTrueBranch() {
-		return trueBranch;
-	}
-	
-	public BooleanBranchOutcome getFalseBranch() {
-		return falseBranch;
 	}
 	
 	protected void negate() {

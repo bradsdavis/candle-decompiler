@@ -83,8 +83,8 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				
 				
 				WhileIntermediate whileIntermediate = new WhileIntermediate(refHandle, line);
-				whileIntermediate.setTrueBranch(line.getTrueBranch());
-				whileIntermediate.setFalseBranch(line.getFalseBranch());
+				//whileIntermediate.setTrueBranch(line.getTrueBranch());
+				//whileIntermediate.setFalseBranch(line.getFalseBranch());
 				
 				//add this to the graph.
 				this.igc.getGraph().addVertex(whileIntermediate);

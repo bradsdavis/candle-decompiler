@@ -17,9 +17,11 @@ import org.candle.decompiler.intermediate.code.CaseIntermediate;
 import org.candle.decompiler.intermediate.code.CaseIntermediateComparator;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
+import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
+import org.candle.decompiler.intermediate.graph.edge.ConditionEdge;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.candle.decompiler.util.GraphUtil;
 import org.jgrapht.Graphs;
@@ -67,16 +69,42 @@ public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate> {
 	}
 	
 	public AbstractIntermediate getTrueTarget(BooleanBranchIntermediate ci) {
-		return getSingleSuccessor(ci.getTrueBranch());
+		//find true edge...
+		List<AbstractIntermediate> successors = getSuccessors(ci);
+		
+		for(AbstractIntermediate successor : successors) {
+			IntermediateEdge ie  = graph.getEdge(ci, successor);
+			
+			if(ie instanceof ConditionEdge) {
+				if(((ConditionEdge) ie).isCondition()) {
+					return successor;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public AbstractIntermediate getTarget(GoToIntermediate gt) {
+		return getSingleSuccessor(gt);
 	}
 	
 	public AbstractIntermediate getFalseTarget(BooleanBranchIntermediate ci) {
-		return getSingleSuccessor(ci.getFalseBranch());
-	}
-	
-	public void replaceBooleanBranchIntermediate(BooleanBranchIntermediate a, BooleanBranchIntermediate b) {
-		b.setFalseBranch(a.getFalseBranch());
-		b.setTrueBranch(a.getTrueBranch());
+		//find true edge...
+				List<AbstractIntermediate> successors = getSuccessors(ci);
+				
+				for(AbstractIntermediate successor : successors) {
+					IntermediateEdge ie  = graph.getEdge(ci, successor);
+					
+					if(ie instanceof ConditionEdge) {
+						//false condition
+						if(!((ConditionEdge) ie).isCondition()) {
+							return successor;
+						}
+					}
+				}
+				
+				return null;
 	}
 	
 	public List<CatchIntermediate> getCatchClauses(TryIntermediate tryIntermediate) {
