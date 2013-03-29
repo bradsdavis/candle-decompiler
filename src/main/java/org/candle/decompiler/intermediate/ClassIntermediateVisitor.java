@@ -3,6 +3,7 @@ package org.candle.decompiler.intermediate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -51,6 +52,7 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
@@ -379,6 +381,13 @@ public class ClassIntermediateVisitor implements Visitor {
 		writeGraph("ibefore.dot", interGraphContext);
 		processIntermediate(interGraphContext);
 		writeGraph("iafter.dot", interGraphContext);
+		
+		MethodBlock method = extractMethodSignature(methodGenerator);
+		BlockVisitor iv = new BlockVisitor(interGraphContext, method);
+		iv.process();
+		
+		classBlock.addChild(method);
+		method.setParent(classBlock);
 		
 		/*
 		Iterator<InstructionHandle> debugIterator = instructions.iterator();

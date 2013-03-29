@@ -54,7 +54,14 @@ public class Else extends GraphIntermediateVisitor {
 		//find the element directly after this one...
 		SortedSet<AbstractIntermediate> elseBranchElements = igc.getOrderedIntermediate().subSet(maxGotoForBranch, false, line, false);
 		
-		//get the first element...
+		AbstractIntermediate ai = igc.getSinglePredecessor(elseBranchElements.first());
+		if(!(ai instanceof IfIntermediate || ai instanceof ElseIfIntermediate)) {
+			return;
+		}
+		
+		
+		
+		//get the first element... 
 		if(elseBranchElements.size() > 0) {
 			AbstractIntermediate firstElseBlockElement = elseBranchElements.first();
 			if(firstElseBlockElement instanceof StatementIntermediate) {
