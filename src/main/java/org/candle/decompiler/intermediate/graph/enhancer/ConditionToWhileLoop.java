@@ -63,7 +63,7 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				return;
 			}
 			
-			nestedLine = incomingGotoNonNested.pollLast();
+			nestedLine = getCandidateGoto(incomingGotoNonNested, incomingGotoNested);
 			
 			//stop if both conditions aren't met.
 			if(nestedLine == null || otherLine == null) {
@@ -83,8 +83,6 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				
 				
 				WhileIntermediate whileIntermediate = new WhileIntermediate(refHandle, line);
-				//whileIntermediate.setTrueBranch(line.getTrueBranch());
-				//whileIntermediate.setFalseBranch(line.getFalseBranch());
 				
 				//add this to the graph.
 				this.igc.getGraph().addVertex(whileIntermediate);
@@ -96,9 +94,11 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 				//now, create line from other to while.
 				this.igc.getGraph().addEdge(otherLine, whileIntermediate);
 				
-				//now, remove the GOTO and Conditional Vertext from graph.
+				//now, remove the GOTO and Conditional Vertex from graph.
 				igc.getGraph().removeVertex(nestedLine);
 				igc.getGraph().removeVertex(line);
+				
+				
 				
 				//now, the other GOTO lines coming in should all be CONTINUE statements...
 				for(GoToIntermediate gotoIntermediate : incomingGotoNested) {
@@ -114,7 +114,26 @@ public class ConditionToWhileLoop extends GraphIntermediateVisitor {
 					//now, add line to the loop.
 					igc.getGraph().addEdge(continueIntermediate, whileIntermediate);
 				}
+				
+				updateEdges(whileIntermediate);
 			}
+		}
+	}
+	
+	protected GoToIntermediate getCandidateGoto(TreeSet<GoToIntermediate> incomingGotoNonNested, TreeSet<GoToIntermediate> incomingGotoNested) {
+		return incomingGotoNonNested.pollLast();
+	}
+	
+	protected void updateEdges(WhileIntermediate wi) {
+		List<AbstractIntermediate> predecessors = igc.getPredecessors(wi);
+		for(AbstractIntermediate predecessor : predecessors) {
+			IntermediateEdge ie = igc.getGraph().getEdge(predecessor, wi);
+			igc.validateBackEdge(ie);
+		}
+		List<AbstractIntermediate> successors = igc.getSuccessors(wi);
+		for(AbstractIntermediate successor : successors) {
+			IntermediateEdge ie = igc.getGraph().getEdge(wi, successor);
+			igc.validateBackEdge(ie);
 		}
 	}
 

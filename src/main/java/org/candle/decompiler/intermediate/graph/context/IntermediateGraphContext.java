@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.bcel.generic.InstructionHandle;
+import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
@@ -130,6 +131,22 @@ public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate> {
 			}
 		}
 		return null;		
+	}
+	
+	public void validateBackEdge(IntermediateEdge ie) {
+		if(ie.getType() == EdgeType.EXCEPTION) {
+			return;
+		}
+		
+		int source = ie.getSourceIntermediate().getInstruction().getPosition();
+		int target = ie.getTargetIntermediate().getInstruction().getPosition();
+		
+		if(target < source) {
+			ie.setType(EdgeType.BACK);
+		}
+		else {
+			ie.setType(EdgeType.NORMAL);
+		}
 	}
 	
 	public List<CaseIntermediate> getCases(SwitchIntermediate si) {

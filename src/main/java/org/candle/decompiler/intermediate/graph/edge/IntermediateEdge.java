@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.candle.decompiler.instruction.graph.edge.EdgeType;
+import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.jgrapht.graph.DefaultEdge;
 
 public class IntermediateEdge extends DefaultEdge {
@@ -27,6 +28,13 @@ public class IntermediateEdge extends DefaultEdge {
 		this.type = type;
 	}
 	
+	public AbstractIntermediate getSourceIntermediate() {
+		return (AbstractIntermediate)getSource();
+	}
+	
+	public AbstractIntermediate getTargetIntermediate() {
+		return (AbstractIntermediate)getTarget();
+	}
 	
 	public Object getSource() {
 		return super.getSource();

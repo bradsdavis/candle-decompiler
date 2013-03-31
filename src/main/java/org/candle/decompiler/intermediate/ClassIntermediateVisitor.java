@@ -3,7 +3,6 @@ package org.candle.decompiler.intermediate;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -27,6 +26,7 @@ import org.apache.bcel.classfile.ConstantString;
 import org.apache.bcel.classfile.ConstantUtf8;
 import org.apache.bcel.classfile.ConstantValue;
 import org.apache.bcel.classfile.Deprecated;
+import org.apache.bcel.classfile.EmptyVisitor;
 import org.apache.bcel.classfile.ExceptionTable;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.InnerClass;
@@ -52,7 +52,6 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
@@ -77,34 +76,16 @@ import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvi
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdgeProvider;
-import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionExternalToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
-import org.candle.decompiler.intermediate.graph.enhancer.Else;
-import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
-import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
-import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
-import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
-import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
-import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
-import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
-import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
-import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
-import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
-import org.candle.decompiler.intermediate.graph.range.CaseEndRangeIntermediateVisitor;
-import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
-import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
-import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
-import org.candle.decompiler.intermediate.graph.range.SwitchRangeVisitor;
-import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 
 import com.sun.org.apache.bcel.internal.classfile.Utility;
 
-public class ClassIntermediateVisitor implements Visitor {
+public class ClassIntermediateVisitor extends EmptyVisitor {
 
 	private final JavaClass javaClass;
 	private final ConstantPoolGen constantPool;
@@ -125,18 +106,6 @@ public class ClassIntermediateVisitor implements Visitor {
 	private static final Log LOG = LogFactory.getLog(ClassIntermediateVisitor.class);
 	
 	@Override
-	public void visitCode(Code obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitCodeException(CodeException obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void visitConstantClass(ConstantClass obj) {
 		ConstantPool pool = javaClass.getConstantPool();
 		String classVal = obj.getConstantValue(pool).toString();
@@ -151,104 +120,8 @@ public class ClassIntermediateVisitor implements Visitor {
 	}
 
 	@Override
-	public void visitConstantDouble(ConstantDouble obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantFieldref(ConstantFieldref obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantFloat(ConstantFloat obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantInteger(ConstantInteger obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantInterfaceMethodref(ConstantInterfaceMethodref obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantLong(ConstantLong obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantMethodref(ConstantMethodref obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantNameAndType(ConstantNameAndType obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantPool(ConstantPool obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantString(ConstantString obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantUtf8(ConstantUtf8 obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitConstantValue(ConstantValue obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitDeprecated(Deprecated obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitExceptionTable(ExceptionTable obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void visitField(Field obj) {
 		classBlock.getFields().add(obj.toString());
-	}
-
-	@Override
-	public void visitInnerClass(InnerClass obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitInnerClasses(InnerClasses obj) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -276,45 +149,24 @@ public class ClassIntermediateVisitor implements Visitor {
 		}
 	}
 
-	@Override
-	public void visitLineNumber(LineNumber obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitLineNumberTable(LineNumberTable obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitLocalVariable(LocalVariable obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitLocalVariableTable(LocalVariableTable obj) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 	public void processIntermediate(IntermediateGraphContext igc) {
 		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
 		
 		enhancers.add(new MergeConditionExpression(igc));
 		enhancers.add(new ConstantArrayCompressor(igc));
 		
+		enhancers.add(new ConditionToWhileLoop(igc));
+		enhancers.add(new ConditionExternalToWhileLoop(igc));
+		
+		/*
 		enhancers.add(new FinallyRangeVisitor(igc));
 		enhancers.add(new CatchUpperRangeVisitor(igc));
 		
 		enhancers.add(new RetractDuplicateFinally(igc));
 		enhancers.add(new RetractOrphanGoto(igc));
 		
-		enhancers.add(new ConditionExternalToWhileLoop(igc));
-		enhancers.add(new ConditionToWhileLoop(igc));
+		
+		
 		enhancers.add(new WhileToForLoopIncrement(igc));
 		enhancers.add(new WhileToForLoopIterator(igc));
 		enhancers.add(new ArrayForToEnhancedFor(igc));
@@ -335,7 +187,7 @@ public class ClassIntermediateVisitor implements Visitor {
 		
 		//enhancers.add(new HealGoto(lc));
 		enhancers.add(new RemoveImpliedVoidReturn(igc));
-		
+		*/
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();
 		}
@@ -343,7 +195,6 @@ public class ClassIntermediateVisitor implements Visitor {
 
 	@Override
 	public void visitMethod(Method obj) {
-		// TODO Auto-generated method stub
 		MethodGen methodGenerator = new MethodGen(obj, this.javaClass.getClassName(), this.constantPool);
 		
 		LOG.debug("Processing MethodInvocation: "+methodGenerator.toString());
@@ -382,130 +233,16 @@ public class ClassIntermediateVisitor implements Visitor {
 		processIntermediate(interGraphContext);
 		writeGraph("iafter.dot", interGraphContext);
 		
+		/*
 		MethodBlock method = extractMethodSignature(methodGenerator);
 		BlockVisitor iv = new BlockVisitor(interGraphContext, method);
 		iv.process();
 		
 		classBlock.addChild(method);
 		method.setParent(classBlock);
-		
-		/*
-		Iterator<InstructionHandle> debugIterator = instructions.iterator();
-		while(debugIterator.hasNext()) {
-			InstructionHandle instruction = debugIterator.next();
-			LOG.debug("Instruction: "+instruction);
-		}
-		
-
-		Map<InstructionHandle, ObjectType> catchPosition = new HashMap<InstructionHandle, ObjectType>();
-		for(CodeExceptionGen e : methodGenerator.getExceptionHandlers()) {
-			catchPosition.put(e.getHandlerPC(), e.getCatchType());
-		}
-		 
-		
-		Iterator<InstructionHandle> instructionIterator = instructions.iterator();
-		while(instructionIterator.hasNext()) {
-			InstructionHandle instruction = instructionIterator.next();
-			LOG.debug("STEP ====================");
-			LOG.debug(instruction);
-			intermediateVisitor.printExpressions();
-			
-			//check to see whether you need to enhance the stack prior to calling
-			//the instruction for catch blocks.
-			if(catchPosition.containsKey(instruction)) {
-				//then we simply add to the stack.
-				//check to see whether it is a finally block...
-				ObjectType ot = catchPosition.get(instruction);
-				if(ot == null) {
-					Resolved resolved = new Resolved(instruction, Type.THROWABLE, "e");
-					intermediateContext.getExpressions().push(resolved);
-				}
-				else {
-					Resolved resolved = new Resolved(instruction, ot, ot.toString());
-					intermediateContext.getExpressions().push(resolved);
-				}
-			}
-			
-			//update the context.
-			intermediateContext.setCurrentInstruction(instruction);
-			instruction.accept(intermediateVisitor);
-			intermediateVisitor.printExpressions();
-		}
-		
-		
-		List<AbstractIntermediate> intermediate = new ArrayList<AbstractIntermediate>(intermediateContext.getIntermediate());
-		MethodBlock method = extractMethodSignature(methodGenerator);
-		classBlock.addChild(method);
-		method.setParent(classBlock);
-		
-		
-		//IntermediateLineContext ilc = new IntermediateLineContext(intermediate);
-		IntermediateLineContext illc = new IntermediateLineContext(intermediate);
-		IntermediateGraphFactory lc = new IntermediateGraphFactory(illc);
-
-		 
-		
-		
-		
-		LOG.debug("Before ======");
-		Writer w = new OutputStreamWriter(System.out);
-		DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(lc.getIntermediateGraph()), new IntermediateVertexAttributeProvider(), new IntermediateEdgeAttributeProvider());
-		dot.export(w, lc.getIntermediateGraph().getGraph());
-		LOG.debug("End Before ======");
-		
-		IntermediateTryCatch itc = new IntermediateTryCatch(methodGenerator, lc.getIntermediateGraph());
-		itc.process();
-		
-		
-		
-		
-		
-		LOG.debug("After ======");
-		dot.export(w, lc.getIntermediateGraph().getGraph());
-		LOG.debug("End After ======");
-		
-
-		BlockVisitor iv = new BlockVisitor(lc.getIntermediateGraph(), method);
-		iv.process();
-			*/
+		*/
 	}
 
-	@Override
-	public void visitSignature(Signature obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitSourceFile(SourceFile obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitSynthetic(Synthetic obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitUnknown(Unknown obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitStackMap(StackMap obj) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visitStackMapEntry(StackMapEntry obj) {
-		// TODO Auto-generated method stub
-	}
-	
-	
 	private void writeGraph(String name, IntermediateGraphContext igc) {
 		LOG.debug("Instruction Graph ======");
 		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/"+name);
@@ -515,7 +252,6 @@ public class ClassIntermediateVisitor implements Visitor {
 			DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(), new IntermediateVertexAttributeProvider(), new InstructionEdgeAttributeProvider()); 
 			dot.export(x, igc.getGraph());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		LOG.debug("End Instruction Graph ======");
@@ -530,7 +266,6 @@ public class ClassIntermediateVisitor implements Visitor {
 			DOTExporter<InstructionHandle, IntermediateEdge> f = new DOTExporter<InstructionHandle, IntermediateEdge>(new IntegerNameProvider<InstructionHandle>(), new InstructionLabelProvider(), new IntermediateEdgeProvider(), null, new InstructionEdgeAttributeProvider());
 			f.export(x, igc.getGraph());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		LOG.debug("End Instruction Graph ======");

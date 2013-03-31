@@ -1,6 +1,7 @@
 package org.candle.decompiler.instruction.graph.enhancer;
 
 import java.util.List;
+import java.util.TreeSet;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
@@ -8,6 +9,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
+import org.candle.decompiler.instruction.graph.vertex.InstructionComparator;
 import org.candle.decompiler.intermediate.graph.edge.ConditionEdge;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 
@@ -26,38 +28,21 @@ public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
 			BranchHandle bh = (BranchHandle)ih;
 			
 			List<InstructionHandle> successors = igc.getSuccessors(ih);
-			//find the next instruction..
+			TreeSet<InstructionHandle> orderedSuccessors = new TreeSet<InstructionHandle>(new InstructionComparator());
+			orderedSuccessors.addAll(successors);
 			
 			if(successors.size() == 2) {
-				for(InstructionHandle successor : successors) {
-					IntermediateEdge ie = igc.getGraph().getEdge(ih, successor);
-					igc.getGraph().removeEdge(ie);
-					
-					if(successor.getPosition() == bh.getTarget().getPosition()) {
-						//false case.
-						ConditionEdge ce = createConditionalEdge(ie, false);
-						
-						//remove existing edge.
-						boolean added = igc.getGraph().addEdge(ih, successor, ce);
-						if(LOG.isDebugEnabled()) {
-							LOG.debug(added+ " from "+ie);
-							LOG.debug(ReflectionToStringBuilder.toString(igc.getGraph().getEdge(ih, successor)));
-						}
-					}
-					else {
-						//false case.
-						ConditionEdge ce = createConditionalEdge(ie, true);
-						
-						//remove existing edge.
-						boolean added = igc.getGraph().addEdge(ih, successor, ce);
-						
-						if(LOG.isDebugEnabled()) {
-							LOG.debug(added+ " from "+ie);
-							LOG.debug(ReflectionToStringBuilder.toString(igc.getGraph().getEdge(ih, successor)));
-						}
-						
-					}
-				}
+				//lowest will be true condition.... 
+				IntermediateEdge truePath = igc.getGraph().getEdge(ih, orderedSuccessors.first());
+				ConditionEdge trueCondition = createConditionalEdge(truePath, true);
+				igc.getGraph().removeEdge(truePath);
+				igc.getGraph().addEdge(ih, orderedSuccessors.first(), trueCondition);
+				
+				//highest will be false condition....
+				IntermediateEdge falsePath = igc.getGraph().getEdge(ih, orderedSuccessors.last());
+				ConditionEdge falseCondition = createConditionalEdge(falsePath, false);
+				igc.getGraph().removeEdge(falsePath);
+				igc.getGraph().addEdge(ih, orderedSuccessors.last(), falseCondition);
 			}
 		}
 	}
