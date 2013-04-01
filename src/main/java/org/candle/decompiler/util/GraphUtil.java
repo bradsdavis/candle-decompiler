@@ -45,13 +45,7 @@ public class GraphUtil<T> {
 		//remove edges between predecessor and source.
 		for(T p : predecessors) {
 			IntermediateEdge existing = graph.getEdge(p, source);
-			
-			//remove the edge to ci, add one to line.
-			if(!graph.containsEdge(p, target)) {
-				graph.addEdge(p, target, (IntermediateEdge)existing.clone());
-			}
-			
-			graph.removeEdge(existing);
+			redirectEnd(existing, target);
 		}
 	}
 	
@@ -61,15 +55,29 @@ public class GraphUtil<T> {
 		//remove edges between predecessor and source.
 		for(T s : successors) {
 			IntermediateEdge existing = graph.getEdge(source, s);
-			
-			//remove the edge to ci, add one to line.
-			if(!graph.containsEdge(s, target)) {
-				graph.addEdge(target, s, (IntermediateEdge)existing.clone());
-			}
-			
-			graph.removeEdge(existing);
+			redirectStart(existing, target);
 		}
 	}
+	
+	
+	public void redirectStart(IntermediateEdge ie, T newSource) {
+		//remove the edge to ci, add one to line.
+		if(!graph.containsEdge(newSource, (T)ie.getTarget())) {
+			graph.addEdge(newSource, (T)ie.getTarget(), (IntermediateEdge)ie.clone());
+		}
+		
+		graph.removeEdge(ie);
+	}
+	
+	public void redirectEnd(IntermediateEdge ie, T newTarget) {
+		//remove the edge to ci, add one to line.
+		if(!graph.containsEdge((T)ie.getSource(), newTarget)) {
+			graph.addEdge((T)ie.getSource(), newTarget, (IntermediateEdge)ie.clone());
+		}
+		
+		graph.removeEdge(ie);
+	}
+	
 	public List<T> getSuccessors(T iv) {
 		return Graphs.successorListOf(this.graph, iv);
 	}

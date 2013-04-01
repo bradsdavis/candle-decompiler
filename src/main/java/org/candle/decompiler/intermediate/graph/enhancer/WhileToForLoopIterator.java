@@ -15,6 +15,7 @@ import org.candle.decompiler.intermediate.expression.SingleConditional;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
+import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graphs;
 
 public class WhileToForLoopIterator extends GraphIntermediateVisitor {
@@ -107,27 +108,19 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 																//now, we are pretty certain this is an enhanced for loop...  we can chop up the graph.
 																
 																EnhancedForIntermediate enhancedFor = new EnhancedForIntermediate(line, nextDeclaration.getVariable(), iteratorInvocation.getTarget());
-																//enhancedFor.setTrueBranch(line.getTrueBranch());
-																//enhancedFor.setFalseBranch(line.getFalseBranch());
-																
 																igc.getGraph().addVertex(enhancedFor);
 																
 																igc.redirectSuccessors(line, enhancedFor);
 																igc.redirectPredecessors(line, enhancedFor);
-																igc.redirectPredecessors(declaration, enhancedFor);
-																igc.redirectSuccessors(nextStatement, enhancedFor);
-																
-																//remove the declaration, next, and line 
 																igc.getGraph().removeVertex(line);
+																
+																igc.redirectPredecessors(declaration, igc.getSingleSuccessor(declaration));
 																igc.getGraph().removeVertex(declaration);
-																igc.getGraph().removeVertex(nextStatement);
+																
+																igc.redirectPredecessors(firstChild, igc.getSingleSuccessor(firstChild));
+																igc.getGraph().removeVertex(firstChild);
 															}
 														}
-														
-														
-														
-														
-														
 														
 													}
 												}

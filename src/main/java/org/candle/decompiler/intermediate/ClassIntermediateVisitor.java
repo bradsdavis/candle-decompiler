@@ -9,41 +9,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.bcel.Constants;
-import org.apache.bcel.classfile.Code;
-import org.apache.bcel.classfile.CodeException;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantClass;
-import org.apache.bcel.classfile.ConstantDouble;
-import org.apache.bcel.classfile.ConstantFieldref;
-import org.apache.bcel.classfile.ConstantFloat;
-import org.apache.bcel.classfile.ConstantInteger;
-import org.apache.bcel.classfile.ConstantInterfaceMethodref;
-import org.apache.bcel.classfile.ConstantLong;
-import org.apache.bcel.classfile.ConstantMethodref;
-import org.apache.bcel.classfile.ConstantNameAndType;
 import org.apache.bcel.classfile.ConstantPool;
-import org.apache.bcel.classfile.ConstantString;
-import org.apache.bcel.classfile.ConstantUtf8;
-import org.apache.bcel.classfile.ConstantValue;
-import org.apache.bcel.classfile.Deprecated;
 import org.apache.bcel.classfile.EmptyVisitor;
-import org.apache.bcel.classfile.ExceptionTable;
 import org.apache.bcel.classfile.Field;
-import org.apache.bcel.classfile.InnerClass;
-import org.apache.bcel.classfile.InnerClasses;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.LineNumber;
-import org.apache.bcel.classfile.LineNumberTable;
-import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.LocalVariableTable;
 import org.apache.bcel.classfile.Method;
-import org.apache.bcel.classfile.Signature;
-import org.apache.bcel.classfile.SourceFile;
-import org.apache.bcel.classfile.StackMap;
-import org.apache.bcel.classfile.StackMapEntry;
-import org.apache.bcel.classfile.Synthetic;
-import org.apache.bcel.classfile.Unknown;
-import org.apache.bcel.classfile.Visitor;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
@@ -52,6 +25,7 @@ import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.candle.decompiler.ast.BlockVisitor;
 import org.candle.decompiler.ast.ClassBlock;
 import org.candle.decompiler.ast.ConstructorBlock;
 import org.candle.decompiler.ast.MethodBlock;
@@ -68,18 +42,34 @@ import org.candle.decompiler.instruction.graph.enhancer.LoopHeader;
 import org.candle.decompiler.instruction.graph.enhancer.NonIntermediateEliminator;
 import org.candle.decompiler.instruction.graph.enhancer.SplitInstructionEnhancer;
 import org.candle.decompiler.instruction.graph.vertex.InstructionLabelProvider;
-import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphTransformer;
-import org.candle.decompiler.intermediate.graph.IntermediateLabelProvider;
-import org.candle.decompiler.intermediate.graph.IntermediateVertexAttributeProvider;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdgeProvider;
+import org.candle.decompiler.intermediate.graph.enhancer.ArrayForToEnhancedFor;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionExternalToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
+import org.candle.decompiler.intermediate.graph.enhancer.Else;
+import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
+import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
+import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
+import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
+import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
+import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
+import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
+import org.candle.decompiler.intermediate.graph.enhancer.IntermediateGraphWriter;
+import org.candle.decompiler.intermediate.graph.range.CaseEndRangeIntermediateVisitor;
+import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.IfLowerRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.SwitchRangeVisitor;
+import org.candle.decompiler.intermediate.graph.range.WhileRangeVisitor;
 import org.jgrapht.ext.DOTExporter;
 import org.jgrapht.ext.IntegerNameProvider;
 
@@ -158,23 +148,31 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 		enhancers.add(new ConditionToWhileLoop(igc));
 		enhancers.add(new ConditionExternalToWhileLoop(igc));
 		
-		/*
+		enhancers.add(new IntermediateGraphWriter(igc, "ibefore.dot"));
+		
 		enhancers.add(new FinallyRangeVisitor(igc));
 		enhancers.add(new CatchUpperRangeVisitor(igc));
+		
 		
 		enhancers.add(new RetractDuplicateFinally(igc));
 		enhancers.add(new RetractOrphanGoto(igc));
 		
 		
-		
 		enhancers.add(new WhileToForLoopIncrement(igc));
+		
+		
 		enhancers.add(new WhileToForLoopIterator(igc));
+		
+		
 		enhancers.add(new ArrayForToEnhancedFor(igc));
+		
+
 		
 		enhancers.add(new If(igc));
 		enhancers.add(new ElseIf(igc));
 		enhancers.add(new Else(igc));
 
+		
 		enhancers.add(new MultiConditionalToSwitchIntermediate(igc));
 		enhancers.add(new SwitchRangeVisitor(igc));
 		enhancers.add(new SwitchGotoToBreak(igc));
@@ -185,12 +183,16 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 		enhancers.add(new IfLowerRangeVisitor(igc));
 		
 		
-		//enhancers.add(new HealGoto(lc));
-		enhancers.add(new RemoveImpliedVoidReturn(igc));
-		*/
+		//enhancers.add(new RemoveImpliedVoidReturn(igc));
+		
+		enhancers.add(new IntermediateGraphWriter(igc, "iafter.dot"));
+		
+		
 		for(GraphIntermediateVisitor giv : enhancers) {
 			giv.process();
 		}
+		
+		
 	}
 
 	@Override
@@ -229,34 +231,17 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 
 		IntermediateGraphTransformer igt = new IntermediateGraphTransformer(igc);
 		IntermediateGraphContext interGraphContext = igt.getIntermediateGraphContext();
-		writeGraph("ibefore.dot", interGraphContext);
 		processIntermediate(interGraphContext);
-		writeGraph("iafter.dot", interGraphContext);
 		
-		/*
 		MethodBlock method = extractMethodSignature(methodGenerator);
 		BlockVisitor iv = new BlockVisitor(interGraphContext, method);
 		iv.process();
 		
 		classBlock.addChild(method);
 		method.setParent(classBlock);
-		*/
 	}
 
-	private void writeGraph(String name, IntermediateGraphContext igc) {
-		LOG.debug("Instruction Graph ======");
-		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/"+name);
-		Writer x;
-		try {
-			x = new FileWriter(a);
-			DOTExporter<AbstractIntermediate, IntermediateEdge> dot = new DOTExporter<AbstractIntermediate, IntermediateEdge>(new IntegerNameProvider<AbstractIntermediate>(), new IntermediateLabelProvider(), new IntermediateEdgeProvider(), new IntermediateVertexAttributeProvider(), new InstructionEdgeAttributeProvider()); 
-			dot.export(x, igc.getGraph());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		LOG.debug("End Instruction Graph ======");
-	}
-	
+
 	private void writeGraph(String name, InstructionGraphContext igc) {
 		LOG.debug("Instruction Graph ======");
 		File a = new File("/Users/bradsdavis/Projects/workspace/clzTest/"+name);
@@ -270,7 +255,6 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 		}
 		LOG.debug("End Instruction Graph ======");
 	}
-	
 
 	protected MethodBlock extractMethodSignature(MethodGen methodGen) {
 		
