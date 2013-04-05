@@ -37,6 +37,7 @@ import org.candle.decompiler.instruction.graph.enhancer.ConditionEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.ContinuousLoop;
 import org.candle.decompiler.instruction.graph.enhancer.ExceptionEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.InstructionGraphEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.InstructionGraphWriter;
 import org.candle.decompiler.instruction.graph.enhancer.InstructionToIntermediateEnhancer;
 import org.candle.decompiler.instruction.graph.enhancer.LoopHeader;
 import org.candle.decompiler.instruction.graph.enhancer.NonIntermediateEliminator;
@@ -54,16 +55,15 @@ import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor
 import org.candle.decompiler.intermediate.graph.enhancer.Else;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
+import org.candle.decompiler.intermediate.graph.enhancer.IntermediateGraphWriter;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
-import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
-import org.candle.decompiler.intermediate.graph.enhancer.IntermediateGraphWriter;
 import org.candle.decompiler.intermediate.graph.range.CaseEndRangeIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.range.CatchUpperRangeVisitor;
 import org.candle.decompiler.intermediate.graph.range.FinallyRangeVisitor;
@@ -141,32 +141,22 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 
 	public void processIntermediate(IntermediateGraphContext igc) {
 		List<GraphIntermediateVisitor> enhancers = new LinkedList<GraphIntermediateVisitor>();
+		enhancers.add(new IntermediateGraphWriter(igc, "ibefore.dot"));
 		
 		enhancers.add(new MergeConditionExpression(igc));
 		enhancers.add(new ConstantArrayCompressor(igc));
 		
 		enhancers.add(new ConditionToWhileLoop(igc));
 		enhancers.add(new ConditionExternalToWhileLoop(igc));
-		
-		enhancers.add(new IntermediateGraphWriter(igc, "ibefore.dot"));
-		
+
 		enhancers.add(new FinallyRangeVisitor(igc));
 		enhancers.add(new CatchUpperRangeVisitor(igc));
 		
-		
 		enhancers.add(new RetractDuplicateFinally(igc));
 		enhancers.add(new RetractOrphanGoto(igc));
-		
-		
 		enhancers.add(new WhileToForLoopIncrement(igc));
-		
-		
 		enhancers.add(new WhileToForLoopIterator(igc));
-		
-		
 		enhancers.add(new ArrayForToEnhancedFor(igc));
-		
-
 		
 		enhancers.add(new If(igc));
 		enhancers.add(new ElseIf(igc));
@@ -208,9 +198,9 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 		InstructionGraphFactory igf = new InstructionGraphFactory(instructions, methodGenerator.getExceptionHandlers());
 		InstructionGraphContext igc = igf.process();
 		
-		writeGraph("before.dot", igc);
 		
 		List<InstructionGraphEnhancer> iges = new ArrayList<InstructionGraphEnhancer>();
+		iges.add(new InstructionGraphWriter(igc, "before.dot"));
 		iges.add(new SplitInstructionEnhancer(igc));
 		iges.add(new ConditionEdgeEnhancer(igc));
 		iges.add(new ExceptionEdgeEnhancer(igc, methodGenerator.getExceptionHandlers()));
@@ -220,13 +210,13 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 		iges.add(new LoopHeader(igc));
 		iges.add(new ContinuousLoop(igc));
 		iges.add(new NonIntermediateEliminator(igc));
+		iges.add(new InstructionGraphWriter(igc, "after.dot"));
 		
 		for(InstructionGraphEnhancer ige : iges)
 		{
 			ige.process();
 		}
 		
-		writeGraph("after.dot", igc);
 		
 
 		IntermediateGraphTransformer igt = new IntermediateGraphTransformer(igc);

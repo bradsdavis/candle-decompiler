@@ -6,6 +6,8 @@ import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.CodeExceptionGen;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
+import org.apache.bcel.generic.LOOKUPSWITCH;
+import org.apache.bcel.generic.Select;
 import org.apache.bcel.generic.UnconditionalBranch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +40,16 @@ public class InstructionGraphFactory {
 			InstructionHandle ih = iter.next();
 			InstructionHandle sourceVertex = igc.getPositionMap().get(ih.getPosition());
 			
-			if(ih instanceof BranchHandle) {
+			if(ih.getInstruction() instanceof Select) {
+				for(InstructionHandle targetVertex : ((Select)ih.getInstruction()).getTargets()) {
+					instructionHandleGraph.addEdge(sourceVertex, targetVertex);
+				}
+				InstructionHandle targetVertex = ((Select)ih.getInstruction()).getTarget();
+				if(targetVertex != null) {
+					instructionHandleGraph.addEdge(sourceVertex, targetVertex);
+				}
+			}
+			else if(ih instanceof BranchHandle) {
 				//if this is an unconditional branch, only add the branch between the instruction and it's target.
 				InstructionHandle targetVertex = igc.getPositionMap().get(((BranchHandle) ih).getTarget().getPosition());
 				instructionHandleGraph.addEdge(sourceVertex, targetVertex);

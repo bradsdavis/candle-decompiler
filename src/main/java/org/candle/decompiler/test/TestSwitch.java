@@ -12,6 +12,9 @@ public class TestSwitch {
 			case 2:
 				System.out.println("Case 2.");
 				break;
+			case 3:
+				System.out.println("Case 3.");
+				break;
 			default:
 				System.out.println("Default.");
 				break;
