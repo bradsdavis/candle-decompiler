@@ -20,8 +20,8 @@ Closed Source Alternative Decompilers
 * JAD
 
 
-Contributing to Cake Decompiler 
-================================
+Contributing to Candle Decompiler 
+==================================
 Please consider contributing to the project if you are interested in decompilation.  The flow control is implemented in BlockVisitor currently, and is missing a lot of logic right now.  Intermediate Code assembly occurs within IntermediateVisitor.  To contribute back to the code, please issue a pull-request against the project.
 
 
