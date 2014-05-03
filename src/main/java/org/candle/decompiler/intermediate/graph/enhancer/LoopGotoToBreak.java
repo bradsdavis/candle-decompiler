@@ -16,6 +16,12 @@ import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
+/**
+ * This replaces GOTO statements within Loops with Break statements.
+ * If the GOTO's target is outside of the Loop's min and max instruction, then this is a break.
+ * @author bradsdavis
+ *
+ */
 public class LoopGotoToBreak extends GraphIntermediateVisitor {
 
 	public LoopGotoToBreak(IntermediateGraphContext igc) {

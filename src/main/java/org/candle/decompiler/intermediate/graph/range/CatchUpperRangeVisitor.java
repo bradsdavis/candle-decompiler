@@ -31,7 +31,7 @@ import org.jgrapht.traverse.BreadthFirstIterator;
  * 
  * The last catch block is bound by the try-block's last statement's GOTO target.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class CatchUpperRangeVisitor extends GraphIntermediateVisitor {

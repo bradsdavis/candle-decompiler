@@ -18,7 +18,7 @@ public class CaseEndRangeIntermediateVisitor extends GraphIntermediateVisitor {
 	public void visitCaseIntermediate(CaseIntermediate line) {
 		SwitchIntermediate si = (SwitchIntermediate)igc.getSinglePredecessor(line);
 
-		List<CaseIntermediate> switchCases = igc.getCases(si);
+		List<CaseIntermediate> switchCases = igc.getCaseIntermediates(si);
 		int position = line.getBlockRange().getStart().getPosition();
 		CaseIntermediate next = findNextCase(switchCases, position);
 

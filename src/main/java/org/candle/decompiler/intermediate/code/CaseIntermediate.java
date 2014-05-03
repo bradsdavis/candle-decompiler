@@ -16,8 +16,7 @@ public class CaseIntermediate extends AbstractIntermediate implements BlockSeria
 		super(instruction);
 		this.caseEntry = caseVal;
 		this.blockRange = new BlockRange();
-		
-		this.blockRange.setStart(this.caseEntry.getTarget());
+		this.blockRange.setStart(caseVal.getInstructionHandle());
 	}
 	
 	public Case getCaseEntry() {

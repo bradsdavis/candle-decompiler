@@ -30,7 +30,7 @@ public class InstructionGraphWriter extends InstructionGraphEnhancer {
 		super(igc);
 		this.name = name;
 
-		String graphLocation = System.getProperty(GRAPH_LOCATION);
+		String graphLocation = "/Users/bradsdavis/Projects/candle/graphs"; //System.getProperty(GRAPH_LOCATION);
 		if(StringUtils.isNotBlank(graphLocation)) {
 			File graphLocationFile = new File(graphLocation);
 			if(graphLocationFile.exists() && graphLocationFile.isDirectory()) {

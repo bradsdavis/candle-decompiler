@@ -31,7 +31,7 @@ public class IntermediateGraphWriter extends GraphIntermediateVisitor {
 		super(igc);
 		this.name = name;
 
-		String graphLocation = System.getProperty(GRAPH_LOCATION);
+		String graphLocation = "/Users/bradsdavis/Projects/candle/graphs"; //System.getProperty("/Users/bradsdavis/Projects/candle/graphs");
 		if(StringUtils.isNotBlank(graphLocation)) {
 			File graphLocationFile = new File(graphLocation);
 			if(graphLocationFile.exists() && graphLocationFile.isDirectory()) {
@@ -46,9 +46,8 @@ public class IntermediateGraphWriter extends GraphIntermediateVisitor {
 			return;
 		}
 		
-		
 		File a = new File(directory.getAbsolutePath()+File.separator+name);
-		LOG.debug("Instruction Graph: "+a.getAbsolutePath());
+		LOG.info("Instruction Graph: "+a.getAbsolutePath());
 		Writer x;
 		try {
 			x = new FileWriter(a);

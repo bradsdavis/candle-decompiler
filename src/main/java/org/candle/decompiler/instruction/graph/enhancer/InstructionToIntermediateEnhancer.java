@@ -11,7 +11,7 @@ import org.jgrapht.traverse.GraphIterator;
 /**
  * Walks the instruction graph and populates intermediate instructions.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class InstructionToIntermediateEnhancer extends InstructionGraphEnhancer {

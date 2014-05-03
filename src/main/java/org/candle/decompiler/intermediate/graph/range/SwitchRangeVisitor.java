@@ -1,5 +1,6 @@
 package org.candle.decompiler.intermediate.graph.range;
 
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
@@ -9,6 +10,7 @@ import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.expression.Case;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
+import org.candle.decompiler.intermediate.graph.edge.SwitchEdge;
 
 public class SwitchRangeVisitor extends GraphIntermediateVisitor {
 
@@ -20,7 +22,8 @@ public class SwitchRangeVisitor extends GraphIntermediateVisitor {
 	public void visitSwitchIntermediate(SwitchIntermediate line) {
 		boolean foundUpper = false;
 		
-		AbstractIntermediate lastNode = igc.findNextNode(findMaxCase(line).getTarget());
+		SwitchEdge maxEdge = findMaxCase(line);
+		AbstractIntermediate lastNode = maxEdge.getTargetIntermediate();
 		TreeSet<AbstractIntermediate> elements = (TreeSet<AbstractIntermediate>)igc.getOrderedIntermediate().subSet(line, true, lastNode, false);
 		
 		int position = lastNode.getInstruction().getPosition();
@@ -45,16 +48,23 @@ public class SwitchRangeVisitor extends GraphIntermediateVisitor {
 		
 	}
 	
-	protected Case findMaxCase(SwitchIntermediate line) {
+	protected SwitchEdge findMaxCase(SwitchIntermediate line) {
 		TreeSet<Case> cases = new TreeSet<Case>(new CaseComparator());
-		if(line.getCases()!=null) {
-			cases.addAll(line.getCases());
+		
+		Set<SwitchEdge> scs = igc.getCases(line);
+		
+		for(SwitchEdge sc : scs) {
+			cases.add(sc.getSwitchCase());
 		}
-		if(line.getDefaultCase() != null) {
-			cases.add(line.getDefaultCase());
+		Case max = cases.last();
+		
+		for(SwitchEdge sc : scs) {
+			if(max == sc.getSwitchCase()) {
+				return sc;
+			}
 		}
 		
-		return cases.last();
+		return null;
 	}
 
 }

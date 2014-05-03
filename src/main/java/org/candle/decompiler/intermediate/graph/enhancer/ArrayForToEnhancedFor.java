@@ -25,7 +25,7 @@ import org.jgrapht.Graphs;
 /**
  * 
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {

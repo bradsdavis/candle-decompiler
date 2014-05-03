@@ -10,8 +10,8 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.Type;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
-import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.expression.Resolved;
+import org.candle.decompiler.intermediate.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 
 public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {

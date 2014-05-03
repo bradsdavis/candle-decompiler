@@ -1,8 +1,7 @@
 package org.candle.decompiler.intermediate.graph.context;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,20 +9,21 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
 import org.candle.decompiler.intermediate.code.BooleanBranchIntermediate;
 import org.candle.decompiler.intermediate.code.CaseIntermediate;
-import org.candle.decompiler.intermediate.code.CaseIntermediateComparator;
 import org.candle.decompiler.intermediate.code.CatchIntermediate;
 import org.candle.decompiler.intermediate.code.FinallyIntermediate;
 import org.candle.decompiler.intermediate.code.GoToIntermediate;
 import org.candle.decompiler.intermediate.code.IntermediateComparator;
 import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.code.TryIntermediate;
-import org.candle.decompiler.intermediate.graph.edge.ConditionEdge;
+import org.candle.decompiler.intermediate.expression.DefaultCase;
+import org.candle.decompiler.intermediate.graph.edge.BooleanConditionEdge;
+import org.candle.decompiler.intermediate.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.SwitchEdge;
 import org.candle.decompiler.util.GraphUtil;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.ListenableDirectedGraph;
@@ -76,8 +76,8 @@ public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate> {
 		for(AbstractIntermediate successor : successors) {
 			IntermediateEdge ie  = graph.getEdge(ci, successor);
 			
-			if(ie instanceof ConditionEdge) {
-				if(((ConditionEdge) ie).isCondition()) {
+			if(ie instanceof BooleanConditionEdge) {
+				if(((BooleanConditionEdge) ie).isCondition()) {
 					return successor;
 				}
 			}
@@ -97,9 +97,9 @@ public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate> {
 				for(AbstractIntermediate successor : successors) {
 					IntermediateEdge ie  = graph.getEdge(ci, successor);
 					
-					if(ie instanceof ConditionEdge) {
+					if(ie instanceof BooleanConditionEdge) {
 						//false condition
-						if(!((ConditionEdge) ie).isCondition()) {
+						if(!((BooleanConditionEdge) ie).isCondition()) {
 							return successor;
 						}
 					}
@@ -148,19 +148,55 @@ public class IntermediateGraphContext extends GraphUtil<AbstractIntermediate> {
 			ie.setType(EdgeType.NORMAL);
 		}
 	}
-	
-	public List<CaseIntermediate> getCases(SwitchIntermediate si) {
-		List<AbstractIntermediate> intermediate = Graphs.successorListOf(graph, si);
+
+	public SwitchEdge getDefaultCase(SwitchIntermediate si) {
+		List<AbstractIntermediate> successors = Graphs.successorListOf(graph, si);
  		
-		List<CaseIntermediate> switchCases = new LinkedList<CaseIntermediate>();
-		for(AbstractIntermediate i : intermediate) {
-			if(i instanceof CaseIntermediate) {
-				switchCases.add((CaseIntermediate)i);
+		for(AbstractIntermediate successor : successors) {
+			IntermediateEdge ie = this.getGraph().getEdge(si, successor);
+			
+			if(ie instanceof SwitchEdge) {
+				if(((SwitchEdge) ie).getSwitchCase() instanceof DefaultCase) {
+					return (SwitchEdge)ie;
+				}
 			}
 		}
-		Collections.sort(switchCases, new CaseIntermediateComparator());
+		
+		return null;
+	}
+	
+	public Set<SwitchEdge> getCases(SwitchIntermediate si) {
+		List<AbstractIntermediate> successors = Graphs.successorListOf(graph, si);
+
+		Set<SwitchEdge> edges = new HashSet<SwitchEdge>();
+ 		for(AbstractIntermediate successor : successors) {
+			IntermediateEdge ie = this.getGraph().getEdge(si, successor);
+			
+			if(ie instanceof SwitchEdge) {
+				edges.add((SwitchEdge)ie);
+			}
+		}
+ 		
+ 		return edges;
+	}
+	
+	public List<CaseIntermediate> getCaseIntermediates(SwitchIntermediate si) {
+		Set<SwitchEdge> ses = getCases(si);
+		
+		List<CaseIntermediate> switchCases = new ArrayList<CaseIntermediate>();
+		for(SwitchEdge se : ses) {
+			if(se.getTarget() instanceof CaseIntermediate) {
+				switchCases.add((CaseIntermediate)se.getTargetIntermediate());
+			}
+			else {
+				throw new RuntimeException("SwitchIntermediate should point to Cases.");
+			}
+		}
+
 		return switchCases;
 	}
+	
+	
 	
 	public Set<AbstractIntermediate> getNodesWithinRange(BlockRange blockRange) {
 		AbstractIntermediate start = findNextNode(blockRange.getStart());

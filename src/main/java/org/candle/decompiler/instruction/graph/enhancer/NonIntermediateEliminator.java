@@ -11,7 +11,7 @@ import org.candle.decompiler.instruction.graph.InstructionGraphContext;
  * For each instruction... check it's successors.  If there is one, eliminate the node
  * as long as the node doesn't contain an intermediate.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class NonIntermediateEliminator extends InstructionHandleEnhancer {

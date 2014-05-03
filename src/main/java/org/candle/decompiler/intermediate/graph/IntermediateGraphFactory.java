@@ -118,7 +118,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 	
 	@Override
 	public void visitMultiBranchIntermediate(MultiBranchIntermediate line) {
-		
+		/*
 		Select select = (Select)line.getInstruction().getInstruction();
 		
 		Set<Case> cases = new HashSet<Case>();
@@ -173,7 +173,7 @@ public class IntermediateGraphFactory extends EmptyIntermediateVisitor {
 			AbstractIntermediate target = ilc.getNext(caseVal.getTarget().getPosition());
 			igc.getGraph().addVertex(target);
 			igc.getGraph().addEdge(si, target);
-		}
+		}*/
 	}
 
 	@Override

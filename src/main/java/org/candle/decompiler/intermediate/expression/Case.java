@@ -6,19 +6,16 @@ import java.io.Writer;
 import org.apache.bcel.generic.InstructionHandle;
 
 public class Case extends Expression {
-
-	private final InstructionHandle target;
 	private final Expression expression;
 	
-	public Case(InstructionHandle instructionHandle, InstructionHandle target, Expression expression) {
+	/***
+	 * @param instructionHandle - Handle where the case begins.
+	 * @param expression - Expression for the case.
+	 */
+	public Case(InstructionHandle instructionHandle, Expression expression) {
 		super(instructionHandle);
-		this.target = target;
 		this.expression = expression;
 		
-	}
-	
-	public InstructionHandle getTarget() {
-		return target;
 	}
 	
 	public Expression getExpression() {

@@ -42,7 +42,7 @@ import org.jgrapht.Graphs;
 /***
  * Walks the graph and creates Blocks from Intermediates.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class BlockVisitor extends GraphIntermediateVisitor {
@@ -171,7 +171,7 @@ public class BlockVisitor extends GraphIntermediateVisitor {
 		current.addChild(switchBlock);
 		current = switchBlock;
 		
-		List<CaseIntermediate> cases = igc.getCases(line);
+		List<CaseIntermediate> cases = igc.getCaseIntermediates(line);
 		
 		for(CaseIntermediate switchCase : cases) {
 			switchCase.accept(this);

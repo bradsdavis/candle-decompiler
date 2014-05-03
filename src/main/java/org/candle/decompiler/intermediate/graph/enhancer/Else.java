@@ -16,6 +16,10 @@ import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
+/*
+ * Finds goto statements, checks the source of the statement ordered by instruction number.
+ * Puts in an else block before the GOTO instruction, with the output directed at the GOTO's target.
+ */
 public class Else extends GraphIntermediateVisitor {
 
 	public Else(IntermediateGraphContext igc) {

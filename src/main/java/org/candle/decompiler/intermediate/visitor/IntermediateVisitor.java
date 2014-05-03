@@ -17,6 +17,7 @@ import org.candle.decompiler.intermediate.code.loop.ContinuousWhileIntermediate;
 import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.WhileIntermediate;
+import org.candle.decompiler.intermediate.expression.Return;
 
 public interface IntermediateVisitor {
 	public void visitEnhancedForLoopIntermediate(EnhancedForIntermediate line);
@@ -41,6 +42,4 @@ public interface IntermediateVisitor {
 	public void visitMultiBranchIntermediate(MultiBranchIntermediate line);
 	public void visitBooleanBranchIntermediate(BooleanBranchIntermediate line);
 	public void visitAbstractIntermediate(AbstractIntermediate line);
-	
-	
 }

@@ -104,5 +104,4 @@ public class EmptyIntermediateVisitor implements IntermediateVisitor {
 	public void visitSwitchIntermediate(SwitchIntermediate line) {
 		
 	}
-
 }

@@ -5,12 +5,12 @@ import java.util.TreeSet;
 
 import org.apache.bcel.generic.BranchHandle;
 import org.apache.bcel.generic.InstructionHandle;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.bcel.generic.Select;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
 import org.candle.decompiler.instruction.graph.vertex.InstructionComparator;
-import org.candle.decompiler.intermediate.graph.edge.ConditionEdge;
+import org.candle.decompiler.intermediate.graph.edge.BooleanConditionEdge;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 
 public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
@@ -24,6 +24,11 @@ public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
 	@Override
 	public void process(InstructionHandle ih) {
 		if(ih instanceof BranchHandle) {
+			if(ih.getInstruction() instanceof Select) {
+				return;
+			}
+			
+			
 			//ok, now we need to replace existing successor edges appropriately.
 			BranchHandle bh = (BranchHandle)ih;
 			
@@ -34,21 +39,21 @@ public class ConditionEdgeEnhancer extends InstructionHandleEnhancer {
 			if(successors.size() == 2) {
 				//lowest will be true condition.... 
 				IntermediateEdge truePath = igc.getGraph().getEdge(ih, orderedSuccessors.first());
-				ConditionEdge trueCondition = createConditionalEdge(truePath, true);
+				BooleanConditionEdge trueCondition = createConditionalEdge(truePath, true);
 				igc.getGraph().removeEdge(truePath);
 				igc.getGraph().addEdge(ih, orderedSuccessors.first(), trueCondition);
 				
 				//highest will be false condition....
 				IntermediateEdge falsePath = igc.getGraph().getEdge(ih, orderedSuccessors.last());
-				ConditionEdge falseCondition = createConditionalEdge(falsePath, false);
+				BooleanConditionEdge falseCondition = createConditionalEdge(falsePath, false);
 				igc.getGraph().removeEdge(falsePath);
 				igc.getGraph().addEdge(ih, orderedSuccessors.last(), falseCondition);
 			}
 		}
 	}
 
-	public ConditionEdge createConditionalEdge(IntermediateEdge ie, boolean condition) {
-		ConditionEdge ce = new ConditionEdge();
+	public BooleanConditionEdge createConditionalEdge(IntermediateEdge ie, boolean condition) {
+		BooleanConditionEdge ce = new BooleanConditionEdge();
 		ce.setCondition(condition);
 		ce.setType(ie.getType());
 		ce.getAttributes().putAll(ie.getAttributes());

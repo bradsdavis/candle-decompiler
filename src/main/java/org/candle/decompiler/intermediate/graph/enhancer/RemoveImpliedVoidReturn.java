@@ -5,6 +5,11 @@ import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 
+/**
+ * Removes the return statement in a void method, where the statement is the last statement of the method.
+ * @author bradsdavis
+ *
+ */
 public class RemoveImpliedVoidReturn extends GraphIntermediateVisitor {
 
 	public RemoveImpliedVoidReturn(IntermediateGraphContext igc) {

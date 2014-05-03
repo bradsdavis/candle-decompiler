@@ -3,7 +3,6 @@ package org.candle.decompiler.intermediate.graph.edge;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.jgrapht.graph.DefaultEdge;
 

@@ -7,8 +7,8 @@ import org.apache.bcel.generic.InstructionHandle;
  
 public class DefaultCase extends Case {
 
-	public DefaultCase(InstructionHandle instructionHandle, InstructionHandle target) {
-		super(instructionHandle, target, null);
+	public DefaultCase(InstructionHandle instructionHandle) {
+		super(instructionHandle, null);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext
 /**
  * This enhancer transforms BooleanBranchIntermediate lines into If lines.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class If extends GraphIntermediateVisitor {

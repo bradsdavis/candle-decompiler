@@ -13,7 +13,7 @@ import org.jgrapht.Graphs;
  * In the case that CASE 1 does not contain a break to the instruction
  * that succeeds CASE 2, remove the edge for serialization.
  * 
- * @author bradsdavis
+ * @author bradsdavis@gmail.com
  *
  */
 public class RemoveCaseToCaseEdge extends GraphIntermediateVisitor {

@@ -9,6 +9,7 @@ import org.candle.decompiler.intermediate.code.SwitchIntermediate;
 import org.candle.decompiler.intermediate.expression.Break;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
+import org.candle.decompiler.intermediate.graph.edge.SwitchEdge;
 
 public class SwitchGotoToBreak extends GraphIntermediateVisitor {
 
@@ -20,11 +21,14 @@ public class SwitchGotoToBreak extends GraphIntermediateVisitor {
 	@Override
 	public void visitSwitchIntermediate(SwitchIntermediate line) {
 
-		if(line.getDefaultCase()!=null) {
-			AbstractIntermediate defaultNode = igc.findNextNode(line.getDefaultCase().getTarget());
+		if(igc.getDefaultCase(line)!=null) {
+			SwitchEdge se = igc.getDefaultCase(line);
+			
+			AbstractIntermediate defaultNode = se.getTargetIntermediate(); 
 			TreeSet<AbstractIntermediate> elements = (TreeSet<AbstractIntermediate>)igc.getOrderedIntermediate().subSet(line, true, defaultNode, false);
 			
 			int position = defaultNode.getInstruction().getPosition();
+			
 			
 			//look for goto statements...
 			for(AbstractIntermediate element : elements) {

@@ -12,6 +12,13 @@ import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 import org.jgrapht.Graphs;
 
+/**
+ * Looks at branch intermediate instructions.  If the proceeding is an if statement, this is on the "false" path of the if statement, 
+ * and there is conditional logic, convert the vertex to an ElseIf statement.
+ * 
+ * @author bradsdavis
+ *
+ */
 public class ElseIf extends GraphIntermediateVisitor {
 
 	private static final Log LOG = LogFactory.getLog(ElseIf.class);

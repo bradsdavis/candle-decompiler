@@ -42,6 +42,7 @@ import org.candle.decompiler.instruction.graph.enhancer.InstructionToIntermediat
 import org.candle.decompiler.instruction.graph.enhancer.LoopHeader;
 import org.candle.decompiler.instruction.graph.enhancer.NonIntermediateEliminator;
 import org.candle.decompiler.instruction.graph.enhancer.SplitInstructionEnhancer;
+import org.candle.decompiler.instruction.graph.enhancer.SwitchEdgeEnhancer;
 import org.candle.decompiler.instruction.graph.vertex.InstructionLabelProvider;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.IntermediateGraphTransformer;
@@ -59,6 +60,8 @@ import org.candle.decompiler.intermediate.graph.enhancer.IntermediateGraphWriter
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveImportedStaticClassReferences;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
@@ -171,10 +174,8 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 
 		enhancers.add(new WhileRangeVisitor(igc));
 		enhancers.add(new IfLowerRangeVisitor(igc));
-		
-		
-		//enhancers.add(new RemoveImpliedVoidReturn(igc));
-		
+		enhancers.add(new RemoveImpliedVoidReturn(igc));
+		enhancers.add(new RemoveImportedStaticClassReferences(igc));
 		enhancers.add(new IntermediateGraphWriter(igc, "iafter.dot"));
 		
 		
@@ -203,6 +204,7 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 		iges.add(new InstructionGraphWriter(igc, "before.dot"));
 		iges.add(new SplitInstructionEnhancer(igc));
 		iges.add(new ConditionEdgeEnhancer(igc));
+		iges.add(new SwitchEdgeEnhancer(igc));
 		iges.add(new ExceptionEdgeEnhancer(igc, methodGenerator.getExceptionHandlers()));
 		iges.add(new InstructionToIntermediateEnhancer(igc, intermediateContext));
 		

@@ -6,14 +6,11 @@ import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 public class SwitchIntermediate extends MultiBranchIntermediate implements BlockSerializable {
 
 	private final BlockRange blockRange;
-	private MultiBranchIntermediate conditionalIntermediate;
+	protected final MultiBranchIntermediate conditionalIntermediate;
 	
 	public SwitchIntermediate(InstructionHandle bi, MultiBranchIntermediate ci) {
 		super(bi, ci.getExpression());
 		this.conditionalIntermediate = ci;
-		
-		this.setCases(ci.getCases());
-		this.setDefaultCase(ci.getDefaultCase());
 		this.blockRange = new BlockRange();
 		
 		this.blockRange.setStart(bi);

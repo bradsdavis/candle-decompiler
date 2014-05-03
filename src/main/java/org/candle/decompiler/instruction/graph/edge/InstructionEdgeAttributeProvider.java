@@ -3,8 +3,10 @@ package org.candle.decompiler.instruction.graph.edge;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.candle.decompiler.intermediate.graph.edge.ConditionEdge;
+import org.candle.decompiler.intermediate.graph.edge.BooleanConditionEdge;
+import org.candle.decompiler.intermediate.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
+import org.candle.decompiler.intermediate.graph.edge.SwitchEdge;
 import org.jgrapht.ext.ComponentAttributeProvider;
 
 public class InstructionEdgeAttributeProvider implements ComponentAttributeProvider<IntermediateEdge> {
@@ -22,8 +24,12 @@ public class InstructionEdgeAttributeProvider implements ComponentAttributeProvi
 			attributes.put("color", "blue");
 		}
 		
-		if(edge instanceof ConditionEdge) {
+		if(edge instanceof BooleanConditionEdge) {
 			attributes.put("color", "orange");
+		}
+		
+		if(edge instanceof SwitchEdge) {
+			attributes.put("color", "yellow");
 		}
 		
 		return attributes;

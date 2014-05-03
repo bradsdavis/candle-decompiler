@@ -7,7 +7,7 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.instruction.graph.InstructionGraphContext;
-import org.candle.decompiler.instruction.graph.edge.EdgeType;
+import org.candle.decompiler.intermediate.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graphs;
 
