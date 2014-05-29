@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
-import org.candle.decompiler.intermediate.expression.ArrayPositionReference;
+import org.candle.decompiler.intermediate.expression.ArrayAccess;
 import org.candle.decompiler.intermediate.expression.Assignment;
 import org.candle.decompiler.intermediate.expression.ConstantArray;
 import org.candle.decompiler.intermediate.expression.Declaration;
@@ -50,10 +50,10 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		}
 		
 		//check the right hand of the declaration...
-		if(!(declaration.getAssignment().getRight() instanceof NewConstantArrayInstance)) {
+		if(!(declaration.getAssignment().getRightHandSide() instanceof NewConstantArrayInstance)) {
 			return;
 		}
-		NewConstantArrayInstance ncai = (NewConstantArrayInstance)declaration.getAssignment().getRight();
+		NewConstantArrayInstance ncai = (NewConstantArrayInstance)declaration.getAssignment().getRightHandSide();
 		Expression countExpression = ncai.getCount();
 		
 		
@@ -79,8 +79,8 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		//ok, we have the stack... now we need to just create a new expression.
 
 		//create the contant...
-		ConstantArray constantArray = new ConstantArray(declaration.getAssignment().getRight().getInstructionHandle(), expressions);
-		declaration.getAssignment().setRight(constantArray);
+		ConstantArray constantArray = new ConstantArray(declaration.getAssignment().getRightHandSide().getInstructionHandle(), expressions);
+		declaration.getAssignment().setRightHandSide(constantArray);
 		
 		
 		//excellent.  we have reordered the statements into the appropriate ContantArray assignment.  Now, we need to remove the dead nodes and heal the graph.
@@ -123,9 +123,9 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 			return;
 		}
 		
-		Expression right = assignment.getRight();
-		ArrayPositionReference apr = (ArrayPositionReference)assignment.getLeft();
-		assignments.put(toInteger(apr.getArrayPosition()), right);
+		Expression right = assignment.getRightHandSide();
+		ArrayAccess apr = (ArrayAccess)assignment.getLeftHandSide();
+		assignments.put(toInteger(apr.getIndex()), right);
 		
 		List<AbstractIntermediate> predecessor = Graphs.predecessorListOf(igc.getGraph(), current);
 		
@@ -179,12 +179,12 @@ public class ConstantArrayCompressor extends GraphIntermediateVisitor {
 		
 		Assignment assignment = (Assignment)line;
 		
-		if(!(assignment.getLeft() instanceof ArrayPositionReference)) {
+		if(!(assignment.getLeftHandSide() instanceof ArrayAccess)) {
 			return null;
 		}
 		
-		ArrayPositionReference apr = (ArrayPositionReference)assignment.getLeft();
-		if(!(apr.getArrayReference() instanceof NewConstantArrayInstance)) {
+		ArrayAccess apr = (ArrayAccess)assignment.getLeftHandSide();
+		if(!(apr.getArray() instanceof NewConstantArrayInstance)) {
 			return null;
 		}
 		

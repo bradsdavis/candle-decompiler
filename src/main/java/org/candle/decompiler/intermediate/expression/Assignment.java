@@ -8,36 +8,43 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class Assignment extends Expression {
 
-	private Expression left;
-	private Expression right;
+	private Expression leftHandSide;
+	private Expression rightHandSide;
 	
 	public Assignment(InstructionHandle instructionHandle, Expression left, Expression right) {
 		super(instructionHandle);
-		this.left = left;
-		this.right = right;
+		this.leftHandSide = left;
+		this.rightHandSide = right;
 	}
 	
-	public Expression getLeft() {
-		return left;
+	public Expression getLeftHandSide() {
+		return leftHandSide;
 	}
 	
-	public Expression getRight() {
-		return right;
+	public Expression getRightHandSide() {
+		return rightHandSide;
 	}
 	
-	public void setLeft(Expression left) {
-		this.left = left;
+	public void setLeftHandSide(Expression leftHandSide) {
+		this.leftHandSide = leftHandSide;
 	}
 	
-	public void setRight(Expression right) {
-		this.right = right;
+	public void setRightHandSide(Expression rightHandSide) {
+		this.rightHandSide = rightHandSide;
 	}
 	
 	@Override
 	public void write(Writer builder) throws IOException {
-		left.write(builder);
+		leftHandSide.write(builder);
 		builder.append(" = ");
-		right.write(builder);
+		rightHandSide.write(builder);
 	}
 
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getLeftHandSide());
+		listener.accept(getRightHandSide());
+	}
+	
 }

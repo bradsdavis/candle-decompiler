@@ -1,10 +1,10 @@
 package org.candle.decompiler.util;
 
 import java.util.List;
+import java.util.Set;
 
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.ListenableDirectedGraph;
 
 public class GraphUtil<T> {
@@ -18,7 +18,17 @@ public class GraphUtil<T> {
 	public ListenableDirectedGraph<T, IntermediateEdge> getGraph() {
 		return graph;
 	}
+
+	public Set<IntermediateEdge> getIncomingEdges(T ai) {
+		return graph.incomingEdgesOf(ai);
+	}
 	
+	public Set<IntermediateEdge> getOutgoingEdges(T ai) {
+		return graph.outgoingEdgesOf(ai);
+	}
+	
+	
+
 	public T getSingleSuccessor(T ai) {
 		List<T> successors = Graphs.successorListOf(graph, ai);
 		
@@ -39,6 +49,12 @@ public class GraphUtil<T> {
 		throw new IllegalStateException("Should only have 1 incoming edge.");
 	}
 
+	/**
+	 * Takes all parent of source, and redirects their output to the target.
+	 * 
+	 * @param source
+	 * @param target
+	 */
 	public void redirectPredecessors(T source, T target) {
 		List<T> predecessors = Graphs.predecessorListOf(this.graph, source);
 		

@@ -13,7 +13,7 @@ import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.code.loop.EnhancedForIntermediate;
 import org.candle.decompiler.intermediate.code.loop.ForIntermediate;
-import org.candle.decompiler.intermediate.expression.ArrayPositionReference;
+import org.candle.decompiler.intermediate.expression.ArrayAccess;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.GeneratedVariable;
@@ -113,7 +113,7 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 			StatementIntermediate si = (StatementIntermediate)declaration;
 			
 			Declaration dec = (Declaration)si.getExpression();
-			return dec.getAssignment().getRight();
+			return dec.getAssignment().getRightHandSide();
 		}
 		
 		return null;
@@ -121,21 +121,21 @@ public class ArrayForToEnhancedFor extends GraphIntermediateVisitor {
 	
 	private boolean firstMatchesGeneratedVariables(StatementIntermediate first, GeneratedVariable generatedArrayRef, GeneratedVariable generatedArrayIterator) {
 		Declaration childDeclaration = (Declaration)first.getExpression();
-		Expression right = childDeclaration.getAssignment().getRight();
+		Expression right = childDeclaration.getAssignment().getRightHandSide();
 		
-		if(right instanceof ArrayPositionReference) {
-			ArrayPositionReference apr = (ArrayPositionReference)right;
+		if(right instanceof ArrayAccess) {
+			ArrayAccess apr = (ArrayAccess)right;
 			
-			if(!(apr.getArrayPosition() instanceof Variable)) {
+			if(!(apr.getIndex() instanceof Variable)) {
 				return false;
 			}
-			if(!(apr.getArrayReference() instanceof Variable)) {
+			if(!(apr.getArray() instanceof Variable)) {
 				return false;
 			}
 			
 			//cast both to variable. check the variables match the name and type of the ones found above.
-			Variable arrayPosition = (Variable)apr.getArrayPosition();
-			Variable arrayRef = (Variable)apr.getArrayReference();
+			Variable arrayPosition = (Variable)apr.getArray();
+			Variable arrayRef = (Variable)apr.getArray();
 			
 			if(!StringUtils.equals(arrayPosition.getName(), generatedArrayIterator.getName())) {
 				return false;

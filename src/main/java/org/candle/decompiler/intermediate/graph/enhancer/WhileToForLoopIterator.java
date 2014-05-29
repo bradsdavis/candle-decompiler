@@ -15,7 +15,6 @@ import org.candle.decompiler.intermediate.expression.SingleConditional;
 import org.candle.decompiler.intermediate.expression.Variable;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
-import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 import org.jgrapht.Graphs;
 
 public class WhileToForLoopIterator extends GraphIntermediateVisitor {
@@ -30,8 +29,8 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 		//check to see if the while loop is a method invocation of hasNext.
 		
 		if(line.getExpression() instanceof SingleConditional) {
-			if(((SingleConditional)line.getExpression()).getLeft() instanceof MethodInvocation) {
-				MethodInvocation mi = (MethodInvocation)((SingleConditional)line.getExpression()).getLeft();
+			if(((SingleConditional)line.getExpression()).getExpression() instanceof MethodInvocation) {
+				MethodInvocation mi = (MethodInvocation)((SingleConditional)line.getExpression()).getExpression();
 				
 				String iteratorName = null;
 				if(mi.getTarget() instanceof Variable) {
@@ -70,7 +69,7 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 						//otherwise, let's see if the declaration is an iterator.
 						if(declaration.getExpression() instanceof Declaration) {
 							Declaration declarationExpression = (Declaration)declaration.getExpression();
-							Variable v = (Variable)declarationExpression.getAssignment().getLeft();
+							Variable v = (Variable)declarationExpression.getAssignment().getLeftHandSide();
 							
 							//check to see if the declaration is the same as the iterator's name.
 							if(StringUtils.equals(iteratorName, v.getName())) {
@@ -87,8 +86,8 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 										//the statement is indeed a declaration.
 										Declaration nextDeclaration = (Declaration)nextStatement.getExpression();
 										
-										if(nextDeclaration.getAssignment().getRight() instanceof MethodInvocation) {
-											MethodInvocation nextMethodInvocation = (MethodInvocation)nextDeclaration.getAssignment().getRight();
+										if(nextDeclaration.getAssignment().getRightHandSide() instanceof MethodInvocation) {
+											MethodInvocation nextMethodInvocation = (MethodInvocation)nextDeclaration.getAssignment().getRightHandSide();
 											
 											if(StringUtils.equals("next", nextMethodInvocation.getMethodName())) {
 												//YES.
@@ -101,8 +100,8 @@ public class WhileToForLoopIterator extends GraphIntermediateVisitor {
 													if(StringUtils.equals(iteratorName, nextMethodTarget.getName())) {
 														LOG.info("Definitely an enhanced for loop.");
 														
-														if(declarationExpression.getAssignment().getRight() instanceof MethodInvocation) {
-															MethodInvocation iteratorInvocation = (MethodInvocation)declarationExpression.getAssignment().getRight();
+														if(declarationExpression.getAssignment().getRightHandSide() instanceof MethodInvocation) {
+															MethodInvocation iteratorInvocation = (MethodInvocation)declarationExpression.getAssignment().getRightHandSide();
 															
 															if(StringUtils.equals("iterator", iteratorInvocation.getMethodName())) {
 																//now, we are pretty certain this is an enhanced for loop...  we can chop up the graph.

@@ -27,6 +27,18 @@ public class Return extends Expression {
 		}
 	}
 	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		if(child != null) {
+			listener.accept(child);
+		}
+	}
+	
+	public void setChild(Expression child) {
+		this.child = child;
+	}
+	
 	public Expression getChild() {
 		return child;
 	}

@@ -23,6 +23,10 @@ public class NewArrayInstance extends NewInstance {
 		super(instructionHandle, type);
 		this.counts.addAll(counts);
 	}
+	
+	public List<Expression> getCounts() {
+		return counts;
+	}
 
 	@Override
 	public void write(Writer builder) throws IOException {

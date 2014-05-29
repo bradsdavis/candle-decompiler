@@ -14,6 +14,11 @@ import org.candle.decompiler.instruction.graph.edge.EdgeType;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.graph.edge.IntermediateEdge;
 
+/**
+ * Takes a set of exceptions, and sets the edge type to EXCEPTION.
+ * @author bradsdavis@gmail.com
+ *
+ */
 public class ExceptionEdgeEnhancer extends InstructionGraphEnhancer {
 
 	public static final String CEG_KEY = "CEG_KEY";

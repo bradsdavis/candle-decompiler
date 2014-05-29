@@ -7,12 +7,28 @@ import org.apache.bcel.generic.InstructionHandle;
 
 
 public class FieldReference extends Expression {
-	protected final Expression target;
-	protected final String fieldName;
+	protected Expression target;
+	protected String fieldName;
 
 	public FieldReference(InstructionHandle instructionHandle, Expression target, String fieldName) {
 		super(instructionHandle);
 		this.target = target;
+		this.fieldName = fieldName;
+	}
+	
+	public Expression getTarget() {
+		return target;
+	}
+	
+	public void setTarget(Expression target) {
+		this.target = target;
+	}
+	
+	public String getFieldName() {
+		return fieldName;
+	}
+	
+	public void setFieldName(String fieldName) {
 		this.fieldName = fieldName;
 	}
 
@@ -21,6 +37,12 @@ public class FieldReference extends Expression {
 		target.write(builder);
 		builder.append(".");
 		builder.append(fieldName);
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(target);
 	}
 	
 }

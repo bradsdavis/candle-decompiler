@@ -7,12 +7,28 @@ import org.apache.bcel.generic.InstructionHandle;
 
 
 public class Cast extends Expression {
-	private final Expression left;
-	private final Expression right;
+	private Expression left;
+	private Expression right;
 	
 	public Cast(InstructionHandle instructionHandle, Expression left, Expression right) {
 		super(instructionHandle);
 		this.left = left;
+		this.right = right;
+	}
+	
+	public Expression getLeft() {
+		return left;
+	}
+	
+	public Expression getRight() {
+		return right;
+	}
+	
+	public void setLeft(Expression left) {
+		this.left = left;
+	}
+	
+	public void setRight(Expression right) {
 		this.right = right;
 	}
 	
@@ -25,4 +41,10 @@ public class Cast extends Expression {
 		right.write(val);
 	}
 	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getLeft());
+		listener.accept(getRight());
+	}
 }

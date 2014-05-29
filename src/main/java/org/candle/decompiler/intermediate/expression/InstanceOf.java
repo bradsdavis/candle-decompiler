@@ -7,8 +7,8 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class InstanceOf extends Expression {
 
-	private final Expression left;
-	private final Expression right;
+	private Expression left;
+	private Expression right;
 	
 	public InstanceOf(InstructionHandle instructionHandle, Expression left, Expression right) {
 		super(instructionHandle);
@@ -16,13 +16,34 @@ public class InstanceOf extends Expression {
 		this.right = right;
 	}
 	
+	public Expression getLeft() {
+		return left;
+	}
 	
+	public void setLeft(Expression left) {
+		this.left = left;
+	}
+	
+	public Expression getRight() {
+		return right;
+	}
+	
+	public void setRight(Expression right) {
+		this.right = right;
+	}
 	
 	@Override
 	public void write(Writer val) throws IOException {
 		left.write(val);
 		val.append(" ").append("instanceof").append(" ");
 		right.write(val);
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getLeft());
+		listener.accept(getRight());
 	}
 
 }

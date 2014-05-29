@@ -16,5 +16,8 @@ public class Continue extends Expression {
 		writer.append("continue");
 	}
 
-
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+	}
 }

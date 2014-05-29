@@ -9,13 +9,17 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class ConstantArray extends Expression {
 
-	private List<Expression> values = new LinkedList<Expression>();
+	private final List<Expression> values = new LinkedList<Expression>();
 
 	public ConstantArray(InstructionHandle instruction, List<Expression> values) {
 		super(instruction);
 		if(values != null) {
 			this.values.addAll(values);
 		}
+	}
+	
+	public List<Expression> getValues() {
+		return values;
 	}
 	
 	@Override
@@ -31,6 +35,14 @@ public class ConstantArray extends Expression {
 			count++;
 		}
 		writer.append("}");
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		for(Expression exp: values) {
+			listener.accept(exp);
+		}
 	}
 	
 }

@@ -9,8 +9,8 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class Declaration extends Expression {
 
-	private final Variable variable;
-	private final Assignment assignment;
+	private Variable variable;
+	private Assignment assignment;
 	
 	public Declaration(InstructionHandle instructionHandle, Variable variable, Assignment assignment) {
 		super(instructionHandle);
@@ -24,6 +24,14 @@ public class Declaration extends Expression {
 	
 	public Assignment getAssignment() {
 		return assignment;
+	}
+	
+	public void setVariable(Variable variable) {
+		this.variable = variable;
+	}
+	
+	public void setAssignment(Assignment assignment) {
+		this.assignment = assignment;
 	}
 
 	@Override
@@ -39,5 +47,11 @@ public class Declaration extends Expression {
 		assignment.write(builder);
 	}
 	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getVariable());
+		listener.accept(getAssignment());
+	}
 	
 }

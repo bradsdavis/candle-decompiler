@@ -21,7 +21,7 @@ import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Arithmetic;
 import org.candle.decompiler.intermediate.expression.ArithmeticType;
 import org.candle.decompiler.intermediate.expression.ArrayLength;
-import org.candle.decompiler.intermediate.expression.ArrayPositionReference;
+import org.candle.decompiler.intermediate.expression.ArrayAccess;
 import org.candle.decompiler.intermediate.expression.Assignment;
 import org.candle.decompiler.intermediate.expression.Cast;
 import org.candle.decompiler.intermediate.expression.ConstructorInvocation;
@@ -1065,7 +1065,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression arrayPosition = context.getExpressions().pop();
 		Expression arrayReference = context.getExpressions().pop();
 		
-		ArrayPositionReference arrayPositionReference = new ArrayPositionReference(context.getCurrentInstruction(), arrayReference, arrayPosition);
+		ArrayAccess arrayPositionReference = new ArrayAccess(context.getCurrentInstruction(), arrayReference, arrayPosition);
 		Assignment assignment = new Assignment(context.getCurrentInstruction(), arrayPositionReference, value);
 		
 		StatementIntermediate si = new StatementIntermediate(context.getCurrentInstruction(), assignment);
@@ -1152,7 +1152,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		
 		//now, we just need to create the array reference.
 		
-		ArrayPositionReference apr = new ArrayPositionReference(context.getCurrentInstruction(), arrayObject, arrayPosition);
+		ArrayAccess apr = new ArrayAccess(context.getCurrentInstruction(), arrayObject, arrayPosition);
 		context.getExpressions().push(apr);
 	}
 	

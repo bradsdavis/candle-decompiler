@@ -9,7 +9,7 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class ObjectType extends Expression implements TypedExpression {
 
-	protected final Type type;
+	protected Type type;
 
 	public ObjectType(InstructionHandle instructionHandle, Type type) {
 		super(instructionHandle);
@@ -20,10 +20,19 @@ public class ObjectType extends Expression implements TypedExpression {
 		return type;
 	}
 	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
 	@Override
 	public void write(Writer writer) throws IOException {
 		String signature = SignatureUtility.signatureToString(type.getSignature());
 		writer.append(signature);
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
 	}
 	
 	@Override

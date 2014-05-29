@@ -23,6 +23,14 @@ public class Ternary extends Expression {
 	private Expression right;
 	
 	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getLogic());
+		listener.accept(getLeft());
+		listener.accept(getRight());
+	}
+	
+	@Override
 	public void write(Writer writer) throws IOException {
 		writer.write("(");
 		logic.write(writer);
@@ -35,6 +43,39 @@ public class Ternary extends Expression {
 		writer.write(" : ");
 		
 		right.write(writer);
+	}
+	
+	
+	public Type getType() {
+		return type;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public Expression getLeft() {
+		return left;
+	}
+	
+	public void setLeft(Expression left) {
+		this.left = left;
+	}
+	
+	public Expression getRight() {
+		return right;
+	}
+	
+	public void setRight(Expression right) {
+		this.right = right;
+	}
+	
+	public Expression getLogic() {
+		return logic;
+	}
+	
+	public void setLogic(Expression logic) {
+		this.logic = logic;
 	}
 
 }

@@ -6,13 +6,36 @@ import java.io.Writer;
 import org.apache.bcel.generic.InstructionHandle;
 
 public class StatementBlock extends Expression {
-	private final Expression left;
-	private final Expression right;
+	private Expression left;
+	private Expression right;
 	
 	public StatementBlock(InstructionHandle instructionHandle, Expression left, Expression right) {
 		super(instructionHandle);
 		this.left = left;
 		this.right = right;
+	}
+	
+	public Expression getLeft() {
+		return left;
+	}
+	
+	public void setLeft(Expression left) {
+		this.left = left;
+	}
+	
+	public Expression getRight() {
+		return right;
+	}
+	
+	public void setRight(Expression right) {
+		this.right = right;
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getLeft());
+		listener.accept(getRight());
 	}
 	
 	@Override

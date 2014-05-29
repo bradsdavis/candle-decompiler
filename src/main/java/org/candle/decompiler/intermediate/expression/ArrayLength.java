@@ -7,18 +7,31 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class ArrayLength extends Expression {
 
-	private final Expression arrayTarget;
+	private Expression expression;
 	
 	public ArrayLength(InstructionHandle instructionHandle, Expression arrayTarget) {
 		super(instructionHandle);
-		this.arrayTarget = arrayTarget;
+		this.expression = arrayTarget;
 	}
 	
 	@Override
 	public void write(Writer builder) throws IOException {
-		arrayTarget.write(builder);
+		expression.write(builder);
 		builder.append(".");
 		builder.append("length");
 	}
 	
+	public Expression getExpression() {
+		return expression;
+	}
+	
+	public void setExpression(Expression expression) {
+		this.expression = expression;
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(expression);
+	}
 }

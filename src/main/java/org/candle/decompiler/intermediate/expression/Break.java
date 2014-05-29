@@ -15,5 +15,10 @@ public class Break extends Expression {
 	public void write(Writer writer) throws IOException {
 		writer.append("break");
 	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+	}
 
 }

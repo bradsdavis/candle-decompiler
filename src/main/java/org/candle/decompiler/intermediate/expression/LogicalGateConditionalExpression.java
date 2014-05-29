@@ -6,8 +6,8 @@ import java.io.Writer;
 public class LogicalGateConditionalExpression extends ConditionalExpression {
 
 	private LogicalGateType logicalGate;
-	private final ConditionalExpression left;
-	private final ConditionalExpression right;
+	private ConditionalExpression left;
+	private ConditionalExpression right;
 	
 	public LogicalGateConditionalExpression(ConditionalExpression left, ConditionalExpression right, LogicalGateType logicalGate) {
 		super(left.getInstructionHandle());
@@ -25,6 +25,30 @@ public class LogicalGateConditionalExpression extends ConditionalExpression {
 		builder.append(" ");
 		
 		right.write(builder);
+	}
+	
+	public ConditionalExpression getLeft() {
+		return left;
+	}
+	
+	public ConditionalExpression getRight() {
+		return right;
+	}
+	
+	public void setLeft(ConditionalExpression left) {
+		this.left = left;
+	}
+	
+	public void setRight(ConditionalExpression right) {
+		this.right = right;
+	}
+	
+	public LogicalGateType getLogicalGate() {
+		return logicalGate;
+	}
+	
+	public void setLogicalGate(LogicalGateType logicalGate) {
+		this.logicalGate = logicalGate;
 	}
 
 	@Override
@@ -46,6 +70,13 @@ public class LogicalGateConditionalExpression extends ConditionalExpression {
 			logicalGate = LogicalGateType.AND;
 			break;
 		}
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getLeft());
+		listener.accept(getRight());
 	}
 
 }

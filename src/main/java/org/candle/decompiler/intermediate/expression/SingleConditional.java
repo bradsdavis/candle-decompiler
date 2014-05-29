@@ -7,12 +7,12 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class SingleConditional extends ConditionalExpression {
 
-	private final Expression left;
+	private Expression expression;
 	private boolean negated;
 	
-	public SingleConditional(InstructionHandle instructionHandle, Expression left, boolean negated) {
+	public SingleConditional(InstructionHandle instructionHandle, Expression expression, boolean negated) {
 		super(instructionHandle);
-		this.left = left;
+		this.expression = expression;
 		this.negated = negated;
 	}
 	
@@ -20,8 +20,18 @@ public class SingleConditional extends ConditionalExpression {
 		this(instructionHandle, left, false);
 	}
 	
-	public Expression getLeft() {
-		return left;
+	public Expression getExpression() {
+		return expression;
+	}
+	
+	public void setExpression(Expression expression) {
+		this.expression = expression;
+	}
+	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(getExpression());
 	}
 
 	@Override
@@ -32,7 +42,7 @@ public class SingleConditional extends ConditionalExpression {
 			val.append("!(");
 		}
 
-		left.write(val);
+		expression.write(val);
 		
 		//close parentheses around negate...
 		if(negated) {

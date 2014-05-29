@@ -6,27 +6,40 @@ import java.io.StringWriter;
 import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.Sourceable;
 
-public abstract class Expression implements Sourceable, Cloneable {
+public abstract class Expression extends ASTNode implements Sourceable, Cloneable {
 
-	protected InstructionHandle InstructionHandle;
+	protected Expression parent;
+	protected InstructionHandle instructionHandle;
 	
 	public Expression(InstructionHandle InstructionHandle) {
-		this.InstructionHandle = InstructionHandle;
+		this.instructionHandle = InstructionHandle;
 	}
 	
 	public InstructionHandle getInstructionHandle() {
-		return InstructionHandle;
+		return instructionHandle;
 	}
 	
 	public void setInstructionHandle(InstructionHandle instructionHandle) {
-		this.InstructionHandle = instructionHandle;
+		this.instructionHandle = instructionHandle;
 	}
+	
+	public Expression getParent() {
+		return this.parent;
+	}
+	
+	public void setParent(Expression parent) {
+		this.parent = parent;
+	}
+	
+	public abstract void visit(ASTListener listener);
+
+	
 	
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
 	}
-	 
+	
 	@Override
 	public String toString() {
 		StringWriter sw = new StringWriter();

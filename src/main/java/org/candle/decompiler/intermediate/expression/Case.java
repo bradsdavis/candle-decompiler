@@ -7,8 +7,8 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class Case extends Expression {
 
-	private final InstructionHandle target;
-	private final Expression expression;
+	private InstructionHandle target;
+	private Expression expression;
 	
 	public Case(InstructionHandle instructionHandle, InstructionHandle target, Expression expression) {
 		super(instructionHandle);
@@ -25,6 +25,14 @@ public class Case extends Expression {
 		return expression;
 	}
 	
+	public void setTarget(InstructionHandle target) {
+		this.target = target;
+	}
+	
+	public void setExpression(Expression expression) {
+		this.expression = expression;
+	}
+	
 	@Override
 	public void write(Writer writer) throws IOException {
 		writer.append("case ");
@@ -32,4 +40,10 @@ public class Case extends Expression {
 		writer.append(":");
 	}
 
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+		listener.accept(expression);
+	}
+	
 }

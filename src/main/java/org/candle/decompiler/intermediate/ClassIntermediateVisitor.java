@@ -54,14 +54,17 @@ import org.candle.decompiler.intermediate.graph.enhancer.ConditionToWhileLoop;
 import org.candle.decompiler.intermediate.graph.enhancer.ConstantArrayCompressor;
 import org.candle.decompiler.intermediate.graph.enhancer.Else;
 import org.candle.decompiler.intermediate.graph.enhancer.ElseIf;
+import org.candle.decompiler.intermediate.graph.enhancer.ExpressionEnhancer;
 import org.candle.decompiler.intermediate.graph.enhancer.If;
 import org.candle.decompiler.intermediate.graph.enhancer.IntermediateGraphWriter;
 import org.candle.decompiler.intermediate.graph.enhancer.MergeConditionExpression;
 import org.candle.decompiler.intermediate.graph.enhancer.MultiConditionalToSwitchIntermediate;
 import org.candle.decompiler.intermediate.graph.enhancer.RemoveCaseToCaseEdge;
+import org.candle.decompiler.intermediate.graph.enhancer.RemoveImpliedVoidReturn;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractDuplicateFinally;
 import org.candle.decompiler.intermediate.graph.enhancer.RetractOrphanGoto;
 import org.candle.decompiler.intermediate.graph.enhancer.SwitchGotoToBreak;
+import org.candle.decompiler.intermediate.graph.enhancer.Try;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIncrement;
 import org.candle.decompiler.intermediate.graph.enhancer.WhileToForLoopIterator;
 import org.candle.decompiler.intermediate.graph.range.CaseEndRangeIntermediateVisitor;
@@ -171,10 +174,10 @@ public class ClassIntermediateVisitor extends EmptyVisitor {
 
 		enhancers.add(new WhileRangeVisitor(igc));
 		enhancers.add(new IfLowerRangeVisitor(igc));
+		enhancers.add(new Try(igc));
 		
-		
-		//enhancers.add(new RemoveImpliedVoidReturn(igc));
-		
+		enhancers.add(new RemoveImpliedVoidReturn(igc));
+		enhancers.add(new ExpressionEnhancer(igc));
 		enhancers.add(new IntermediateGraphWriter(igc, "iafter.dot"));
 		
 		

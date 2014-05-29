@@ -16,8 +16,8 @@ public class BCELMainTest {
 		  //Fix: Array Iterator
 		  //Fix: Else clause in last switch statement.
 		  
-		  //String className = "org.candle.decompiler.test.TestSimpleCondition";
-		  String className = "org.candle.decompiler.test.TestTryCatch";
+		  String className = "org.candle.decompiler.test.TestSimpleCondition";
+		  //String className = "org.candle.decompiler.test.TestTryCatch";
 
 		 // String className = "org.candle.decompiler.test.TestSwitch";
 		  

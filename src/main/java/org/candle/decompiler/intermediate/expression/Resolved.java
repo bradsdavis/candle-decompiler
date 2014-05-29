@@ -11,8 +11,8 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class Resolved extends Expression implements TypedExpression {
 	private static final Log LOG = LogFactory.getLog(Resolved.class);
-	private final Type type;
-	private final String value;
+	private Type type;
+	private String value;
 	
 	public Resolved(InstructionHandle instructionHandle, Type type, String value) {
 		super(instructionHandle);
@@ -25,11 +25,24 @@ public class Resolved extends Expression implements TypedExpression {
 		writer.append(value);
 	}
 	
+	@Override
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+	}
+	
 	public Type getType() {
 		return type;
 	}
 	
 	public String getValue() {
 		return value;
+	}
+	
+	public void setType(Type type) {
+		this.type = type;
+	}
+	
+	public void setValue(String value) {
+		this.value = value;
 	}
 }
