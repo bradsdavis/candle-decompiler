@@ -6,7 +6,7 @@ import java.io.Writer;
 import org.apache.bcel.generic.Type;
 import org.apache.bcel.generic.InstructionHandle;
 
-public class NewMultidimensionalArray extends NewArrayInstance {
+public class NewMultidimensionalArray extends ArrayCreation {
 
 	protected final int dimensions;
 	

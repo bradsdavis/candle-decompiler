@@ -10,12 +10,12 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.bcel.generic.InstructionHandle;
-import org.candle.decompiler.intermediate.expression.NewArrayInstance;
+import org.candle.decompiler.intermediate.expression.ArrayCreation;
 
 public class VariableResolver {
 	private static final Log LOG = LogFactory.getLog(VariableResolver.class);
 	
-	private final Map<NewArrayInstance, IntermediateVariable> localGeneratedArrayVariables = new HashMap<NewArrayInstance, IntermediateVariable>();
+	private final Map<ArrayCreation, IntermediateVariable> localGeneratedArrayVariables = new HashMap<ArrayCreation, IntermediateVariable>();
 	
 	private final Map<VariableIndex, IntermediateVariable> localGeneratedVariables = new HashMap<VariableIndex, IntermediateVariable>();
 	private final MethodGen methodGen;
@@ -24,13 +24,13 @@ public class VariableResolver {
 		this.methodGen = methodGen;
 	}
 	
-	public void addLocalArrayVariable(NewArrayInstance nai) {
+	public void addLocalArrayVariable(ArrayCreation nai) {
 		String name = RandomStringUtils.randomAlphabetic(3) + "$";
 		IntermediateVariable iv = new IntermediateVariable(name, null);
 		localGeneratedArrayVariables.put(nai, iv);
 	}
 	
-	public IntermediateVariable getLocalArrayVariable(NewArrayInstance nai) {
+	public IntermediateVariable getLocalArrayVariable(ArrayCreation nai) {
 		if(localGeneratedArrayVariables.containsKey(nai)) {
 			return localGeneratedArrayVariables.get(nai);
 		}

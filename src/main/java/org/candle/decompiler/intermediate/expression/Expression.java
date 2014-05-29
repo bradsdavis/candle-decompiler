@@ -31,7 +31,9 @@ public abstract class Expression extends ASTNode implements Sourceable, Cloneabl
 		this.parent = parent;
 	}
 	
-	public abstract void visit(ASTListener listener);
+	public void visit(ASTListener listener) {
+		listener.accept(this);
+	}
 
 	
 	

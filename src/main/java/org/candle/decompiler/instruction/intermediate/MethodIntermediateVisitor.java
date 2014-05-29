@@ -23,6 +23,7 @@ import org.candle.decompiler.intermediate.expression.ArithmeticType;
 import org.candle.decompiler.intermediate.expression.ArrayLength;
 import org.candle.decompiler.intermediate.expression.ArrayAccess;
 import org.candle.decompiler.intermediate.expression.Assignment;
+import org.candle.decompiler.intermediate.expression.ByteLiteral;
 import org.candle.decompiler.intermediate.expression.Cast;
 import org.candle.decompiler.intermediate.expression.ConstructorInvocation;
 import org.candle.decompiler.intermediate.expression.Declaration;
@@ -33,18 +34,22 @@ import org.candle.decompiler.intermediate.expression.Increment;
 import org.candle.decompiler.intermediate.expression.InstanceOf;
 import org.candle.decompiler.intermediate.expression.MethodInvocation;
 import org.candle.decompiler.intermediate.expression.MultiConditional;
-import org.candle.decompiler.intermediate.expression.NewArrayInstance;
+import org.candle.decompiler.intermediate.expression.ArrayCreation;
 import org.candle.decompiler.intermediate.expression.NewConstantArrayInstance;
 import org.candle.decompiler.intermediate.expression.NewInstance;
+import org.candle.decompiler.intermediate.expression.NullLiteral;
 import org.candle.decompiler.intermediate.expression.OperationType;
 import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.expression.Return;
 import org.candle.decompiler.intermediate.expression.SingleConditional;
+import org.candle.decompiler.intermediate.expression.StringLiteral;
 import org.candle.decompiler.intermediate.expression.Switch;
 import org.candle.decompiler.intermediate.expression.Ternary;
 import org.candle.decompiler.intermediate.expression.Throw;
 import org.candle.decompiler.intermediate.expression.TypedExpression;
 import org.candle.decompiler.intermediate.expression.Variable;
+
+import com.sun.org.apache.xerces.internal.xs.datatypes.ByteList;
 
 public class MethodIntermediateVisitor implements Visitor {
 	private static final Log LOG = LogFactory.getLog(MethodIntermediateVisitor.class);
@@ -77,7 +82,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	}
 	
 	public void visitBIPUSH(BIPUSH instruction) {
-		Resolved resolved = new Resolved(context.getCurrentInstruction(), Type.BYTE, instruction.getValue().toString());
+		ByteLiteral resolved = new ByteLiteral(context.getCurrentInstruction(), instruction.getValue());
 		context.getExpressions().push(resolved);
 		LOG.debug("Pushing: "+resolved);
 	}
@@ -202,7 +207,7 @@ public class MethodIntermediateVisitor implements Visitor {
 
 	public void visitACONST_NULL(ACONST_NULL instruction) {
 		//load from constant pool.
-		Resolved cons = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
+		NullLiteral cons = new NullLiteral(context.getCurrentInstruction());
 		context.getExpressions().push(cons);
 	}
 
@@ -284,14 +289,20 @@ public class MethodIntermediateVisitor implements Visitor {
 		MethodGen mg = context.getMethodGen();
 		ConstantPoolGen cpg = mg.getConstantPool();
 		
-		StringBuilder resolvedValue = new StringBuilder();
+
 		Type type = instruction.getType(cpg);
+		Object instructionValue = instruction.getValue(cpg);
+		
 		if(Type.STRING == type) {
-			resolvedValue.append("\"");
+			Expression resolved = new StringLiteral(context.getCurrentInstruction(), instructionValue.toString());
+			context.getExpressions().push(resolved);
+			return;
+		}
+		else {
+			
 		}
 		
-		
-		Object instructionValue = instruction.getValue(cpg);
+		StringBuilder resolvedValue = new StringBuilder();
 		if(instructionValue instanceof ConstantClass) {
 			String clzName = getClassName((ConstantClass)instructionValue, cpg.getConstantPool());
 			resolvedValue.append(clzName);
@@ -301,11 +312,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		}
 		
 		
-		if(Type.STRING == type) {
-			resolvedValue.append("\"");
-		}
-		
-		Resolved resolved = new Resolved(context.getCurrentInstruction(), type, resolvedValue.toString());
+		Expression resolved = new Resolved(context.getCurrentInstruction(), type, resolvedValue.toString());
 		context.getExpressions().push(resolved);
 	}
 	
@@ -437,7 +444,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	@Override
 	public void visitIFNULL(IFNULL instruction) {
 		Expression left = context.getExpressions().pop();
-		Expression right = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
+		Expression right = new NullLiteral(context.getCurrentInstruction());
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.EQ);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
@@ -447,7 +454,7 @@ public class MethodIntermediateVisitor implements Visitor {
 	@Override
 	public void visitIFNONNULL(IFNONNULL instruction) {
 		Expression left = context.getExpressions().pop();
-		Expression right = new Resolved(context.getCurrentInstruction(), Type.NULL, "null");
+		Expression right = new NullLiteral(context.getCurrentInstruction());
 		
 		MultiConditional conditional = new MultiConditional(context.getCurrentInstruction(), left, right, OperationType.NE);
 		BooleanBranchIntermediate line = new BooleanBranchIntermediate(context.getCurrentInstruction(), conditional);
@@ -1094,13 +1101,13 @@ public class MethodIntermediateVisitor implements Visitor {
 		//first, check to see if the next instruction is a DUP.  If so,
 		//this is probably a constant array value.
 		Expression count = context.getExpressions().pop();
-		NewArrayInstance nai = null;
+		ArrayCreation nai = null;
 		
 		if(context.getCurrentInstruction().getNext().getInstruction() instanceof DUP) {
 			nai = new NewConstantArrayInstance(context.getCurrentInstruction(), instruction.getType(), count);
 		}
 		else {
-			nai = new NewArrayInstance(context.getCurrentInstruction(), instruction.getType(), count);
+			nai = new ArrayCreation(context.getCurrentInstruction(), instruction.getType(), count);
 		}
 		
 		context.getExpressions().push(nai);	
@@ -1114,13 +1121,13 @@ public class MethodIntermediateVisitor implements Visitor {
 		Type type = instruction.getType(context.getMethodGen().getConstantPool());
 		Expression count = context.getExpressions().pop();
 
-		NewArrayInstance nai = null;
+		ArrayCreation nai = null;
 		
 		if(context.getCurrentInstruction().getNext().getInstruction() instanceof DUP) {
 			nai = new NewConstantArrayInstance(context.getCurrentInstruction(), type, count);
 		}
 		else {
-			nai = new NewArrayInstance(context.getCurrentInstruction(), type, count);
+			nai = new ArrayCreation(context.getCurrentInstruction(), type, count);
 		}
 		
 		context.getExpressions().push(nai);
@@ -1141,7 +1148,7 @@ public class MethodIntermediateVisitor implements Visitor {
 			counts.addFirst(context.getExpressions().pop());
 		}
 		
-		NewArrayInstance nai = new NewArrayInstance(context.getCurrentInstruction(), type, counts);
+		ArrayCreation nai = new ArrayCreation(context.getCurrentInstruction(), type, counts);
 		context.getExpressions().push(nai);
 	}
 	

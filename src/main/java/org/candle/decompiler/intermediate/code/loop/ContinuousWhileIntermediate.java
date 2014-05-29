@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import org.apache.bcel.generic.InstructionHandle;
-import org.apache.bcel.generic.Type;
 import org.candle.decompiler.intermediate.code.AbstractIntermediate;
 import org.candle.decompiler.intermediate.code.BlockRange;
 import org.candle.decompiler.intermediate.code.BlockSerializable;
+import org.candle.decompiler.intermediate.expression.BooleanLiteral;
 import org.candle.decompiler.intermediate.expression.Expression;
-import org.candle.decompiler.intermediate.expression.Resolved;
 import org.candle.decompiler.intermediate.visitor.IntermediateVisitor;
 
 public class ContinuousWhileIntermediate extends AbstractIntermediate implements BlockSerializable {
@@ -18,7 +17,7 @@ public class ContinuousWhileIntermediate extends AbstractIntermediate implements
 	
 	public ContinuousWhileIntermediate(InstructionHandle instruction) {
 		super(instruction);
-		this.expression = new Resolved(instruction, Type.BOOLEAN, "true");
+		this.expression = new BooleanLiteral(instruction, true);
 		this.blockRange = new BlockRange();
 	}
 

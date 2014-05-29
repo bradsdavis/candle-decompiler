@@ -10,16 +10,16 @@ import org.apache.commons.lang.StringUtils;
 import org.candle.decompiler.ast.SignatureUtility;
 import org.apache.bcel.generic.InstructionHandle;
 
-public class NewArrayInstance extends NewInstance {
+public class ArrayCreation extends NewInstance {
 
 	protected final List<Expression> counts = new LinkedList<Expression>();
 	
-	public NewArrayInstance(InstructionHandle instructionHandle, Type type, Expression count) {
+	public ArrayCreation(InstructionHandle instructionHandle, Type type, Expression count) {
 		super(instructionHandle, type);
 		this.counts.add(count);
 	}
 	
-	public NewArrayInstance(InstructionHandle instructionHandle, Type type, List<Expression> counts) {
+	public ArrayCreation(InstructionHandle instructionHandle, Type type, List<Expression> counts) {
 		super(instructionHandle, type);
 		this.counts.addAll(counts);
 	}

@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.bcel.generic.Type;
 import org.apache.bcel.generic.InstructionHandle;
 
-public class NewConstantArrayInstance extends NewArrayInstance {
+public class NewConstantArrayInstance extends ArrayCreation {
 
 	public NewConstantArrayInstance(InstructionHandle instructionHandle, Type type, Expression count) {
 		super(instructionHandle, type, count);
