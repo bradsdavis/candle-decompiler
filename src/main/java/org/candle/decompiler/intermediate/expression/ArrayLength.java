@@ -7,11 +7,11 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class ArrayLength extends Expression {
 
-	private Expression expression;
+	private Expression expression = null;
 	
 	public ArrayLength(InstructionHandle instructionHandle, Expression arrayTarget) {
 		super(instructionHandle);
-		this.expression = arrayTarget;
+		this.setExpression(arrayTarget);
 	}
 	
 	@Override
@@ -25,8 +25,17 @@ public class ArrayLength extends Expression {
 		return expression;
 	}
 	
-	public void setExpression(Expression expression) {
-		this.expression = expression;
+	public void setExpression(Expression exp) {
+		if(expression != null) {
+			expression.setParent(null);
+		}
+		
+		this.expression = exp;
+		
+		if(expression != null) {
+			expression.setParent(this);
+		}
+		
 	}
 	
 	@Override

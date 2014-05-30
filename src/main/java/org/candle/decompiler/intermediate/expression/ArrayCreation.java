@@ -12,37 +12,56 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class ArrayCreation extends NewInstance {
 
-	protected final List<Expression> counts = new LinkedList<Expression>();
+	protected List<Expression> dimensions;
 	
 	public ArrayCreation(InstructionHandle instructionHandle, Type type, Expression count) {
 		super(instructionHandle, type);
-		this.counts.add(count);
+		
+		List<Expression> exps = new LinkedList<Expression>();
+		exps.add(count);
+		this.setDimensions(exps);
 	}
 	
 	public ArrayCreation(InstructionHandle instructionHandle, Type type, List<Expression> counts) {
 		super(instructionHandle, type);
-		this.counts.addAll(counts);
+		this.setDimensions(counts);
 	}
 	
-	public List<Expression> getCounts() {
-		return counts;
+	public List<Expression> getDimensions() {
+		return dimensions;
+	}
+	
+	public void setDimensions(List<Expression> d) {
+		if(this.dimensions != null) {
+			for(Expression exp : dimensions) {
+				exp.setParent(null);
+			}
+		}
+		
+		this.dimensions = d;
+		
+		if(this.dimensions != null) {
+			for(Expression exp : dimensions) {
+				exp.setParent(this);
+			}
+		}
 	}
 
 	@Override
 	public void write(Writer builder) throws IOException {
 		builder.append("new ");
 		
-		int dimensions = StringUtils.countMatches(type.getSignature(), "[");
+		final int dimensionCounts = StringUtils.countMatches(type.getSignature(), "[");
 		
 		String signature = SignatureUtility.signatureToString(type.getSignature());
 		signature = StringUtils.substringBefore(signature, "[]");
 		builder.append(signature);
 		
 		
-		for(int i=0; i<dimensions; i++) {
+		for(int i=0; i< dimensionCounts; i++) {
 			builder.append("[");
-			if(i < counts.size()) {
-				Expression exp = counts.get(i);
+			if(i < dimensions.size()) {
+				Expression exp = dimensions.get(i);
 				exp.write(builder);
 			}
 			builder.append("]");

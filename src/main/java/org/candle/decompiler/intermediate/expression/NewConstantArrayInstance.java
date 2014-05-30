@@ -18,7 +18,7 @@ public class NewConstantArrayInstance extends ArrayCreation {
 	}
 	
 	public Expression getCount() {
-		return counts.get(0);
+		return dimensions.get(0);
 	}
 	
 	@Override

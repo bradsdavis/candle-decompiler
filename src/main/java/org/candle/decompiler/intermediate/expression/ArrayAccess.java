@@ -13,8 +13,11 @@ public class ArrayAccess extends Expression {
 	
 	public ArrayAccess(InstructionHandle instructionHandle, Expression arrayReference, Expression arrayPosition) {
 		super(instructionHandle);
-		this.array = arrayReference;
-		this.index = arrayPosition;
+		this.array = null;
+		this.index = null;
+		
+		this.setArray(arrayReference);
+		this.setIndex(arrayPosition);
 	}
 	
 	public Expression getIndex() {
@@ -22,7 +25,15 @@ public class ArrayAccess extends Expression {
 	}
 	
 	public void setIndex(Expression index) {
+		//unset parent to avoid leak.
+		if(this.index != null) {
+			this.index.setParent(null);
+		}
 		this.index = index;
+		
+		if(this.index != null) {
+			this.index.setParent(this);
+		}
 	}
 	
 	public Expression getArray() {
@@ -30,7 +41,16 @@ public class ArrayAccess extends Expression {
 	}
 	
 	public void setArray(Expression array) {
+		//unset parent to avoid leak.
+		if(this.array != null) {
+			this.array.setParent(null);
+		}
+		
 		this.array = array;
+		
+		if(this.array != null) {
+			this.array.setParent(this);
+		}
 	}
 	
 	@Override

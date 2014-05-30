@@ -7,8 +7,6 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.candle.decompiler.Sourceable;
 
 public abstract class Expression extends ASTNode implements Sourceable, Cloneable {
-
-	protected Expression parent;
 	protected InstructionHandle instructionHandle;
 	
 	public Expression(InstructionHandle InstructionHandle) {
@@ -21,14 +19,6 @@ public abstract class Expression extends ASTNode implements Sourceable, Cloneabl
 	
 	public void setInstructionHandle(InstructionHandle instructionHandle) {
 		this.instructionHandle = instructionHandle;
-	}
-	
-	public Expression getParent() {
-		return this.parent;
-	}
-	
-	public void setParent(Expression parent) {
-		this.parent = parent;
 	}
 	
 	public void visit(ASTListener listener) {

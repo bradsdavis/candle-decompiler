@@ -3,6 +3,7 @@ package org.candle.decompiler.intermediate.graph.enhancer;
 import org.candle.decompiler.intermediate.code.StatementIntermediate;
 import org.candle.decompiler.intermediate.expression.Expression;
 import org.candle.decompiler.intermediate.expression.ASTListener;
+import org.candle.decompiler.intermediate.expression.MethodInvocation;
 import org.candle.decompiler.intermediate.graph.GraphIntermediateVisitor;
 import org.candle.decompiler.intermediate.graph.context.IntermediateGraphContext;
 
@@ -21,7 +22,9 @@ public class ExpressionEnhancer extends GraphIntermediateVisitor {
 			
 			@Override
 			public void accept(Expression e) {
-				System.out.println(e);
+				if(e instanceof MethodInvocation) {
+					System.out.println(e);
+				}
 			}
 		});
 		

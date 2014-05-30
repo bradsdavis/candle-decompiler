@@ -2,6 +2,7 @@ package org.candle.decompiler.intermediate.expression;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.bcel.generic.InstructionHandle;
@@ -9,27 +10,50 @@ import org.apache.bcel.generic.InstructionHandle;
 
 public class MethodInvocation extends Expression {
 
-	protected Expression target;
+	protected Expression target = null;
 	protected String methodName;
 	protected List<Expression> parameters;
 
 	public MethodInvocation(InstructionHandle instructionHandle, Expression target, String methodName, List<Expression> params) {
 		super(instructionHandle);
-		this.target = target;
+		this.setTarget(target);
 		this.methodName = methodName;
-		this.parameters = params;
+		this.setParameters(params);
 	}
 	
 	public void setTarget(Expression target) {
+		if(this.target != null) {
+			this.target.setParent(null);
+		}
 		this.target = target;
+		
+		if(target != null) {
+			this.target.setParent(this);
+		}
 	}
 	
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
 	}
 	
-	public void setParameters(List<Expression> parameters) {
-		this.parameters = parameters;
+	public void setParameters(List<Expression> p) {
+		if(this.parameters != null) {
+			//unset all previous parents
+			for(Expression exp : this.parameters) {
+				exp.setParent(null);
+			}
+		}
+		
+		if(p == null) {
+			this.parameters = new LinkedList<Expression>();
+		}
+		else {
+			this.parameters = new LinkedList<Expression>(p);
+			
+			for(Expression exp : this.parameters) {
+				exp.setParent(this);
+			}
+		}
 	}
 	
 	public Expression getTarget() {
