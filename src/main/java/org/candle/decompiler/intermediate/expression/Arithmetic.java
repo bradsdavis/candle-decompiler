@@ -65,7 +65,7 @@ public class Arithmetic extends Expression {
 	@Override
 	public void visit(ASTListener listener) {
 		listener.accept(this);
-		listener.accept(getLeft());
-		listener.accept(getRight());
+		getLeft().visit(listener);
+		getRight().visit(listener);
 	}
 }

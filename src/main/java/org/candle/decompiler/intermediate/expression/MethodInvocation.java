@@ -90,9 +90,10 @@ public class MethodInvocation extends Expression {
 	@Override
 	public void visit(ASTListener listener) {
 		listener.accept(this);
+		target.visit(listener);
 		if(getParameters() != null) {
 			for(Expression exp : getParameters()) {
-				listener.accept(exp);
+				exp.visit(listener);
 			}
 		}
 	}

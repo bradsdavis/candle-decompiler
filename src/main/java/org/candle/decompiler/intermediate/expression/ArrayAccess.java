@@ -76,7 +76,7 @@ public class ArrayAccess extends Expression {
 	@Override
 	public void visit(ASTListener listener) {
 		listener.accept(this);
-		listener.accept(array);
-		listener.accept(index);
+		array.visit(listener);
+		index.visit(listener);
 	}
 }
