@@ -28,7 +28,7 @@ import org.candle.decompiler.intermediate.expression.Cast;
 import org.candle.decompiler.intermediate.expression.ConstructorInvocation;
 import org.candle.decompiler.intermediate.expression.Declaration;
 import org.candle.decompiler.intermediate.expression.Expression;
-import org.candle.decompiler.intermediate.expression.FieldReference;
+import org.candle.decompiler.intermediate.expression.FieldAccess;
 import org.candle.decompiler.intermediate.expression.GeneratedVariable;
 import org.candle.decompiler.intermediate.expression.Increment;
 import org.candle.decompiler.intermediate.expression.InstanceOf;
@@ -261,7 +261,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		Expression right = context.getExpressions().pop();
 		Expression left = context.getExpressions().pop();
 		
-		FieldReference fieldRef = new FieldReference(context.getCurrentInstruction(), left, fieldName);
+		FieldAccess fieldRef = new FieldAccess(context.getCurrentInstruction(), left, fieldName);
 		Assignment assignment = new Assignment(context.getCurrentInstruction(), fieldRef, right);
 		
 		StatementIntermediate complete = new StatementIntermediate(context.getCurrentInstruction(), assignment);
@@ -278,7 +278,7 @@ public class MethodIntermediateVisitor implements Visitor {
 		MethodGen mg = context.getMethodGen();
 		ConstantPoolGen cpg = mg.getConstantPool();
 		
-		FieldReference ref = new FieldReference(context.getCurrentInstruction(), target, instruction.getFieldName(cpg));
+		FieldAccess ref = new FieldAccess(context.getCurrentInstruction(), target, instruction.getFieldName(cpg));
 		context.getExpressions().push(ref);
 	}
 

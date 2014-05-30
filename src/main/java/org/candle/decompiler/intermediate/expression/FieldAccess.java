@@ -6,11 +6,11 @@ import java.io.Writer;
 import org.apache.bcel.generic.InstructionHandle;
 
 
-public class FieldReference extends Expression {
+public class FieldAccess extends Expression {
 	protected Expression target;
 	protected String fieldName;
 
-	public FieldReference(InstructionHandle instructionHandle, Expression target, String fieldName) {
+	public FieldAccess(InstructionHandle instructionHandle, Expression target, String fieldName) {
 		super(instructionHandle);
 		this.target = target;
 		this.fieldName = fieldName;
